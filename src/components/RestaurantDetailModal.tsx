@@ -6,6 +6,9 @@ import { Button } from './ui/button';
 import { MapPin, Clock, Star, ExternalLink, Utensils, X } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
+
+const MotionImage = motion(Image);
 
 interface Menu {
   name: string;
@@ -135,12 +138,14 @@ export default function RestaurantDetailModal({ isOpen, onClose, restaurant }: R
                         className="w-11 h-11 rounded-lg overflow-hidden shrink-0 border border-border/40 bg-muted cursor-zoom-in"
                         onClick={() => setSelectedImage({ name: menu.name, imageUrl: menu.imageUrl!, index })}
                       >
-                        <motion.img
+                        <MotionImage
                           layoutId={`menu-image-img-${menu.name}-${index}`}
                           whileHover={{ scale: 1.25 }}
                           transition={{ duration: 0.2, ease: "easeOut" }}
                           src={menu.imageUrl}
                           alt={menu.name}
+                          width={44}
+                          height={44}
                           className="w-full h-full object-cover"
                           onError={(e) => {
                             (e.target as HTMLElement).style.display = 'none';
@@ -197,12 +202,15 @@ export default function RestaurantDetailModal({ isOpen, onClose, restaurant }: R
               <X size={16} />
             </button>
 
-            <div className="aspect-[4/3] w-full overflow-hidden bg-muted">
-              <motion.img
+            <div className="aspect-[4/3] w-full overflow-hidden bg-muted relative">
+              <MotionImage
                 layoutId={`menu-image-img-${selectedImage.name}-${selectedImage.index}`}
                 src={selectedImage.imageUrl}
                 alt={selectedImage.name}
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
+                sizes="(max-w-md) 100vw, 384px"
+                priority
               />
             </div>
             

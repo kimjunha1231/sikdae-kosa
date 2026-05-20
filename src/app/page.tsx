@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useMemo } from 'react';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
@@ -65,6 +66,7 @@ const CATEGORIES = [
 export default function Dashboard() {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [searchInput, setSearchInput] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('전체');
   const [sortBy, setSortBy] = useState<'distance' | 'rating' | 'name'>('distance');
 
@@ -138,6 +140,16 @@ export default function Dashboard() {
       root.classList.remove('dark');
     }
   }, [isDarkMode]);
+
+  // Debounce search query to prevent heavy recalculations/re-renders on every keystroke
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setSearchQuery(searchInput);
+    }, 200);
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchInput]);
 
   // Haversine distance calculator helper
   const getHaversineDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
@@ -297,8 +309,8 @@ export default function Dashboard() {
             <Input
               type="text"
               placeholder="식당명 또는 대표메뉴 검색"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
               className="pl-10 rounded-2xl bg-background border-border h-11 text-xs focus:ring-primary/40 focus:ring-2"
             />
           </div>
@@ -352,10 +364,10 @@ export default function Dashboard() {
               return (
                 <motion.div
                   key={`${res.name}-${index}`}
-                  initial={{ opacity: 0, y: 15 }}
+                  initial={index < 15 ? { opacity: 0, y: 15 } : { opacity: 1, y: 0 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.2, delay: Math.min(index * 0.02, 0.2) }}
+                  transition={index < 15 ? { duration: 0.2, delay: Math.min(index * 0.02, 0.2) } : { duration: 0 }}
                   onMouseEnter={() => setHoveredRes(res)}
                   onMouseLeave={() => setHoveredRes(null)}
                   onClick={() => setSelectedRes(res)}
@@ -386,9 +398,11 @@ export default function Dashboard() {
                         {/* Thumbnail Image */}
                         {res.image_url ? (
                           <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-border/50 bg-muted flex items-center justify-center">
-                            <img
+                            <Image
                               src={res.image_url}
                               alt={res.name}
+                              width={64}
+                              height={64}
                               className="w-full h-full object-cover"
                               onError={(e) => {
                                 (e.target as HTMLElement).style.display = 'none';
@@ -549,11 +563,14 @@ export default function Dashboard() {
 
                 {/* Display Restaurant image */}
                 {rouletteWinner.image_url ? (
-                  <div className="w-full h-44 rounded-2xl overflow-hidden border border-border/50 mb-4 bg-muted">
-                    <img
+                  <div className="w-full h-44 rounded-2xl overflow-hidden border border-border/50 mb-4 bg-muted relative">
+                    <Image
                       src={rouletteWinner.image_url}
                       alt={rouletteWinner.name}
-                      className="w-full h-full object-cover"
+                      fill
+                      className="object-cover"
+                      sizes="(max-w-md) 100vw, 384px"
+                      priority
                       onError={(e) => {
                         (e.target as HTMLElement).style.display = 'none';
                       }}
