@@ -2,33 +2,13 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { Card } from './ui/card';
-import { Badge } from './ui/badge';
-import { Button } from './ui/button';
+import { Card } from '@/shared/ui/card';
+import { Badge } from '@/shared/ui/badge';
+import { Button } from '@/shared/ui/button';
 import { Check, Eye } from 'lucide-react';
-import { formatPrice } from '@/lib/utils';
+import { formatPrice } from '@/shared/lib/utils';
 import { motion } from 'framer-motion';
-
-interface Menu {
-  name: string;
-  price: number | string;
-  imageUrl?: string | null;
-}
-
-interface Restaurant {
-  id?: string;
-  name: string;
-  category: string;
-  distance: string;
-  distanceVal?: number;
-  rating?: string;
-  operating_hours?: string;
-  naver_link?: string;
-  image_url?: string | null;
-  lat: number;
-  lng: number;
-  menus?: Menu[];
-}
+import { Restaurant } from '../model/types';
 
 interface RestaurantCardProps {
   restaurant: Restaurant;

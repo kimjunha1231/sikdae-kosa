@@ -1,26 +1,14 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Card } from './ui/card';
-import { MapPin, Key, AlertCircle, Navigation } from 'lucide-react';
-import Roulette from './Roulette';
+import { Button } from '@/shared/ui/button';
+import { Input } from '@/shared/ui/input';
+import { Card } from '@/shared/ui/card';
+import { Key, AlertCircle } from 'lucide-react';
+import { RouletteSpinner } from '@/features/draw-roulette';
+import { Restaurant } from '@/entities/restaurant';
 
-interface Restaurant {
-  name: string;
-  category: string;
-  distance: string;
-  rating?: string;
-  operating_hours?: string;
-  naver_link?: string;
-  image_url?: string | null;
-  lat: number;
-  lng: number;
-  menus?: { name: string; price: number | string }[];
-}
-
-interface KakaoMapProps {
+interface KakaoMapViewProps {
   restaurants: Restaurant[];
   hoveredRestaurant: Restaurant | null;
   selectedRestaurant: Restaurant | null;
@@ -31,7 +19,7 @@ interface KakaoMapProps {
   onWinnerSelected?: (restaurant: Restaurant) => void;
 }
 
-export default function KakaoMap({
+export default function KakaoMapView({
   restaurants,
   hoveredRestaurant,
   selectedRestaurant,
@@ -40,7 +28,7 @@ export default function KakaoMap({
   onViewDetails,
   roulettePool,
   onWinnerSelected,
-}: KakaoMapProps) {
+}: KakaoMapViewProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
@@ -137,8 +125,6 @@ export default function KakaoMap({
       };
       mapRef.current = new kakao.maps.Map(mapContainerRef.current, options);
     }
-
-
 
     // Clear old markers
     markersRef.current.forEach((marker) => marker.setMap(null));
@@ -327,7 +313,7 @@ export default function KakaoMap({
       {/* Floating Roulette Overlay */}
       {isSdkLoaded && (
         <div className="absolute top-4 right-4 z-10 w-80 max-w-[calc(100vw-2rem)]">
-          <Roulette 
+          <RouletteSpinner 
             filteredRestaurants={restaurants} 
             customPool={roulettePool}
             onWinnerSelected={(winner) => {

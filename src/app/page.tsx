@@ -1,34 +1,10 @@
 'use client';
 
 import React, { useEffect, useState, useMemo } from 'react';
-import KakaoMap from '@/components/KakaoMap';
-import RestaurantDetailModal from '@/components/RestaurantDetailModal';
-import SidebarHeader from '@/components/SidebarHeader';
-import SearchFilterPanel from '@/components/SearchFilterPanel';
-import RestaurantCard from '@/components/RestaurantCard';
-import WinnerModal from '@/components/WinnerModal';
-import { AnimatePresence } from 'framer-motion';
-
-interface Menu {
-  name: string;
-  price: number | string;
-  imageUrl?: string | null;
-}
-
-interface Restaurant {
-  id?: string;
-  name: string;
-  category: string;
-  distance: string;
-  distanceVal?: number;
-  rating?: string;
-  operating_hours?: string;
-  naver_link?: string;
-  image_url?: string | null;
-  lat: number;
-  lng: number;
-  menus?: Menu[];
-}
+import { Sidebar } from '@/widgets/sidebar';
+import { KakaoMapView } from '@/widgets/map-view';
+import { RestaurantDetailModal, Restaurant } from '@/entities/restaurant';
+import { WinnerModal } from '@/features/draw-roulette';
 
 export default function Dashboard() {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
@@ -53,8 +29,8 @@ export default function Dashboard() {
   // Winner state
   const [rouletteWinner, setRouletteWinner] = useState<Restaurant | null>(null);
 
-  // User Geolocation location state (Fixed to 37.495055, 127.122270)
-  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>({
+  // User location state (Fixed to 37.495055, 127.122270)
+  const [userLocation] = useState<{ lat: number; lng: number } | null>({
     lat: 37.495055,
     lng: 127.122270,
   });
@@ -115,7 +91,7 @@ export default function Dashboard() {
       return {
         ...res,
         distanceVal: distM,
-        distance: formattedDistance, // Overwrite distance with dynamic value
+        distance: formattedDistance,
       };
     });
   }, [restaurants, userLocation]);
@@ -157,59 +133,31 @@ export default function Dashboard() {
 
   return (
     <main className="w-full h-screen flex flex-col md:flex-row overflow-hidden bg-background text-foreground transition-colors duration-200">
-      {/* 1. Left Side Dashboard Panel */}
-      <section className="w-full md:w-[460px] h-full flex flex-col shrink-0 border-r border-border bg-card shadow-lg relative z-20">
-        <SidebarHeader
-          isDarkMode={isDarkMode}
-          onToggleDarkMode={() => setIsDarkMode(!isDarkMode)}
-        />
+      {/* 1. Left Side Dashboard Sidebar Widget */}
+      <Sidebar
+        isDarkMode={isDarkMode}
+        onToggleDarkMode={() => setIsDarkMode(!isDarkMode)}
+        selectedCategory={selectedCategory}
+        onSelectCategory={setSelectedCategory}
+        sortBy={sortBy}
+        onSortByChange={setSortBy}
+        onSearchQueryChange={setSearchQuery}
+        filteredAndSorted={filteredAndSorted}
+        selectedRes={selectedRes}
+        onSelectRes={(res) => setSelectedRes(res)}
+        onHoverEnterRes={(res) => setHoveredRes(res)}
+        onHoverLeaveRes={() => setHoveredRes(null)}
+        roulettePool={roulettePool}
+        onTogglePool={toggleRouletteSelection}
+        onViewDetail={(res) => {
+          setDetailRes(res);
+          setIsDetailOpen(true);
+        }}
+      />
 
-        <SearchFilterPanel
-          selectedCategory={selectedCategory}
-          onSelectCategory={setSelectedCategory}
-          searchResultCount={filteredAndSorted.length}
-          sortBy={sortBy}
-          onSortByChange={setSortBy}
-          onSearchQueryChange={setSearchQuery}
-        />
-
-        {/* Scrollable Restaurant Cards List */}
-        <div className="flex-grow overflow-y-auto p-4 space-y-3 scrollbar bg-background/5">
-          <AnimatePresence>
-            {filteredAndSorted.map((res, index) => {
-              const isSelected = selectedRes?.name === res.name && selectedRes?.distance === res.distance;
-              const isInPool = roulettePool.includes(res.name);
-              return (
-                <RestaurantCard
-                  key={`${res.name}-${index}`}
-                  restaurant={res}
-                  index={index}
-                  isSelected={isSelected}
-                  isInPool={isInPool}
-                  onTogglePool={toggleRouletteSelection}
-                  onSelect={() => setSelectedRes(res)}
-                  onHoverEnter={() => setHoveredRes(res)}
-                  onHoverLeave={() => setHoveredRes(null)}
-                  onViewDetail={() => {
-                    setDetailRes(res);
-                    setIsDetailOpen(true);
-                  }}
-                />
-              );
-            })}
-
-            {filteredAndSorted.length === 0 && (
-              <div className="text-center py-16 text-muted-foreground text-xs border border-dashed border-border/50 rounded-2xl">
-                검색 조건에 맞는 맛집이 없습니다.
-              </div>
-            )}
-          </AnimatePresence>
-        </div>
-      </section>
-
-      {/* 2. Right Side Fullscreen Maps Panel */}
+      {/* 2. Right Side Fullscreen Maps Widget */}
       <section className="flex-grow h-full relative bg-muted/20">
-        <KakaoMap
+        <KakaoMapView
           restaurants={filteredAndSorted}
           hoveredRestaurant={hoveredRes}
           selectedRestaurant={selectedRes}

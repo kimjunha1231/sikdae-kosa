@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Input } from './ui/input';
+import { Input } from '@/shared/ui/input';
 import { Search } from 'lucide-react';
 
 const CATEGORIES = [

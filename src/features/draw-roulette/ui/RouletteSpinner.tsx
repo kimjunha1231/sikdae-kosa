@@ -1,31 +1,18 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Button } from './ui/button';
+import { Button } from '@/shared/ui/button';
 import { Compass, RotateCw, ChevronUp, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Restaurant } from '@/entities/restaurant';
 
-interface Restaurant {
-  name: string;
-  category: string;
-  distance: string;
-  distanceVal?: number;
-  rating?: string;
-  operating_hours?: string;
-  naver_link?: string;
-  image_url?: string | null;
-  lat: number;
-  lng: number;
-  menus?: { name: string; price: number | string; imageUrl?: string | null }[];
-}
-
-interface RouletteProps {
+interface RouletteSpinnerProps {
   filteredRestaurants: Restaurant[];
   customPool: string[];
   onWinnerSelected: (winner: Restaurant) => void;
 }
 
-export default function Roulette({ filteredRestaurants, customPool, onWinnerSelected }: RouletteProps) {
+export default function RouletteSpinner({ filteredRestaurants, customPool, onWinnerSelected }: RouletteSpinnerProps) {
   const [isSpinning, setIsSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
   
@@ -86,9 +73,9 @@ export default function Roulette({ filteredRestaurants, customPool, onWinnerSele
       <AnimatePresence initial={false}>
         {isExpanded && (
           <motion.div
-            initial={{ height: 0, opacity: 0, marginTop: 0 }}
-            animate={{ height: 'auto', opacity: 1, marginTop: 12 }}
-            exit={{ height: 0, opacity: 0, marginTop: 0 }}
+            initial={{ opacity: 0, height: 0, marginTop: 0 }}
+            animate={{ opacity: 1, height: 'auto', marginTop: 12 }}
+            exit={{ opacity: 0, height: 0, marginTop: 0 }}
             transition={{ duration: 0.25, ease: 'easeInOut' }}
             className="w-full overflow-hidden flex flex-col items-center"
           >
@@ -166,4 +153,3 @@ export default function Roulette({ filteredRestaurants, customPool, onWinnerSele
     </div>
   );
 }
-

@@ -2,31 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { Button } from './ui/button';
+import { Button } from '@/shared/ui/button';
 import { X, Trophy, Clock, Map } from 'lucide-react';
-import { formatPrice } from '@/lib/utils';
+import { formatPrice } from '@/shared/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
-
-interface Menu {
-  name: string;
-  price: number | string;
-  imageUrl?: string | null;
-}
-
-interface Restaurant {
-  id?: string;
-  name: string;
-  category: string;
-  distance: string;
-  distanceVal?: number;
-  rating?: string;
-  operating_hours?: string;
-  naver_link?: string;
-  image_url?: string | null;
-  lat: number;
-  lng: number;
-  menus?: Menu[];
-}
+import { Restaurant } from '@/entities/restaurant';
 
 interface WinnerModalProps {
   winner: Restaurant | null;

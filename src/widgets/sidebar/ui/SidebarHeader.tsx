@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Button } from './ui/button';
+import { Button } from '@/shared/ui/button';
 import { UtensilsCrossed, Sun, Moon } from 'lucide-react';
 
 interface SidebarHeaderProps {
