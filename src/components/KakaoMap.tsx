@@ -17,7 +17,7 @@ interface Restaurant {
   image_url?: string | null;
   lat: number;
   lng: number;
-  menus?: { name: string; price: number }[];
+  menus?: { name: string; price: number | string }[];
 }
 
 interface KakaoMapProps {
@@ -27,6 +27,8 @@ interface KakaoMapProps {
   onSelectRestaurant: (restaurant: Restaurant) => void;
   userLocation: { lat: number; lng: number } | null;
   onViewDetails?: (restaurant: Restaurant) => void;
+  roulettePool: string[];
+  onWinnerSelected?: (restaurant: Restaurant) => void;
 }
 
 export default function KakaoMap({
@@ -36,12 +38,13 @@ export default function KakaoMap({
   onSelectRestaurant,
   userLocation,
   onViewDetails,
+  roulettePool,
+  onWinnerSelected,
 }: KakaoMapProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
   const customOverlayRef = useRef<any>(null);
-  const userMarkerRef = useRef<any>(null);
 
   const [apiKey, setApiKey] = useState<string>('');
   const [isSdkLoaded, setIsSdkLoaded] = useState(false);
@@ -122,7 +125,7 @@ export default function KakaoMap({
     if (!isSdkLoaded || !mapContainerRef.current) return;
 
     const kakao = (window as any).kakao;
-    const centerLatLng = new kakao.maps.LatLng(37.492323, 127.121946); // IT Venture Tower
+    const centerLatLng = new kakao.maps.LatLng(37.495055, 127.122270); // Garak-dong default center
 
     if (!mapRef.current) {
       // Create map
@@ -135,34 +138,7 @@ export default function KakaoMap({
       mapRef.current = new kakao.maps.Map(mapContainerRef.current, options);
     }
 
-    // Draw / Update user location marker dynamically
-    if (userLocation) {
-      const userLatLng = new kakao.maps.LatLng(userLocation.lat, userLocation.lng);
-      
-      if (userMarkerRef.current) {
-        userMarkerRef.current.setMap(null);
-      }
 
-      const userContent = document.createElement('div');
-      userContent.className = 'relative flex items-center justify-center';
-      userContent.innerHTML = `
-        <div class="absolute w-8 h-8 rounded-full bg-primary/30 animate-ping"></div>
-        <div class="w-4 h-4 rounded-full bg-primary border-2 border-white shadow-md relative z-10"></div>
-      `;
-
-      userMarkerRef.current = new kakao.maps.CustomOverlay({
-        position: userLatLng,
-        content: userContent,
-        map: mapRef.current,
-        xAnchor: 0.5,
-        yAnchor: 0.5,
-      });
-    } else {
-      if (userMarkerRef.current) {
-        userMarkerRef.current.setMap(null);
-        userMarkerRef.current = null;
-      }
-    }
 
     // Clear old markers
     markersRef.current.forEach((marker) => marker.setMap(null));
@@ -254,9 +230,6 @@ export default function KakaoMap({
         <span class="text-primary font-bold">${res.distance}</span>
         <span>|</span>
         <span class="truncate">${res.operating_hours || '시간 정보 없음'}</span>
-      </div>
-      <div class="text-[9px] text-muted-foreground/60 font-mono">
-        좌표: ${res.lat.toFixed(6)}, ${res.lng.toFixed(6)}
       </div>
       <div class="flex justify-between items-center mt-1 border-t border-border/50 pt-1.5">
         <span class="text-[10px] text-yellow-500 font-bold">${res.rating && res.rating !== '-' ? '★ ' + res.rating : '평가 없음'}</span>
@@ -351,35 +324,18 @@ export default function KakaoMap({
     <Card className="relative w-full h-full min-h-[450px] bg-background border border-border overflow-hidden rounded-3xl shadow-lg">
       <div ref={mapContainerRef} className="w-full h-full absolute inset-0" />
       
-      {/* Floating Center Badge */}
-      <div className="absolute top-4 left-4 bg-background/90 backdrop-blur-md px-3 py-1.5 rounded-full border border-border shadow-md text-xs font-semibold flex items-center gap-1.5 pointer-events-none select-none z-10">
-        <MapPin size={14} className="text-primary" />
-        <span>{userLocation ? '내 위치 기준 측정 중' : 'IT벤처타워 (위치 권한 필요)'}</span>
-      </div>
-
       {/* Floating Roulette Overlay */}
       {isSdkLoaded && (
         <div className="absolute top-4 right-4 z-10 w-80 max-w-[calc(100vw-2rem)]">
           <Roulette 
             filteredRestaurants={restaurants} 
-            onWinnerSelected={onSelectRestaurant} 
+            customPool={roulettePool}
+            onWinnerSelected={(winner) => {
+              onSelectRestaurant(winner);
+              if (onWinnerSelected) onWinnerSelected(winner);
+            }} 
           />
         </div>
-      )}
-
-      {/* Floating Pan To User Button */}
-      {userLocation && (
-        <Button
-          onClick={() => {
-            if (mapRef.current && userLocation) {
-              const kakao = (window as any).kakao;
-              mapRef.current.panTo(new kakao.maps.LatLng(userLocation.lat, userLocation.lng));
-            }
-          }}
-          className="absolute bottom-4 right-4 bg-primary hover:bg-primary/90 text-white font-bold rounded-full w-10 h-10 shadow-lg flex items-center justify-center p-0 z-10 cursor-pointer toss-btn-active shrink-0"
-        >
-          <Navigation size={18} />
-        </Button>
       )}
     </Card>
   );

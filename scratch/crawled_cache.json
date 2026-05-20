@@ -3488,37 +3488,37 @@
     "menus": [
       {
         "name": "김치찌개돈까스",
-        "price": 1000015000,
+        "price": "10000~15000",
         "imageUrl": "https://ldb-phinf.pstatic.net/20251122_106/1763766806561ty44b_PNG/1000001710.png"
       },
       {
         "name": "돈부리",
-        "price": 1000015000,
+        "price": "10000~15000",
         "imageUrl": "https://ldb-phinf.pstatic.net/20251122_135/17637667904695sYlw_PNG/1000001713.png"
       },
       {
         "name": "카레우동돈까스",
-        "price": 1000015000,
+        "price": "10000~15000",
         "imageUrl": "https://ldb-phinf.pstatic.net/20251122_204/1763766768566bR3mj_PNG/1000001535.png"
       },
       {
         "name": "카레돈까스",
-        "price": 1000015000,
+        "price": "10000~15000",
         "imageUrl": "https://ldb-phinf.pstatic.net/20251122_98/1763766742083omfFo_PNG/1000001708.png"
       },
       {
         "name": "생선까스",
-        "price": 1000013000,
+        "price": "10000~13000",
         "imageUrl": "https://ldb-phinf.pstatic.net/20251119_152/1763553170226P8j8A_JPEG/1000001707.jpg"
       },
       {
         "name": "안심까스",
-        "price": 1000013000,
+        "price": "10000~13000",
         "imageUrl": "https://ldb-phinf.pstatic.net/20251119_288/1763553132225w84At_PNG/1000001702.png"
       },
       {
         "name": "등심돈까스",
-        "price": 1000013000,
+        "price": "10000~13000",
         "imageUrl": "https://ldb-phinf.pstatic.net/20251119_229/1763553014889MYn4o_PNG/1000001711.png"
       }
     ]

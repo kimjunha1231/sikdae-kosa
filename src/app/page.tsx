@@ -8,25 +8,31 @@ import { Badge } from '@/components/ui/badge';
 import KakaoMap from '@/components/KakaoMap';
 import RestaurantModal from '@/components/RestaurantModal';
 import RestaurantDetailModal from '@/components/RestaurantDetailModal';
-import { 
-  Search, 
-  MapPin, 
-  Plus, 
-  Edit3, 
-  Trash2, 
-  ExternalLink, 
-  Moon, 
+import {
+  Search,
+  MapPin,
+  Plus,
+  Edit3,
+  Trash2,
+  ExternalLink,
+  Moon,
   Sun,
-  UtensilsCrossed, 
+  UtensilsCrossed,
   SlidersHorizontal,
   ThumbsUp,
-  Eye
+  Eye,
+  Check,
+  Trophy,
+  Clock,
+  X,
+  Map
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { formatPrice } from '@/lib/utils';
 
 interface Menu {
   name: string;
-  price: number;
+  price: number | string;
   imageUrl?: string | null;
 }
 
@@ -61,7 +67,7 @@ export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('전체');
   const [sortBy, setSortBy] = useState<'distance' | 'rating' | 'name'>('distance');
-  
+
   // Theme state
   const [isDarkMode, setIsDarkMode] = useState(true);
 
@@ -77,28 +83,36 @@ export default function Dashboard() {
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [detailRes, setDetailRes] = useState<Restaurant | null>(null);
 
+  // State for tracking custom roulette candidates (names)
+  const [roulettePool, setRoulettePool] = useState<string[]>([]);
 
+  const toggleRouletteSelection = (name: string) => {
+    setRoulettePool((prev) =>
+      prev.includes(name) ? prev.filter((n) => n !== name) : [...prev, name]
+    );
+  };
 
-  // User Geolocation location state
-  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  // Winner modal states
+  const [rouletteWinner, setRouletteWinner] = useState<Restaurant | null>(null);
+  const [confetti, setConfetti] = useState<{ id: number; color: string; x: number; y: number }[]>([]);
 
-  // Get current user location
-  useEffect(() => {
-    if (typeof window !== 'undefined' && navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setUserLocation({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          });
-        },
-        (error) => {
-          console.warn('Geolocation access denied or error:', error);
-        },
-        { enableHighAccuracy: true }
-      );
-    }
-  }, []);
+  // Function to trigger confetti
+  const triggerConfetti = () => {
+    const colors = ['#3182f6', '#ff477e', '#ffb300', '#00c853', '#d500f9', '#00e5ff'];
+    const particles = Array.from({ length: 60 }).map((_, i) => ({
+      id: i,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      x: Math.random() * 100 - 50,
+      y: Math.random() * 100 - 150,
+    }));
+    setConfetti(particles);
+  };
+
+  // User Geolocation location state (Fixed to 37.495055, 127.122270)
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>({
+    lat: 37.495055,
+    lng: 127.122270,
+  });
 
   // Fetch restaurant list
   const fetchRestaurants = async () => {
@@ -146,14 +160,14 @@ export default function Dashboard() {
   const restaurantsWithDistance = useMemo(() => {
     return restaurants.map((res) => {
       const distM = getHaversineDistance(activeCenter.lat, activeCenter.lng, res.lat, res.lng);
-      
+
       let formattedDistance = '';
       if (distM < 1000) {
         formattedDistance = `${Math.round(distM)}m`;
       } else {
         formattedDistance = `${(distM / 1000).toFixed(1)}km`;
       }
-      
+
       return {
         ...res,
         distanceVal: distM,
@@ -173,8 +187,8 @@ export default function Dashboard() {
   const filteredAndSorted = useMemo(() => {
     return restaurantsWithDistance
       .filter((res) => {
-        const matchesSearch = res.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                             (res.menus && res.menus.some(m => m.name.toLowerCase().includes(searchQuery.toLowerCase())));
+        const matchesSearch = res.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          (res.menus && res.menus.some(m => m.name.toLowerCase().includes(searchQuery.toLowerCase())));
         const matchesCategory = selectedCategory === '전체' || res.category === selectedCategory;
         return matchesSearch && matchesCategory;
       })
@@ -204,7 +218,7 @@ export default function Dashboard() {
         body: JSON.stringify(payload),
       });
       const resData = await response.json();
-      
+
       if (resData.success) {
         fetchRestaurants();
         setEditingRes(null);
@@ -225,10 +239,10 @@ export default function Dashboard() {
       const response = await fetch('/api/restaurants', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          id: resToDelete.id, 
-          name: resToDelete.name, 
-          distance: resToDelete.distance 
+        body: JSON.stringify({
+          id: resToDelete.id,
+          name: resToDelete.name,
+          distance: resToDelete.distance
         }),
       });
       const resData = await response.json();
@@ -247,10 +261,10 @@ export default function Dashboard() {
 
   return (
     <main className="w-full h-screen flex flex-col md:flex-row overflow-hidden bg-background text-foreground transition-colors duration-200">
-      
+
       {/* 1. Left Side Dashboard Panel */}
       <section className="w-full md:w-[460px] h-full flex flex-col shrink-0 border-r border-border bg-card shadow-lg relative z-20">
-        
+
         {/* Top Header */}
         <header className="p-5 border-b border-border flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -259,9 +273,7 @@ export default function Dashboard() {
             </div>
             <div>
               <h1 className="text-md font-black tracking-tight flex items-center gap-1">식권대장 대시보드</h1>
-              <span className="text-[10px] text-muted-foreground font-semibold">
-                {userLocation ? '내 위치 기준 실시간 측정 중' : '송파 IT벤처타워 기준 매핑 (위치 권한 권장)'}
-              </span>
+
             </div>
           </div>
 
@@ -274,17 +286,6 @@ export default function Dashboard() {
               className="rounded-xl w-9 h-9 border border-border shrink-0 cursor-pointer"
             >
               {isDarkMode ? <Sun size={16} className="text-yellow-400" /> : <Moon size={16} />}
-            </Button>
-
-            {/* Add Restaurant button */}
-            <Button
-              onClick={() => {
-                setEditingRes(null);
-                setIsModalOpen(true);
-              }}
-              className="bg-primary hover:bg-primary/90 text-white font-bold rounded-xl h-9 text-xs px-3 gap-1 toss-btn-active shrink-0"
-            >
-              <Plus size={14} /> 추가
             </Button>
           </div>
         </header>
@@ -303,16 +304,15 @@ export default function Dashboard() {
           </div>
 
           {/* Category Tabs (Horizontal Pill Selector) */}
-          <div className="flex gap-1.5 overflow-x-auto pb-1.5 scrollbar-none max-w-full">
+          <div className="flex flex-nowrap gap-1.5 overflow-x-auto pb-1.5 scrollbar-none w-full min-w-0">
             {CATEGORIES.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`text-xs px-3.5 py-1.5 rounded-full shrink-0 font-bold transition-all duration-200 cursor-pointer ${
-                  selectedCategory === cat
+                className={`text-xs px-3.5 py-1.5 rounded-full shrink-0 font-bold transition-all duration-200 cursor-pointer ${selectedCategory === cat
                     ? 'bg-primary text-white shadow-sm'
                     : 'bg-muted/80 text-muted-foreground hover:bg-muted'
-                }`}
+                  }`}
               >
                 {cat}
               </button>
@@ -332,11 +332,10 @@ export default function Dashboard() {
               <button
                 key={sortOption}
                 onClick={() => setSortBy(sortOption)}
-                className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase transition-all duration-150 cursor-pointer ${
-                  sortBy === sortOption 
-                    ? 'bg-card text-foreground shadow-sm' 
+                className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase transition-all duration-150 cursor-pointer ${sortBy === sortOption
+                    ? 'bg-card text-foreground shadow-sm'
                     : 'text-muted-foreground hover:text-foreground'
-                }`}
+                  }`}
               >
                 {sortOption === 'distance' ? '거리순' : sortOption === 'rating' ? '평점순' : '이름순'}
               </button>
@@ -349,6 +348,7 @@ export default function Dashboard() {
           <AnimatePresence>
             {filteredAndSorted.map((res, index) => {
               const isSelected = selectedRes?.name === res.name && selectedRes?.distance === res.distance;
+              const isInPool = roulettePool.includes(res.name);
               return (
                 <motion.div
                   key={`${res.name}-${index}`}
@@ -360,98 +360,87 @@ export default function Dashboard() {
                   onMouseLeave={() => setHoveredRes(null)}
                   onClick={() => setSelectedRes(res)}
                 >
-                  <Card 
-                    className={`relative p-3.5 rounded-2xl cursor-pointer border transition-all duration-300 shadow-sm ${
-                      isSelected 
-                        ? 'border-primary bg-primary/5 shadow-md shadow-primary/5 ring-1 ring-primary/30' 
+                  <Card
+                    className={`relative p-3.5 rounded-2xl cursor-pointer border transition-all duration-300 shadow-sm ${isSelected
+                        ? 'border-primary bg-primary/5 shadow-md shadow-primary/5 ring-1 ring-primary/30'
                         : 'border-border/60 bg-card hover:border-muted-foreground/30 hover:shadow-md'
-                    }`}
+                      }`}
                   >
-                    <div className="flex gap-3">
-                      {/* Thumbnail Image */}
-                      {res.image_url ? (
-                        <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-border/50 bg-muted flex items-center justify-center">
-                          <img
-                            src={res.image_url}
-                            alt={res.name}
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                              (e.target as HTMLElement).style.display = 'none';
-                            }}
-                          />
-                        </div>
-                      ) : (
-                        <div className="w-16 h-16 rounded-xl bg-muted/40 shrink-0 border border-dashed border-border/60 flex items-center justify-center text-[10px] text-muted-foreground font-bold">
-                          NO IMAGE
-                        </div>
-                      )}
+                    <div className="flex items-center gap-3">
+                      {/* Checkbox for custom roulette pool */}
+                      <div
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleRouletteSelection(res.name);
+                        }}
+                        className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 transition-all duration-200 cursor-pointer ${isInPool
+                            ? 'bg-primary border-primary text-white shadow-sm shadow-primary/20 scale-105'
+                            : 'border-muted-foreground/30 bg-background hover:border-primary/50'
+                          }`}
+                        title="룰렛 추천 목록에 추가/제외"
+                      >
+                        {isInPool && <Check size={12} className="stroke-[3.5px]" />}
+                      </div>
 
-                      {/* Content details */}
-                      <div className="flex-grow min-w-0 flex flex-col justify-between">
-                        <div>
-                          <div className="flex items-start justify-between gap-1">
-                            <h3 className="font-bold text-xs truncate max-w-[200px] text-foreground">
-                              {res.name}
-                            </h3>
-                            <Badge variant="outline" className="text-[9px] px-1.5 py-0 rounded font-bold uppercase tracking-wide border-muted-foreground/20 shrink-0 bg-muted/40">
-                              {res.category}
-                            </Badge>
+                      <div className="flex gap-3 flex-grow min-w-0">
+                        {/* Thumbnail Image */}
+                        {res.image_url ? (
+                          <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-border/50 bg-muted flex items-center justify-center">
+                            <img
+                              src={res.image_url}
+                              alt={res.name}
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                (e.target as HTMLElement).style.display = 'none';
+                              }}
+                            />
                           </div>
-
-                          <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground mt-1 font-semibold">
-                            <span className="text-primary font-bold">{res.distance}</span>
-                            <span>•</span>
-                            <span className="text-yellow-500">{res.rating && res.rating !== '-' ? '★ ' + res.rating : '평가없음'}</span>
-                            <span>•</span>
-                            <span className="truncate max-w-[120px]">{res.operating_hours || '정보 없음'}</span>
-                          </div>
-                          
-                          <div className="text-[9px] text-muted-foreground/60 font-mono mt-1 select-all">
-                            좌표: {res.lat.toFixed(6)}, {res.lng.toFixed(6)}
-                          </div>
-                        </div>
-
-                        {/* Top menus price tags preview */}
-                        {res.menus && res.menus.length > 0 && (
-                          <div className="flex gap-1.5 flex-wrap mt-2.5">
-                            {res.menus.slice(0, 2).map((m, mIdx) => (
-                              <span 
-                                key={mIdx} 
-                                className="text-[9px] bg-background border border-border/50 px-2 py-0.5 rounded-md font-semibold text-muted-foreground truncate max-w-[130px]"
-                              >
-                                {m.name}: <strong className="text-foreground">{m.price.toLocaleString()}원</strong>
-                              </span>
-                            ))}
+                        ) : (
+                          <div className="w-16 h-16 rounded-xl bg-muted/40 shrink-0 border border-dashed border-border/60 flex items-center justify-center text-[10px] text-muted-foreground font-bold">
+                            NO IMAGE
                           </div>
                         )}
+
+                        {/* Content details */}
+                        <div className="flex-grow min-w-0 flex flex-col justify-between">
+                          <div>
+                            <div className="flex items-start justify-between gap-1">
+                              <h3 className="font-bold text-xs truncate max-w-[200px] text-foreground">
+                                {res.name}
+                              </h3>
+                              <Badge variant="outline" className="text-[9px] px-1.5 py-0 rounded font-bold uppercase tracking-wide border-muted-foreground/20 shrink-0 bg-muted/40">
+                                {res.category}
+                              </Badge>
+                            </div>
+
+                            <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground mt-1 font-semibold">
+                              <span className="text-primary font-bold">{res.distance}</span>
+                              <span>•</span>
+                              <span className="text-yellow-500">{res.rating && res.rating !== '-' ? '★ ' + res.rating : '평가없음'}</span>
+                              <span>•</span>
+                              <span className="truncate max-w-[120px]">{res.operating_hours || '정보 없음'}</span>
+                            </div>
+                          </div>
+
+                          {/* Top menus price tags preview */}
+                          {res.menus && res.menus.length > 0 && (
+                            <div className="flex gap-1.5 flex-wrap mt-2.5">
+                              {res.menus.slice(0, 2).map((m, mIdx) => (
+                                <span
+                                  key={mIdx}
+                                  className="text-[9px] bg-background border border-border/50 px-2 py-0.5 rounded-md font-semibold text-muted-foreground truncate max-w-[130px]"
+                                >
+                                  {m.name}: <strong className="text-foreground">{formatPrice(m.price)}원</strong>
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
 
-                    {/* Float Hover Controls: Edit / Delete / Details */}
+                    {/* Float Hover Controls: Details */}
                     <div className="absolute right-2 top-2 flex items-center gap-0.5 opacity-0 hover:opacity-100 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-200 bg-card rounded-lg border border-border/60 p-0.5 shadow-sm">
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        className="h-7 w-7 rounded-md text-muted-foreground hover:text-foreground cursor-pointer"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setEditingRes(res);
-                          setIsModalOpen(true);
-                        }}
-                      >
-                        <Edit3 size={12} />
-                      </Button>
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        className="h-7 w-7 rounded-md text-muted-foreground hover:text-red-500 cursor-pointer"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDelete(res);
-                        }}
-                      >
-                        <Trash2 size={12} />
-                      </Button>
                       <Button
                         size="icon"
                         variant="ghost"
@@ -482,7 +471,7 @@ export default function Dashboard() {
 
       {/* 2. Right Side Fullscreen Maps Panel */}
       <section className="flex-grow h-full relative bg-muted/20">
-        <KakaoMap 
+        <KakaoMap
           restaurants={filteredAndSorted}
           hoveredRestaurant={hoveredRes}
           selectedRestaurant={selectedRes}
@@ -491,6 +480,11 @@ export default function Dashboard() {
           onViewDetails={(res) => {
             setDetailRes(res);
             setIsDetailOpen(true);
+          }}
+          roulettePool={roulettePool}
+          onWinnerSelected={(winner) => {
+            setRouletteWinner(winner);
+            triggerConfetti();
           }}
         />
       </section>
@@ -515,6 +509,123 @@ export default function Dashboard() {
         }}
         restaurant={detailRes}
       />
+
+      {/* 5. Toss Winner modal */}
+      <AnimatePresence>
+        {rouletteWinner && (
+          <div className="fixed inset-0 bg-[#06040d]/80 backdrop-blur-md z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+            <div className="absolute inset-0 cursor-pointer" onClick={() => setRouletteWinner(null)} />
+
+            <motion.div
+              initial={{ y: '100%', opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: '100%', opacity: 0 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 220 }}
+              className="bg-card border border-border sm:rounded-3xl rounded-t-3xl w-full sm:max-w-md p-6 relative z-50 shadow-2xl overflow-hidden max-h-[85vh] overflow-y-auto"
+            >
+              <button
+                onClick={() => setRouletteWinner(null)}
+                className="absolute top-4 right-4 text-muted-foreground hover:text-foreground cursor-pointer transition-colors"
+              >
+                <X size={20} />
+              </button>
+
+              <div className="flex flex-col items-center text-center mt-2">
+                <div className="w-12 h-12 bg-secondary/10 text-secondary rounded-2xl flex items-center justify-center mb-4">
+                  <Trophy size={24} />
+                </div>
+                <h4 className="text-[11px] font-bold text-secondary tracking-widest uppercase mb-1">
+                  오늘의 식권 당첨!
+                </h4>
+
+                <h2 className="text-2xl font-black mb-2 text-foreground">{rouletteWinner.name}</h2>
+                <div className="flex gap-2 text-xs font-semibold text-muted-foreground mb-4">
+                  <span className="bg-muted px-2.5 py-1 rounded-lg">{rouletteWinner.category}</span>
+                  <span className="bg-primary/10 text-primary px-2.5 py-1 rounded-lg">{rouletteWinner.distance}</span>
+                  {rouletteWinner.rating && rouletteWinner.rating !== '-' && (
+                    <span className="bg-yellow-500/10 text-yellow-500 px-2.5 py-1 rounded-lg">★ {rouletteWinner.rating}</span>
+                  )}
+                </div>
+
+                {/* Display Restaurant image */}
+                {rouletteWinner.image_url ? (
+                  <div className="w-full h-44 rounded-2xl overflow-hidden border border-border/50 mb-4 bg-muted">
+                    <img
+                      src={rouletteWinner.image_url}
+                      alt={rouletteWinner.name}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        (e.target as HTMLElement).style.display = 'none';
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <div className="w-full h-24 bg-muted/30 rounded-2xl border border-dashed border-border flex items-center justify-center text-muted-foreground text-xs mb-4">
+                    네이버 이미지 없음
+                  </div>
+                )}
+
+                {rouletteWinner.operating_hours && (
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground mb-5">
+                    <Clock size={12} />
+                    <span>영업시간: {rouletteWinner.operating_hours}</span>
+                  </div>
+                )}
+
+                {/* Recommendations checklist */}
+                {rouletteWinner.menus && rouletteWinner.menus.length > 0 && (
+                  <div className="w-full bg-muted/30 rounded-2xl p-4 border border-border/40 text-left mb-6">
+                    <h5 className="text-[11px] font-bold text-muted-foreground uppercase mb-2">추천 메뉴</h5>
+                    <div className="flex flex-col gap-2">
+                      {rouletteWinner.menus.slice(0, 3).map((m, idx) => (
+                        <div key={idx} className="flex justify-between text-sm">
+                          <span className="font-semibold text-foreground">{m.name}</span>
+                          <span className="font-bold text-primary">{formatPrice(m.price)}원</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex gap-2 w-full">
+                  <Button
+                    variant="outline"
+                    onClick={() => setRouletteWinner(null)}
+                    className="flex-1 py-5 rounded-2xl font-bold toss-btn-active border-border"
+                  >
+                    닫기
+                  </Button>
+                  <a
+                    href={rouletteWinner.naver_link}
+                    target="_blank"
+                    className="flex-1 bg-primary hover:bg-primary/95 text-white font-bold py-3.5 rounded-2xl shadow-sm text-sm text-center flex items-center justify-center gap-1 toss-btn-active"
+                  >
+                    <Map size={16} /> 네이버 지도
+                  </a>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Confetti Elements */}
+      {confetti.map((c) => (
+        <motion.div
+          key={c.id}
+          initial={{ x: 0, y: 0, opacity: 1, scale: 1 }}
+          animate={{
+            x: `${c.x}vw`,
+            y: `${c.y}vh`,
+            opacity: 0,
+            scale: 0.5,
+            rotate: 360,
+          }}
+          transition={{ duration: 2, ease: 'easeOut' }}
+          className="fixed w-2 h-2 rounded-full pointer-events-none z-[60]"
+          style={{ backgroundColor: c.color, top: '50%', left: '50%' }}
+        />
+      ))}
     </main>
   );
 }

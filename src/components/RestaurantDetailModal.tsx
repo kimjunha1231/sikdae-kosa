@@ -4,10 +4,11 @@ import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from './ui/dialog';
 import { Button } from './ui/button';
 import { MapPin, Clock, Star, ExternalLink, Utensils } from 'lucide-react';
+import { formatPrice } from '@/lib/utils';
 
 interface Menu {
   name: string;
-  price: number;
+  price: number | string;
   imageUrl?: string | null;
 }
 
@@ -82,15 +83,11 @@ export default function RestaurantDetailModal({ isOpen, onClose, restaurant }: R
 
         {/* Map Location Detail & Naver Link */}
         <div className="flex flex-col gap-2.5 p-4 rounded-2xl bg-muted/40 border border-border/40 text-xs text-muted-foreground">
-          <div className="flex items-start gap-2">
-            <MapPin size={14} className="text-muted-foreground/80 shrink-0 mt-0.5" />
-            <div className="flex flex-col gap-0.5">
-              <span className="font-bold text-foreground">식당 위경도 좌표</span>
-              <span className="font-mono text-[10px] select-all">위도 {restaurant.lat.toFixed(6)} / 경도 {restaurant.lng.toFixed(6)}</span>
-            </div>
-          </div>
-          <div className="flex items-center justify-between mt-2 pt-2 border-t border-border/50">
-            <span className="font-bold text-foreground">네이버 정보 확인</span>
+          <div className="flex items-center justify-between">
+            <span className="font-bold text-foreground flex items-center gap-1.5">
+              <MapPin size={14} className="text-muted-foreground/80" />
+              네이버 정보 확인
+            </span>
             <a
               href={restaurant.naver_link}
               target="_blank"
@@ -139,7 +136,7 @@ export default function RestaurantDetailModal({ isOpen, onClose, restaurant }: R
                     </span>
                   </div>
                   <span className="text-xs font-black text-primary whitespace-nowrap ml-2">
-                    {menu.price.toLocaleString()}원
+                    {formatPrice(menu.price)}원
                   </span>
                 </div>
               ))

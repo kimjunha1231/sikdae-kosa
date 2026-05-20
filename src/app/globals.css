@@ -117,3 +117,11 @@
 .roulette-spin {
   transition: transform 3s cubic-bezier(0.1, 0.8, 0.1, 1);
 }
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}

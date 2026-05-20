@@ -8,7 +8,7 @@ import { Plus, Trash2 } from 'lucide-react';
 
 interface Menu {
   name: string;
-  price: number;
+  price: number | string;
 }
 
 interface Restaurant {
@@ -95,7 +95,12 @@ export default function RestaurantModal({ isOpen, onClose, onSubmit, restaurant 
   const updateMenuRow = (index: number, field: keyof Menu, value: any) => {
     const updated = [...menus];
     if (field === 'price') {
-      updated[index].price = parseInt(value) || 0;
+      if (typeof value === 'string' && value.includes('~')) {
+        updated[index].price = value;
+      } else {
+        const parsed = parseInt(value, 10);
+        updated[index].price = isNaN(parsed) ? value : parsed;
+      }
     } else {
       updated[index].name = value;
     }
@@ -265,7 +270,7 @@ export default function RestaurantModal({ isOpen, onClose, onSubmit, restaurant 
                     className="flex-grow rounded-lg border-border bg-background/50 h-8 text-xs"
                   />
                   <Input
-                    type="number"
+                    type="text"
                     value={menu.price || ''}
                     onChange={(e) => updateMenuRow(index, 'price', e.target.value)}
                     placeholder="가격"
