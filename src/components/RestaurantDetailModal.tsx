@@ -1,10 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from './ui/dialog';
 import { Button } from './ui/button';
-import { MapPin, Clock, Star, ExternalLink, Utensils } from 'lucide-react';
+import { MapPin, Clock, Star, ExternalLink, Utensils, X } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface Menu {
   name: string;
@@ -33,10 +34,20 @@ interface RestaurantDetailModalProps {
 }
 
 export default function RestaurantDetailModal({ isOpen, onClose, restaurant }: RestaurantDetailModalProps) {
+  const [selectedImage, setSelectedImage] = useState<{ name: string; imageUrl: string; index: number } | null>(null);
+
+  // Close image preview when detail modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      setSelectedImage(null);
+    }
+  }, [isOpen]);
+
   if (!restaurant) return null;
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <>
+      <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-md w-full rounded-3xl bg-card border border-border p-6 shadow-2xl overflow-y-auto max-h-[85vh] scrollbar-none">
         <DialogHeader className="space-y-1">
           <div className="flex items-center gap-2">
@@ -109,15 +120,25 @@ export default function RestaurantDetailModal({ isOpen, onClose, restaurant }: R
           <div className="space-y-2 max-h-[30vh] overflow-y-auto pr-1 scrollbar-thin">
             {restaurant.menus && restaurant.menus.length > 0 ? (
               restaurant.menus.map((menu, index) => (
-                <div
+                <motion.div
                   key={index}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.25, delay: Math.min(index * 0.04, 0.3) }}
                   className="flex items-center justify-between p-2.5 rounded-xl bg-card border border-border/60 hover:border-primary/20 transition-all duration-200 shadow-sm"
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     {/* Menu image thumbnail */}
                     {menu.imageUrl ? (
-                      <div className="w-11 h-11 rounded-lg overflow-hidden shrink-0 border border-border/40 bg-muted">
-                        <img
+                      <motion.div
+                        layoutId={`menu-image-container-${menu.name}-${index}`}
+                        className="w-11 h-11 rounded-lg overflow-hidden shrink-0 border border-border/40 bg-muted cursor-zoom-in"
+                        onClick={() => setSelectedImage({ name: menu.name, imageUrl: menu.imageUrl!, index })}
+                      >
+                        <motion.img
+                          layoutId={`menu-image-img-${menu.name}-${index}`}
+                          whileHover={{ scale: 1.25 }}
+                          transition={{ duration: 0.2, ease: "easeOut" }}
                           src={menu.imageUrl}
                           alt={menu.name}
                           className="w-full h-full object-cover"
@@ -125,7 +146,7 @@ export default function RestaurantDetailModal({ isOpen, onClose, restaurant }: R
                             (e.target as HTMLElement).style.display = 'none';
                           }}
                         />
-                      </div>
+                      </motion.div>
                     ) : (
                       <div className="w-11 h-11 rounded-lg bg-muted/40 shrink-0 border border-dashed border-border/50 flex items-center justify-center text-[9px] text-muted-foreground font-extrabold">
                         식기
@@ -138,7 +159,7 @@ export default function RestaurantDetailModal({ isOpen, onClose, restaurant }: R
                   <span className="text-xs font-black text-primary whitespace-nowrap ml-2">
                     {formatPrice(menu.price)}원
                   </span>
-                </div>
+                </motion.div>
               ))
             ) : (
               <div className="text-center py-8 text-xs text-muted-foreground border border-dashed border-border rounded-2xl">
@@ -149,5 +170,56 @@ export default function RestaurantDetailModal({ isOpen, onClose, restaurant }: R
         </div>
       </DialogContent>
     </Dialog>
+
+    <AnimatePresence>
+      {selectedImage && (
+        <div className="fixed inset-0 z-[150] flex items-center justify-center p-4">
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSelectedImage(null)}
+            className="absolute inset-0 bg-black/80 backdrop-blur-sm cursor-zoom-out"
+          />
+          
+          {/* Expanded Content Card */}
+          <motion.div
+            layoutId={`menu-image-container-${selectedImage.name}-${selectedImage.index}`}
+            className="relative bg-card border border-border max-w-sm w-full rounded-[32px] overflow-hidden shadow-2xl flex flex-col z-10"
+            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+          >
+            {/* Close Button */}
+            <button
+              onClick={() => setSelectedImage(null)}
+              className="absolute top-4 right-4 bg-background/80 backdrop-blur-md hover:bg-background border border-border text-foreground hover:scale-105 p-2 rounded-full shadow-md z-20 cursor-pointer transition-all toss-btn-active"
+            >
+              <X size={16} />
+            </button>
+
+            <div className="aspect-[4/3] w-full overflow-hidden bg-muted">
+              <motion.img
+                layoutId={`menu-image-img-${selectedImage.name}-${selectedImage.index}`}
+                src={selectedImage.imageUrl}
+                alt={selectedImage.name}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            
+            <div className="p-6 flex flex-col gap-1.5 bg-card">
+              <h4 className="text-sm font-black text-foreground">
+                {selectedImage.name}
+              </h4>
+              {restaurant.menus && restaurant.menus[selectedImage.index] && (
+                <p className="text-xs font-black text-primary">
+                  {formatPrice(restaurant.menus[selectedImage.index].price)}원
+                </p>
+              )}
+            </div>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
+    </>
   );
 }
