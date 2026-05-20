@@ -6,7 +6,6 @@ import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import KakaoMap from '@/components/KakaoMap';
-import Roulette from '@/components/Roulette';
 import RestaurantModal from '@/components/RestaurantModal';
 import RestaurantDetailModal from '@/components/RestaurantDetailModal';
 import { 
@@ -21,8 +20,7 @@ import {
   UtensilsCrossed, 
   SlidersHorizontal,
   ThumbsUp,
-  Eye,
-  Check
+  Eye
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -79,9 +77,7 @@ export default function Dashboard() {
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [detailRes, setDetailRes] = useState<Restaurant | null>(null);
 
-  // Menu checklist states
-  const [viewTab, setViewTab] = useState<'restaurant' | 'menu'>('restaurant');
-  const [excludedMenus, setExcludedMenus] = useState<string[]>([]);
+
 
   // User Geolocation location state
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
@@ -193,33 +189,7 @@ export default function Dashboard() {
       });
   }, [restaurantsWithDistance, searchQuery, selectedCategory, sortBy]);
 
-  // Flat list of menus compiled from current filtered restaurants
-  const allMenus = useMemo(() => {
-    const list: { name: string; price: number; restaurant: Restaurant; imageUrl: string | null }[] = [];
-    filteredAndSorted.forEach(res => {
-      if (res.menus) {
-        res.menus.forEach(menu => {
-          list.push({
-            name: menu.name,
-            price: menu.price,
-            restaurant: res,
-            imageUrl: menu.imageUrl || null
-          });
-        });
-      }
-    });
-    return list;
-  }, [filteredAndSorted]);
 
-  const toggleMenuSelection = (menuKey: string) => {
-    setExcludedMenus(prev => {
-      if (prev.includes(menuKey)) {
-        return prev.filter(k => k !== menuKey);
-      } else {
-        return [...prev, menuKey];
-      }
-    });
-  };
 
   // Handle Add/Edit Form submission
   const handleModalSubmit = async (payload: Restaurant) => {
@@ -374,255 +344,139 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* View Tab Selector */}
-        <div className="px-4 py-2 border-b border-border/30 bg-background/20 flex gap-2">
-          <button
-            onClick={() => setViewTab('restaurant')}
-            className={`flex-1 py-2 text-[10px] font-black rounded-xl transition-all duration-200 cursor-pointer border ${
-              viewTab === 'restaurant'
-                ? 'bg-primary text-white border-primary shadow-sm'
-                : 'bg-card text-muted-foreground border-border hover:bg-muted'
-            }`}
-          >
-            식당 목록 ({filteredAndSorted.length})
-          </button>
-          <button
-            onClick={() => setViewTab('menu')}
-            className={`flex-1 py-2 text-[10px] font-black rounded-xl transition-all duration-200 cursor-pointer border ${
-              viewTab === 'menu'
-                ? 'bg-primary text-white border-primary shadow-sm'
-                : 'bg-card text-muted-foreground border-border hover:bg-muted'
-            }`}
-          >
-            메뉴 목록 ({allMenus.length})
-          </button>
-        </div>
-
-        {/* Scrollable Cards List */}
+        {/* Scrollable Restaurant Cards List */}
         <div className="flex-grow overflow-y-auto p-4 space-y-3 scrollbar bg-background/5">
-          <AnimatePresence mode="wait">
-            {viewTab === 'restaurant' ? (
-              <motion.div
-                key="restaurants-tab"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="space-y-3"
-              >
-                {filteredAndSorted.map((res, index) => {
-                  const isSelected = selectedRes?.name === res.name && selectedRes?.distance === res.distance;
-                  return (
-                    <motion.div
-                      key={`${res.name}-${index}`}
-                      initial={{ opacity: 0, y: 15 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.95 }}
-                      transition={{ duration: 0.2, delay: Math.min(index * 0.02, 0.2) }}
-                      onMouseEnter={() => setHoveredRes(res)}
-                      onMouseLeave={() => setHoveredRes(null)}
-                      onClick={() => setSelectedRes(res)}
-                    >
-                      <Card 
-                        className={`relative p-3.5 rounded-2xl cursor-pointer border transition-all duration-300 shadow-sm ${
-                          isSelected 
-                            ? 'border-primary bg-primary/5 shadow-md shadow-primary/5 ring-1 ring-primary/30' 
-                            : 'border-border/60 bg-card hover:border-muted-foreground/30 hover:shadow-md'
-                        }`}
-                      >
-                        <div className="flex gap-3">
-                          {/* Thumbnail Image */}
-                          {res.image_url ? (
-                            <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-border/50 bg-muted flex items-center justify-center">
-                              <img
-                                src={res.image_url}
-                                alt={res.name}
-                                className="w-full h-full object-cover"
-                                onError={(e) => {
-                                  (e.target as HTMLElement).style.display = 'none';
-                                }}
-                              />
-                            </div>
-                          ) : (
-                            <div className="w-16 h-16 rounded-xl bg-muted/40 shrink-0 border border-dashed border-border/60 flex items-center justify-center text-[10px] text-muted-foreground font-bold">
-                              NO IMAGE
-                            </div>
-                          )}
+          <AnimatePresence>
+            {filteredAndSorted.map((res, index) => {
+              const isSelected = selectedRes?.name === res.name && selectedRes?.distance === res.distance;
+              return (
+                <motion.div
+                  key={`${res.name}-${index}`}
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.2, delay: Math.min(index * 0.02, 0.2) }}
+                  onMouseEnter={() => setHoveredRes(res)}
+                  onMouseLeave={() => setHoveredRes(null)}
+                  onClick={() => setSelectedRes(res)}
+                >
+                  <Card 
+                    className={`relative p-3.5 rounded-2xl cursor-pointer border transition-all duration-300 shadow-sm ${
+                      isSelected 
+                        ? 'border-primary bg-primary/5 shadow-md shadow-primary/5 ring-1 ring-primary/30' 
+                        : 'border-border/60 bg-card hover:border-muted-foreground/30 hover:shadow-md'
+                    }`}
+                  >
+                    <div className="flex gap-3">
+                      {/* Thumbnail Image */}
+                      {res.image_url ? (
+                        <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-border/50 bg-muted flex items-center justify-center">
+                          <img
+                            src={res.image_url}
+                            alt={res.name}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              (e.target as HTMLElement).style.display = 'none';
+                            }}
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-16 h-16 rounded-xl bg-muted/40 shrink-0 border border-dashed border-border/60 flex items-center justify-center text-[10px] text-muted-foreground font-bold">
+                          NO IMAGE
+                        </div>
+                      )}
 
-                          {/* Content details */}
-                          <div className="flex-grow min-w-0 flex flex-col justify-between">
-                            <div>
-                              <div className="flex items-start justify-between gap-1">
-                                <h3 className="font-bold text-xs truncate max-w-[200px] text-foreground">
-                                  {res.name}
-                                </h3>
-                                <Badge variant="outline" className="text-[9px] px-1.5 py-0 rounded font-bold uppercase tracking-wide border-muted-foreground/20 shrink-0 bg-muted/40">
-                                  {res.category}
-                                </Badge>
-                              </div>
+                      {/* Content details */}
+                      <div className="flex-grow min-w-0 flex flex-col justify-between">
+                        <div>
+                          <div className="flex items-start justify-between gap-1">
+                            <h3 className="font-bold text-xs truncate max-w-[200px] text-foreground">
+                              {res.name}
+                            </h3>
+                            <Badge variant="outline" className="text-[9px] px-1.5 py-0 rounded font-bold uppercase tracking-wide border-muted-foreground/20 shrink-0 bg-muted/40">
+                              {res.category}
+                            </Badge>
+                          </div>
 
-                              <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground mt-1 font-semibold">
-                                <span className="text-primary font-bold">{res.distance}</span>
-                                <span>•</span>
-                                <span className="text-yellow-500">{res.rating && res.rating !== '-' ? '★ ' + res.rating : '평가없음'}</span>
-                                <span>•</span>
-                                <span className="truncate max-w-[120px]">{res.operating_hours || '정보 없음'}</span>
-                              </div>
-                              
-                              <div className="text-[9px] text-muted-foreground/60 font-mono mt-1 select-all">
-                                좌표: {res.lat.toFixed(6)}, {res.lng.toFixed(6)}
-                              </div>
-                            </div>
-
-                            {/* Top menus price tags preview */}
-                            {res.menus && res.menus.length > 0 && (
-                              <div className="flex gap-1.5 flex-wrap mt-2.5">
-                                {res.menus.slice(0, 2).map((m, mIdx) => (
-                                  <span 
-                                    key={mIdx} 
-                                    className="text-[9px] bg-background border border-border/50 px-2 py-0.5 rounded-md font-semibold text-muted-foreground truncate max-w-[130px]"
-                                  >
-                                    {m.name}: <strong className="text-foreground">{m.price.toLocaleString()}원</strong>
-                                  </span>
-                                ))}
-                              </div>
-                            )}
+                          <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground mt-1 font-semibold">
+                            <span className="text-primary font-bold">{res.distance}</span>
+                            <span>•</span>
+                            <span className="text-yellow-500">{res.rating && res.rating !== '-' ? '★ ' + res.rating : '평가없음'}</span>
+                            <span>•</span>
+                            <span className="truncate max-w-[120px]">{res.operating_hours || '정보 없음'}</span>
+                          </div>
+                          
+                          <div className="text-[9px] text-muted-foreground/60 font-mono mt-1 select-all">
+                            좌표: {res.lat.toFixed(6)}, {res.lng.toFixed(6)}
                           </div>
                         </div>
 
-                        {/* Float Hover Controls: Edit / Delete / Details */}
-                        <div className="absolute right-2 top-2 flex items-center gap-0.5 opacity-0 hover:opacity-100 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-200 bg-card rounded-lg border border-border/60 p-0.5 shadow-sm">
-                          <Button
-                            size="icon"
-                            variant="ghost"
-                            className="h-7 w-7 rounded-md text-muted-foreground hover:text-foreground cursor-pointer"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setEditingRes(res);
-                              setIsModalOpen(true);
-                            }}
-                          >
-                            <Edit3 size={12} />
-                          </Button>
-                          <Button
-                            size="icon"
-                            variant="ghost"
-                            className="h-7 w-7 rounded-md text-muted-foreground hover:text-red-500 cursor-pointer"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDelete(res);
-                            }}
-                          >
-                            <Trash2 size={12} />
-                          </Button>
-                          <Button
-                            size="icon"
-                            variant="ghost"
-                            className="h-7 w-7 rounded-md text-muted-foreground hover:text-primary cursor-pointer"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setDetailRes(res);
-                              setIsDetailOpen(true);
-                            }}
-                            title="상세보기"
-                          >
-                            <Eye size={12} />
-                          </Button>
-                        </div>
-                      </Card>
-                    </motion.div>
-                  );
-                })}
-
-                {filteredAndSorted.length === 0 && (
-                  <div className="text-center py-16 text-muted-foreground text-xs border border-dashed border-border/50 rounded-2xl">
-                    검색 조건에 맞는 맛집이 없습니다.
-                  </div>
-                )}
-              </motion.div>
-            ) : (
-              <motion.div
-                key="menus-tab"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="space-y-2.5"
-              >
-                {allMenus.map((item, index) => {
-                  const menuKey = `${item.restaurant.name}-${item.name}`;
-                  const isChecked = !excludedMenus.includes(menuKey);
-                  return (
-                    <motion.div
-                      key={`menu-${item.restaurant.name}-${item.name}-${index}`}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.15, delay: Math.min(index * 0.01, 0.15) }}
-                      onClick={() => toggleMenuSelection(menuKey)}
-                      className={`p-3 rounded-2xl border transition-all duration-200 cursor-pointer shadow-sm ${
-                        isChecked 
-                          ? 'border-border bg-card hover:border-primary/20 hover:shadow-md' 
-                          : 'border-border/30 bg-card/40 opacity-55 hover:opacity-75'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between gap-3 select-none">
-                        <div className="flex items-center gap-3 min-w-0">
-                          {/* Checkbox wrapper */}
-                          <div className="w-4 h-4 rounded border border-border flex items-center justify-center shrink-0 bg-background">
-                            {isChecked && <Check size={12} className="text-primary font-extrabold stroke-[3.5px]" />}
+                        {/* Top menus price tags preview */}
+                        {res.menus && res.menus.length > 0 && (
+                          <div className="flex gap-1.5 flex-wrap mt-2.5">
+                            {res.menus.slice(0, 2).map((m, mIdx) => (
+                              <span 
+                                key={mIdx} 
+                                className="text-[9px] bg-background border border-border/50 px-2 py-0.5 rounded-md font-semibold text-muted-foreground truncate max-w-[130px]"
+                              >
+                                {m.name}: <strong className="text-foreground">{m.price.toLocaleString()}원</strong>
+                              </span>
+                            ))}
                           </div>
-
-                          {/* Thumbnail */}
-                          {item.imageUrl ? (
-                            <div className="w-11 h-11 rounded-xl overflow-hidden shrink-0 border border-border/50 bg-muted flex items-center justify-center">
-                              <img
-                                src={item.imageUrl}
-                                alt={item.name}
-                                className="w-full h-full object-cover"
-                                onError={(e) => {
-                                  (e.target as HTMLElement).style.display = 'none';
-                                }}
-                              />
-                            </div>
-                          ) : (
-                            <div className="w-11 h-11 rounded-xl bg-muted/40 shrink-0 border border-dashed border-border/50 flex items-center justify-center text-[9px] text-muted-foreground font-bold">
-                              식기
-                            </div>
-                          )}
-
-                          <div className="min-w-0">
-                            <h4 className="font-bold text-xs text-foreground truncate max-w-[130px] sm:max-w-[170px]">
-                              {item.name}
-                            </h4>
-                            <p className="text-[10px] text-muted-foreground truncate mt-0.5 font-semibold">
-                              {item.restaurant.name} • <span className="text-primary font-bold">{item.restaurant.distance}</span>
-                            </p>
-                          </div>
-                        </div>
-
-                        <span className="text-xs font-black text-primary whitespace-nowrap ml-2 shrink-0">
-                          {item.price.toLocaleString()}원
-                        </span>
+                        )}
                       </div>
-                    </motion.div>
-                  );
-                })}
+                    </div>
 
-                {allMenus.length === 0 && (
-                  <div className="text-center py-16 text-muted-foreground text-xs border border-dashed border-border/50 rounded-2xl">
-                    검색 조건에 맞는 메뉴가 없습니다.
-                  </div>
-                )}
-              </motion.div>
+                    {/* Float Hover Controls: Edit / Delete / Details */}
+                    <div className="absolute right-2 top-2 flex items-center gap-0.5 opacity-0 hover:opacity-100 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-200 bg-card rounded-lg border border-border/60 p-0.5 shadow-sm">
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="h-7 w-7 rounded-md text-muted-foreground hover:text-foreground cursor-pointer"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditingRes(res);
+                          setIsModalOpen(true);
+                        }}
+                      >
+                        <Edit3 size={12} />
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="h-7 w-7 rounded-md text-muted-foreground hover:text-red-500 cursor-pointer"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(res);
+                        }}
+                      >
+                        <Trash2 size={12} />
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="h-7 w-7 rounded-md text-muted-foreground hover:text-primary cursor-pointer"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setDetailRes(res);
+                          setIsDetailOpen(true);
+                        }}
+                        title="상세보기"
+                      >
+                        <Eye size={12} />
+                      </Button>
+                    </div>
+                  </Card>
+                </motion.div>
+              );
+            })}
+
+            {filteredAndSorted.length === 0 && (
+              <div className="text-center py-16 text-muted-foreground text-xs border border-dashed border-border/50 rounded-2xl">
+                검색 조건에 맞는 맛집이 없습니다.
+              </div>
             )}
           </AnimatePresence>
-        </div>
-
-        {/* Roulette Panel Embed */}
-        <div className="p-4 border-t border-border bg-card relative z-30">
-          <Roulette 
-            filteredRestaurants={filteredAndSorted} 
-            excludedMenus={excludedMenus}
-            onWinnerSelected={(winner) => setSelectedRes(winner)} 
-          />
         </div>
       </section>
 

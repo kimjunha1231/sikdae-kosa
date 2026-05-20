@@ -5,6 +5,7 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Card } from './ui/card';
 import { MapPin, Key, AlertCircle, Navigation } from 'lucide-react';
+import Roulette from './Roulette';
 
 interface Restaurant {
   name: string;
@@ -355,6 +356,16 @@ export default function KakaoMap({
         <MapPin size={14} className="text-primary" />
         <span>{userLocation ? '내 위치 기준 측정 중' : 'IT벤처타워 (위치 권한 필요)'}</span>
       </div>
+
+      {/* Floating Roulette Overlay */}
+      {isSdkLoaded && (
+        <div className="absolute top-4 right-4 z-10 w-80 max-w-[calc(100vw-2rem)]">
+          <Roulette 
+            filteredRestaurants={restaurants} 
+            onWinnerSelected={onSelectRestaurant} 
+          />
+        </div>
+      )}
 
       {/* Floating Pan To User Button */}
       {userLocation && (
