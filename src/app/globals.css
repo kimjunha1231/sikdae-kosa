@@ -1,26 +1,119 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-pretendard);
+  --font-heading: var(--font-pretendard);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --radius-lg: var(--radius);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root {
+  /* Light Mode (Toss UI Light) */
+  --background: #f2f4f6;
+  --foreground: #191f28;
+  --card: #ffffff;
+  --card-foreground: #191f28;
+  --popover: #ffffff;
+  --popover-foreground: #191f28;
+  
+  --primary: #3182f6; /* Toss Blue */
+  --primary-foreground: #ffffff;
+  
+  --secondary: #ff477e; /* Toss Pink */
+  --secondary-foreground: #ffffff;
+  
+  --muted: #f2f4f6;
+  --muted-foreground: #4e5968;
+  
+  --accent: #e8f3ff;
+  --accent-foreground: #3182f6;
+  
+  --border: #e5e8eb;
+  --input: #e5e8eb;
+  --ring: #3182f6;
+  
+  --radius: 18px;
+}
+
+.dark {
+  /* Dark Mode (Toss UI Dark - Default) */
+  --background: #0f1015;
+  --foreground: #f9fafb;
+  --card: #1c1d24;
+  --card-foreground: #f9fafb;
+  --popover: #1c1d24;
+  --popover-foreground: #f9fafb;
+  
+  --primary: #3182f6; /* Toss Blue */
+  --primary-foreground: #ffffff;
+  
+  --secondary: #ff477e; /* Toss Pink */
+  --secondary-foreground: #ffffff;
+  
+  --muted: #2c2d35;
+  --muted-foreground: #8b95a1;
+  
+  --accent: #2c2d35;
+  --accent-foreground: #f9fafb;
+  
+  --border: #2c2d35;
+  --input: #2c2d35;
+  --ring: #3182f6;
+  
+  --radius: 18px;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-pretendard), -apple-system, BlinkMacSystemFont, "Pretendard Variable", Pretendard, system-ui, Roboto, sans-serif;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-foreground);
+}
+
+/* Toss Button Scaling Animation */
+.toss-btn-active:active {
+  transform: scale(0.96);
+}
+
+/* Roulette rotation style */
+.roulette-spin {
+  transition: transform 3s cubic-bezier(0.1, 0.8, 0.1, 1);
 }

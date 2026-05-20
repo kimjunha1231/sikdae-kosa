@@ -1,0 +1,1351 @@
+[
+  {
+    "order": 1,
+    "id": "10611B1E-C81F-4B22-8506-3550BAE250D5",
+    "name": "가락정초밥",
+    "category": "일식",
+    "mainCategories": [
+      "일식"
+    ],
+    "intro": "11시10분부터 9시까지",
+    "latitude": 37.4952305,
+    "longitude": 127.1208517,
+    "score": 4.67,
+    "reviewCount": 6,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 2,
+    "id": "019B67EF-E4AD-776C-A5EC-30CEDA0F29DE",
+    "name": "개성순대국",
+    "category": "한식",
+    "mainCategories": [
+      "한식"
+    ],
+    "intro": "05시-20시30분",
+    "latitude": 37.4986656,
+    "longitude": 127.1185193,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 3,
+    "id": "019D476C-0C32-7F17-B3C9-40A78D1B7E84",
+    "name": "고급양식 문정본점",
+    "category": "양식",
+    "mainCategories": [
+      "양식"
+    ],
+    "intro": "10:30~21:00",
+    "latitude": 37.4878287,
+    "longitude": 127.1206324,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 4,
+    "id": "019DAF02-B83D-7357-BE58-F8986A2E1C31",
+    "name": "고봉삼계탕 송파가락점",
+    "category": "한식",
+    "mainCategories": [
+      "한식"
+    ],
+    "intro": "10시~21시",
+    "latitude": 37.4928366,
+    "longitude": 127.1254294,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 5,
+    "id": "4E8E2EF6-4CE9-D292-44EE-5A7F5711E63B",
+    "name": "광나루찌개",
+    "category": "한식",
+    "mainCategories": [
+      "한식"
+    ],
+    "intro": "09:00~21:00",
+    "latitude": 37.5783616,
+    "longitude": 127.0017438,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 6,
+    "id": "019C9E2E-CD41-745B-85D6-6DAC9E21B29B",
+    "name": "광주 서울곱창 가락시장점",
+    "category": "한식",
+    "mainCategories": [
+      "한식"
+    ],
+    "intro": "운영시간 11시부터 24시",
+    "latitude": 37.494803,
+    "longitude": 127.1185193,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 7,
+    "id": "9A6AED99-3712-6CF2-938B-16B2BDF33D21",
+    "name": "김가네(가락본동점)",
+    "category": "분식",
+    "mainCategories": [
+      "분식"
+    ],
+    "intro": "영업시간 7:00 ~ 22:00",
+    "latitude": 37.49561,
+    "longitude": 127.1215,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 8,
+    "id": "019B48C1-9D55-7662-97E4-00AE24784498",
+    "name": "김씨본가 안동갈비살",
+    "category": "한식",
+    "mainCategories": [
+      "한식"
+    ],
+    "intro": "11:00~22:00",
+    "latitude": 37.4966133,
+    "longitude": 127.1210584,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 9,
+    "id": "E1B9A666-F278-6674-34D0-DA7A662F4515",
+    "name": "노모어피자(대학로점)",
+    "category": "양식",
+    "mainCategories": [
+      "양식"
+    ],
+    "intro": "24시간 운영",
+    "latitude": 37.5834089,
+    "longitude": 126.999525,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 10,
+    "id": "3B8195AA-CD13-7CAD-37EA-C3D1007D9F3A",
+    "name": "데니스타코",
+    "category": "양식",
+    "mainCategories": [
+      "양식"
+    ],
+    "intro": "-",
+    "latitude": 37.496123,
+    "longitude": 127.1211432,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 11,
+    "id": "18F6FD7D-81BE-8B70-DD8C-B1D7BD745322",
+    "name": "돈천동식당",
+    "category": "한식",
+    "mainCategories": [
+      "한식"
+    ],
+    "intro": "-",
+    "latitude": 37.5843253,
+    "longitude": 127.0012002,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 12,
+    "id": "8D58E906-2A7C-49B1-A34B-2ACBB335BE1E",
+    "name": "동래정(송파가락점)",
+    "category": "한식",
+    "mainCategories": [
+      "한식"
+    ],
+    "intro": "운영시간 07시-23시",
+    "latitude": 37.4960763,
+    "longitude": 127.120657,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 13,
+    "id": "7E7A8C76-951D-4C95-B702-49895AC41A20",
+    "name": "딹진또배기(가락본점)",
+    "category": "한식",
+    "mainCategories": [
+      "한식"
+    ],
+    "intro": "08:00~22:00",
+    "latitude": 37.4974427,
+    "longitude": 127.1191979,
+    "score": 5.0,
+    "reviewCount": 1,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 14,
+    "id": "222FC3DF-9E10-1C34-D0A2-CF9FBB8C56A3",
+    "name": "뚱가의정부부대찌개(가락)",
+    "category": "한식",
+    "mainCategories": [
+      "한식"
+    ],
+    "intro": "24년 전통 뚱가의정부부대찌개(가락)",
+    "latitude": 37.49633,
+    "longitude": 127.1201,
+    "score": 5.0,
+    "reviewCount": 2,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 15,
+    "id": "2D142C57-9E87-7EC5-4C4C-E7E4E60257A1",
+    "name": "로스트앤베이크(가락점)",
+    "category": "양식",
+    "mainCategories": [
+      "양식"
+    ],
+    "intro": "-",
+    "latitude": 37.4943325,
+    "longitude": 127.1214042,
+    "score": 5.0,
+    "reviewCount": 1,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 16,
+    "id": "5A7558A2-F2E9-F766-097E-7FB0763E2A85",
+    "name": "롯데리아 롯데마트송파",
+    "category": "양식",
+    "mainCategories": [
+      "프랜차이즈"
+    ],
+    "intro": "10 : 00 ~ 22 : 00",
+    "latitude": 37.491728,
+    "longitude": 127.117731,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": false,
+    "isFavorites": false
+  },
+  {
+    "order": 17,
+    "id": "28F1B1CF-0748-7B7D-8A10-61E7BA76D8AA",
+    "name": "롯데리아 문정로데오",
+    "category": "양식",
+    "mainCategories": [
+      "프랜차이즈"
+    ],
+    "intro": "09 : 00 ~ 02 : 00",
+    "latitude": 37.491005,
+    "longitude": 127.12587,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": false,
+    "isFavorites": false
+  },
+  {
+    "order": 18,
+    "id": "1EBD637B-94A0-3EFA-2609-04037C248C15",
+    "name": "롯데리아 제기역",
+    "category": "양식",
+    "mainCategories": [
+      "프랜차이즈"
+    ],
+    "intro": "09 : 00 ~ 22 : 00",
+    "latitude": 37.5778,
+    "longitude": 127.032995,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": false,
+    "isFavorites": false
+  },
+  {
+    "order": 19,
+    "id": "604AF83D-B667-0362-4776-AC40967941D5",
+    "name": "롯데리아 혜화",
+    "category": "양식",
+    "mainCategories": [
+      "프랜차이즈"
+    ],
+    "intro": "09 : 00 ~ 22 : 00",
+    "latitude": 37.5856967,
+    "longitude": 127.0005798,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": false,
+    "isFavorites": false
+  },
+  {
+    "order": 20,
+    "id": "D1D6891A-1F2E-113D-C656-0AECD20ED31E",
+    "name": "마이클커피",
+    "category": "카페/베이커리/패스트푸드",
+    "mainCategories": [
+      "카페/디저트"
+    ],
+    "intro": "9:30~19:00",
+    "latitude": 37.5763164,
+    "longitude": 127.0438508,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 21,
+    "id": "E0267E4B-9423-41C6-9A98-5DB1905CC96F",
+    "name": "맘스터치 종로대학로점",
+    "category": "카페/베이커리/패스트푸드",
+    "mainCategories": [
+      "프랜차이즈"
+    ],
+    "intro": "운영시간 10시~오더마감 21:30",
+    "latitude": 37.5832948,
+    "longitude": 127.0006229,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 22,
+    "id": "21A68FFD-147C-0D1D-3606-F9E65D0CC182",
+    "name": "맛밥",
+    "category": "한식",
+    "mainCategories": [
+      "한식"
+    ],
+    "intro": "-",
+    "latitude": 37.5853421,
+    "longitude": 127.0006658,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 23,
+    "id": "3F72AAD4-D1A4-6721-3C61-55CE4743459D",
+    "name": "맛있는 샤브돈까스",
+    "category": "일식",
+    "mainCategories": [
+      "일식"
+    ],
+    "intro": "돈까스와 샤브샤브 전문점",
+    "latitude": 37.4945837,
+    "longitude": 127.119133,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 24,
+    "id": "019BBAC5-9734-78A6-8AC5-70352F5D2167",
+    "name": "매머드익스프레스 경찰병원점",
+    "category": "카페/베이커리/패스트푸드",
+    "mainCategories": [
+      "카페/디저트"
+    ],
+    "intro": "07:30~20:00",
+    "latitude": 37.4957359,
+    "longitude": 127.1221419,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": false,
+    "isFavorites": false
+  },
+  {
+    "order": 25,
+    "id": "4595A247-70B7-C54E-477C-18C01DC12B20",
+    "name": "명동칼국수(가락)",
+    "category": "한식",
+    "mainCategories": [
+      "한식"
+    ],
+    "intro": "명동칼국수(가락)",
+    "latitude": 37.49444,
+    "longitude": 127.1205,
+    "score": 5.0,
+    "reviewCount": 1,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 26,
+    "id": "752DC4B5-5927-35E4-CDC2-102F4E55DE68",
+    "name": "명화당",
+    "category": "분식",
+    "mainCategories": [
+      "분식"
+    ],
+    "intro": "아이티벤처타워 지하식당",
+    "latitude": 37.4950774,
+    "longitude": 127.1223685,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 27,
+    "id": "C0F9CB34-AB39-4E07-ACD3-A5B8F601CE66",
+    "name": "모스버거(대학로점)",
+    "category": "카페/베이커리/패스트푸드",
+    "mainCategories": [
+      "프랜차이즈"
+    ],
+    "intro": "-",
+    "latitude": 37.5827031,
+    "longitude": 127.0015306,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 28,
+    "id": "2F7AA72C-EBAD-48A0-AC32-50A0152B65DD",
+    "name": "미당뭉티기",
+    "category": "한식",
+    "mainCategories": [
+      "한식"
+    ],
+    "intro": "11 ~23시까지 운영되는 한우전문점",
+    "latitude": 37.495973,
+    "longitude": 127.1207899,
+    "score": 5.0,
+    "reviewCount": 1,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 29,
+    "id": "8A29115D-8FBC-4E29-8081-420C66F0B584",
+    "name": "밀밭(가락)",
+    "category": "한식",
+    "mainCategories": [
+      "한식"
+    ],
+    "intro": "운영시간 : 10:00 ~ 22:00",
+    "latitude": 37.4948616,
+    "longitude": 127.1201889,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 30,
+    "id": "7129B601-EA4E-C27E-AC9E-191DBF6F9BA4",
+    "name": "반포식스(가락점)",
+    "category": "아시안푸드",
+    "mainCategories": [
+      "아시안음식"
+    ],
+    "intro": "월~ 일 : 11:00~22:00",
+    "latitude": 37.4950169,
+    "longitude": 127.1203666,
+    "score": 5.0,
+    "reviewCount": 1,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 31,
+    "id": "7A66B51B-F041-2DE3-66D3-7BF3043095FD",
+    "name": "밥향기",
+    "category": "중식",
+    "mainCategories": [
+      "중식"
+    ],
+    "intro": "영업시간 10:00 ~ 22:30",
+    "latitude": 37.49587,
+    "longitude": 127.122,
+    "score": 5.0,
+    "reviewCount": 4,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 32,
+    "id": "CA8AA783-296F-44A7-8D9B-0661255A0EA7",
+    "name": "백소정 송파가락",
+    "category": "일식",
+    "mainCategories": [
+      "프랜차이즈",
+      "일식"
+    ],
+    "intro": "운영시간 11시~8시30분",
+    "latitude": 37.4957359,
+    "longitude": 127.1221419,
+    "score": 5.0,
+    "reviewCount": 1,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 33,
+    "id": "871D2363-9181-47BB-B5EE-478E1EBD2F9D",
+    "name": "별동오징어 송파가락점",
+    "category": "한식",
+    "mainCategories": [
+      "한식"
+    ],
+    "intro": "한식 식사메뉴 & 생삼겹살",
+    "latitude": 37.49697,
+    "longitude": 127.1184618,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 34,
+    "id": "019A5143-56D6-71E4-8D84-E4CAED9AA665",
+    "name": "본가통영식당",
+    "category": "한식",
+    "mainCategories": [
+      "한식"
+    ],
+    "intro": "9시30분~21시20분",
+    "latitude": 37.48709,
+    "longitude": 127.1320194,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 35,
+    "id": "17B5E500-A72D-4DCD-B62B-8BF763015A3C",
+    "name": "본죽 대학로본점",
+    "category": "한식",
+    "mainCategories": [
+      "한식"
+    ],
+    "intro": "본죽 대학로본점",
+    "latitude": 37.5787791,
+    "longitude": 127.0017295,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": false,
+    "isFavorites": false
+  },
+  {
+    "order": 36,
+    "id": "D0D494CF-4F37-F2F4-7A2C-C048DFCE1CB8",
+    "name": "본죽 성균관대점",
+    "category": "한식",
+    "mainCategories": [
+      "한식"
+    ],
+    "intro": "본죽 성균관대점",
+    "latitude": 37.5837099,
+    "longitude": 126.9992512,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": false,
+    "isFavorites": false
+  },
+  {
+    "order": 37,
+    "id": "551A5748-5109-1F79-C0C2-CB7AD237F197",
+    "name": "부부김밥",
+    "category": "분식",
+    "mainCategories": [
+      "분식"
+    ],
+    "intro": "9:00~20:00",
+    "latitude": 37.5801867,
+    "longitude": 127.004273,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 38,
+    "id": "1B18623A-D6B3-8FDF-7B34-604748C8C545",
+    "name": "부부식당",
+    "category": "한식",
+    "mainCategories": [
+      "한식"
+    ],
+    "intro": "11:00~20:00",
+    "latitude": 37.580233,
+    "longitude": 127.0043136,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 39,
+    "id": "EE45FE1A-259C-4408-9375-C60A3DB766EB",
+    "name": "불의여우",
+    "category": "한식",
+    "mainCategories": [
+      "한식",
+      "일식"
+    ],
+    "intro": "10:30 - 21:00",
+    "latitude": 37.4979029,
+    "longitude": 127.1187844,
+    "score": 5.0,
+    "reviewCount": 1,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 40,
+    "id": "655C701A-4CCC-4077-9518-0F9A59210419",
+    "name": "빽다방 가락시장역점",
+    "category": "카페/베이커리/패스트푸드",
+    "mainCategories": [
+      "카페/디저트"
+    ],
+    "intro": "08~21",
+    "latitude": 37.4950169,
+    "longitude": 127.1203666,
+    "score": 5.0,
+    "reviewCount": 1,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 41,
+    "id": "53161B8C-6D88-818C-E16F-E1959AE71698",
+    "name": "뿅의전설(가락점)",
+    "category": "중식",
+    "mainCategories": [
+      "중식"
+    ],
+    "intro": "영업시간 9:00 ~ 익일 2:00",
+    "latitude": 37.49463,
+    "longitude": 127.1241,
+    "score": 5.0,
+    "reviewCount": 2,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 42,
+    "id": "DA5CE69D-1DB2-27F0-04B2-577FD9BDAE9C",
+    "name": "삼삼뚝배기",
+    "category": "한식",
+    "mainCategories": [
+      "한식"
+    ],
+    "intro": "6:00~21:00",
+    "latitude": 37.5805579,
+    "longitude": 127.0042086,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 43,
+    "id": "5B39D7C3-F81C-2FFA-FB4A-37F33E4DF1FE",
+    "name": "샐러디(가락점)",
+    "category": "프리미엄 샐러드",
+    "mainCategories": [
+      "샐러드"
+    ],
+    "intro": "건강한 패스트푸드 및 샐러드",
+    "latitude": 37.4947608,
+    "longitude": 127.1218747,
+    "score": 5.0,
+    "reviewCount": 2,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 44,
+    "id": "25FF6385-5DBB-C25D-52F9-45C2448519A5",
+    "name": "샤브로21(가락점)",
+    "category": "한식",
+    "mainCategories": [
+      "한식"
+    ],
+    "intro": "11:00~21:30",
+    "latitude": 37.4950598,
+    "longitude": 127.1204413,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 45,
+    "id": "A3CE3C57-0688-41AF-90A4-5B4AAAD2CF41",
+    "name": "서울익스프레스88 송파가락IT점",
+    "category": "중식",
+    "mainCategories": [
+      "중식"
+    ],
+    "intro": "11:00~20:00",
+    "latitude": 37.4951039,
+    "longitude": 127.1224441,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 46,
+    "id": "68E7CAEC-018C-4116-8FDA-B310EDA10266",
+    "name": "소림만두냉면",
+    "category": "한식",
+    "mainCategories": [
+      "한식"
+    ],
+    "intro": "11시8시",
+    "latitude": 37.4984014,
+    "longitude": 127.1183993,
+    "score": 1.0,
+    "reviewCount": 1,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 47,
+    "id": "019B3446-8561-78F5-9438-F46D559B2A90",
+    "name": "신사동인동 가락점",
+    "category": "한식",
+    "mainCategories": [
+      "한식"
+    ],
+    "intro": "평일 11시30분~22시(15시~17시 브레이크타임) 토요일 16시~22시",
+    "latitude": 37.4970073,
+    "longitude": 127.1212811,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 48,
+    "id": "783AA340-AFB2-E94C-18F8-2AAF66FEB9BE",
+    "name": "아담스 꼬마김밥 가락점",
+    "category": "분식",
+    "mainCategories": [
+      "분식"
+    ],
+    "intro": "한화오밸리스크 건물",
+    "latitude": 37.4948545,
+    "longitude": 127.121911,
+    "score": 1.0,
+    "reviewCount": 1,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 49,
+    "id": "979E3D8F-90FC-2AC9-637A-538A8105ECCC",
+    "name": "아비꼬(가락시장역점)",
+    "category": "일식",
+    "mainCategories": [
+      "일식"
+    ],
+    "intro": "카레전문점",
+    "latitude": 37.4953739,
+    "longitude": 127.1207863,
+    "score": 5.0,
+    "reviewCount": 3,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 50,
+    "id": "95D4CB58-774D-4F04-92FC-D13A8DF7265A",
+    "name": "야키니쿠히오리",
+    "category": "일식",
+    "mainCategories": [
+      "일식"
+    ],
+    "intro": "운영시간 11시 ~ 23시",
+    "latitude": 37.4848354,
+    "longitude": 127.1210395,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 51,
+    "id": "A4105B0A-0B02-4675-88CC-0C56D2827B7E",
+    "name": "양궈푸마라탕 가락점",
+    "category": "중식",
+    "mainCategories": [
+      "중식"
+    ],
+    "intro": "-",
+    "latitude": 37.4950169,
+    "longitude": 127.1203666,
+    "score": 5.0,
+    "reviewCount": 3,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 52,
+    "id": "8DD9E527-F19F-44AF-B3F4-F63FAB9DFC6D",
+    "name": "에그박스 가락점",
+    "category": "한식",
+    "mainCategories": [
+      "양식",
+      "한식",
+      "아시안음식"
+    ],
+    "intro": "브리오슈 에그토스트&핫도그 커피등",
+    "latitude": 37.4969615,
+    "longitude": 127.118505,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 53,
+    "id": "EF5D5954-D049-AE99-2EF2-EFFA11A803AA",
+    "name": "예원",
+    "category": "중식",
+    "mainCategories": [
+      "중식"
+    ],
+    "intro": "예원",
+    "latitude": 37.49711,
+    "longitude": 127.1213,
+    "score": 5.0,
+    "reviewCount": 1,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 54,
+    "id": "019AD75C-3EB8-78D5-8886-19EB6154983C",
+    "name": "오부찌 문정 직영점",
+    "category": "한식",
+    "mainCategories": [
+      "한식"
+    ],
+    "intro": "오부찌 5호 문정 직영점",
+    "latitude": 37.4848354,
+    "longitude": 127.1210395,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 55,
+    "id": "43637A7A-0E4C-3DAD-D135-236D6A4FB7C2",
+    "name": "오심숙이 쭈꾸미 낙지(가락직영점)",
+    "category": "한식",
+    "mainCategories": [
+      "한식"
+    ],
+    "intro": "10:00~22:00",
+    "latitude": 37.4955049,
+    "longitude": 127.11917,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 56,
+    "id": "019CDCC9-262C-7CD8-8338-EAF676C2074B",
+    "name": "올라포케 공덕점",
+    "category": "샐러드",
+    "mainCategories": [
+      "샐러드"
+    ],
+    "intro": "운영시간 10:30 ~ 20:00",
+    "latitude": 37.5474434,
+    "longitude": 126.9530883,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": false,
+    "isFavorites": false
+  },
+  {
+    "order": 57,
+    "id": "1FBCC274-C8E3-4010-9943-E65002774081",
+    "name": "용과서울",
+    "category": "중식",
+    "mainCategories": [
+      "중식"
+    ],
+    "intro": "홍콩식 중식",
+    "latitude": 37.4968146,
+    "longitude": 127.119701,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 58,
+    "id": "3DE82662-D7C5-41E0-A1BC-3B03281277EE",
+    "name": "육도락 청량리역점",
+    "category": "한식",
+    "mainCategories": [
+      "한식"
+    ],
+    "intro": "10:00~20:30 / 브레이크타임 15:00~17:00",
+    "latitude": 37.5794114,
+    "longitude": 127.0453793,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 59,
+    "id": "2DF92AA1-DD01-4ACA-9184-30D874417182",
+    "name": "장강",
+    "category": "중식",
+    "mainCategories": [
+      "중식"
+    ],
+    "intro": "-",
+    "latitude": 37.4956555,
+    "longitude": 127.118829,
+    "score": 5.0,
+    "reviewCount": 3,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 60,
+    "id": "D6311E11-8E7E-77DE-87F1-32889EB6E078",
+    "name": "조선닭꼬치(가락점)",
+    "category": "한식",
+    "mainCategories": [
+      "한식"
+    ],
+    "intro": "운영시간",
+    "latitude": 37.4955249,
+    "longitude": 127.1201854,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 61,
+    "id": "B4356ED9-B96A-EFA9-BA35-93193A4D4AF9",
+    "name": "진국수",
+    "category": "한식",
+    "mainCategories": [
+      "한식"
+    ],
+    "intro": "아이티벤처타워 지하식당",
+    "latitude": 37.4950997,
+    "longitude": 127.1224523,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 62,
+    "id": "4C2BB7A8-147D-5984-5D3B-33045697086A",
+    "name": "천미미(가락점)",
+    "category": "중식",
+    "mainCategories": [
+      "중식"
+    ],
+    "intro": "11:20~21:30",
+    "latitude": 37.4941535,
+    "longitude": 127.1202422,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 63,
+    "id": "20D0C3E5-06DB-4C29-9876-CFBE3FACE660",
+    "name": "최박사돈까스냉면 가락직영점",
+    "category": "일식",
+    "mainCategories": [
+      "일식",
+      "한식"
+    ],
+    "intro": "운영시간 10:30-20:30",
+    "latitude": 37.4942931,
+    "longitude": 127.1205384,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 64,
+    "id": "019DBC9B-C36D-7A0C-8155-C0295C57CA95",
+    "name": "취영루 송파점",
+    "category": "중식",
+    "mainCategories": [
+      "중식"
+    ],
+    "intro": "11시30분~21시30분",
+    "latitude": 37.4926205,
+    "longitude": 127.1249719,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 65,
+    "id": "019DADC4-EE01-7802-99EF-B5CDD98A239B",
+    "name": "칸세이",
+    "category": "일식",
+    "mainCategories": [
+      "일식"
+    ],
+    "intro": "11:00-14:00",
+    "latitude": 37.4965052,
+    "longitude": 127.1211315,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 66,
+    "id": "2DEE1697-AF5A-17EE-6539-DFA7366E1833",
+    "name": "크리스피크림도넛 롯데청량리점",
+    "category": "양식",
+    "mainCategories": [
+      "프랜차이즈"
+    ],
+    "intro": "10 : 30 ~ 20 : 00",
+    "latitude": 37.580701,
+    "longitude": 127.04895,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": false,
+    "isFavorites": false
+  },
+  {
+    "order": 67,
+    "id": "9EBADB9F-C7EC-F842-3E7D-8B3CDC6EC78B",
+    "name": "킨토토(혜화점)",
+    "category": "일식",
+    "mainCategories": [
+      "일식"
+    ],
+    "intro": "-",
+    "latitude": 37.5834235,
+    "longitude": 126.9996413,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 68,
+    "id": "019A70A7-8A2D-7BAE-B8DD-19F3EC57999C",
+    "name": "텐퍼센트커피 가락시장역점",
+    "category": "카페/베이커리/패스트푸드",
+    "mainCategories": [
+      "카페/디저트"
+    ],
+    "intro": "07시~18시30분",
+    "latitude": 37.4950169,
+    "longitude": 127.1203666,
+    "score": 4.33,
+    "reviewCount": 3,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 69,
+    "id": "5F273D3D-538A-4E91-85CC-75F48F6086C0",
+    "name": "토담집",
+    "category": "한식",
+    "mainCategories": [
+      "한식"
+    ],
+    "intro": "-",
+    "latitude": 37.4951039,
+    "longitude": 127.1224441,
+    "score": 5.0,
+    "reviewCount": 1,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 70,
+    "id": "F56EAFB4-3BA1-40E6-92AB-24C5004B60E8",
+    "name": "파리바게뜨 가락중앙",
+    "category": "카페/베이커리/패스트푸드",
+    "mainCategories": [
+      "프랜차이즈"
+    ],
+    "intro": "",
+    "latitude": 37.4953726,
+    "longitude": 127.1310836,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": false,
+    "isFavorites": false
+  },
+  {
+    "order": 71,
+    "id": "C59DB16D-EAFE-44DD-BABF-7930EA467D05",
+    "name": "파리바게뜨 경찰병원역",
+    "category": "카페/베이커리/패스트푸드",
+    "mainCategories": [
+      "프랜차이즈"
+    ],
+    "intro": "",
+    "latitude": 37.4942778,
+    "longitude": 127.1227896,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": false,
+    "isFavorites": false
+  },
+  {
+    "order": 72,
+    "id": "DFC336A8-D4BB-12F9-A880-F349A67831B7",
+    "name": "포브라더스 가락점",
+    "category": "아시안푸드",
+    "mainCategories": [
+      "아시안음식"
+    ],
+    "intro": "베트남음식 전문점",
+    "latitude": 37.4933556,
+    "longitude": 127.1161382,
+    "score": 5.0,
+    "reviewCount": 1,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 73,
+    "id": "019A8F76-2839-7C1D-8694-6CC55F34D3C0",
+    "name": "폭샾",
+    "category": "한식",
+    "mainCategories": [
+      "한식"
+    ],
+    "intro": "-",
+    "latitude": 37.4877125,
+    "longitude": 127.1231953,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 74,
+    "id": "EA2BD77E-D146-0B22-6FD7-C31BD293C70A",
+    "name": "푼양이부대앤김치찌개(가락본점)",
+    "category": "한식",
+    "mainCategories": [
+      "한식"
+    ],
+    "intro": "찌개전문점",
+    "latitude": 37.496373,
+    "longitude": 127.1212802,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 75,
+    "id": "2403F62C-18AA-85D0-810D-33DD27AFD62E",
+    "name": "하루토",
+    "category": "일식",
+    "mainCategories": [
+      "일식"
+    ],
+    "intro": "유타로(가락점)",
+    "latitude": 37.49449,
+    "longitude": 127.1205,
+    "score": 5.0,
+    "reviewCount": 2,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 76,
+    "id": "DD61F1C5-CA15-4135-ACE3-FD22C563EC3F",
+    "name": "한촌설렁탕(송파가락점)",
+    "category": "한식",
+    "mainCategories": [
+      "한식"
+    ],
+    "intro": "운영시간 오전7시 ~ 오후10시",
+    "latitude": 37.4951039,
+    "longitude": 127.1224441,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 77,
+    "id": "F4B2022E-6748-A964-EB01-D5CEA4813598",
+    "name": "함경도찹쌀순대(가락점)",
+    "category": "한식",
+    "mainCategories": [
+      "한식"
+    ],
+    "intro": "현진올림피아오피스텔 1층",
+    "latitude": 37.4948,
+    "longitude": 127.1213,
+    "score": 3.67,
+    "reviewCount": 3,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 78,
+    "id": "C32FBC7A-1F43-BB81-BBE9-317049D64B97",
+    "name": "함흥면옥(혜화)",
+    "category": "한식",
+    "mainCategories": [
+      "한식"
+    ],
+    "intro": "한식전문점",
+    "latitude": 37.5794179,
+    "longitude": 127.0011588,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 79,
+    "id": "F951F0B2-1754-11FC-5D65-0E2544262681",
+    "name": "행복한우동가게(가락점)",
+    "category": "분식",
+    "mainCategories": [
+      "분식"
+    ],
+    "intro": "11:00~4:00",
+    "latitude": 37.496084,
+    "longitude": 127.1203467,
+    "score": 5.0,
+    "reviewCount": 1,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 80,
+    "id": "0C1B7CF6-137A-4B0E-AC3F-5180B13C9097",
+    "name": "헤비스테이크(대학로점)",
+    "category": "양식",
+    "mainCategories": [
+      "양식"
+    ],
+    "intro": "-",
+    "latitude": 37.5829951,
+    "longitude": 126.9993116,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 81,
+    "id": "A388589E-F300-46BD-AC76-08C790F1FB4B",
+    "name": "홍콩반점 가락시장역점",
+    "category": "중식",
+    "mainCategories": [
+      "중식"
+    ],
+    "intro": "10:00~21:00",
+    "latitude": 37.4950169,
+    "longitude": 127.1203666,
+    "score": 5.0,
+    "reviewCount": 1,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 82,
+    "id": "EE369C39-82B7-4E91-9503-E7D1C5AACF9D",
+    "name": "흑돈 1931",
+    "category": "한식",
+    "mainCategories": [
+      "한식"
+    ],
+    "intro": "운영시간 10시~22시",
+    "latitude": 37.4971672,
+    "longitude": 127.1208741,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 83,
+    "id": "1C0F9D8D-A0AB-8574-0EB9-BF4EFF34828A",
+    "name": "CGV대학로",
+    "category": "분식",
+    "mainCategories": [
+      "프랜차이즈"
+    ],
+    "intro": "-",
+    "latitude": 37.5834726,
+    "longitude": 126.9998487,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": false
+  },
+  {
+    "order": 84,
+    "id": "019D0087-0C6A-754A-88E4-091AF199864D",
+    "name": "K밥상",
+    "category": "한식",
+    "mainCategories": [
+      "한식"
+    ],
+    "intro": "한식 점심뷔폐",
+    "latitude": 37.4951039,
+    "longitude": 127.1224441,
+    "score": 0.0,
+    "reviewCount": 0,
+    "multipay": true,
+    "isFavorites": true
+  }
+]
