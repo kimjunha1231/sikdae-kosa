@@ -41,6 +41,7 @@ export default function CollaborativeRoom() {
     currentUser,
     toggleRouletteSelection,
     triggerSpin,
+    completeSpin,
     resetSpin,
     updateNickname,
   } = useCollaborativeRoom(roomId);
@@ -246,7 +247,7 @@ export default function CollaborativeRoom() {
             }}
             roulettePool={roulettePool}
             onWinnerSelected={(winner) => {
-              triggerSpin(winner.name);
+              setSelectedRes(winner);
             }}
             isCollaborative={true}
             collaborativeSpinStatus={spinEvent.status}
@@ -255,7 +256,7 @@ export default function CollaborativeRoom() {
               triggerSpin(chosen.name);
             }}
             onCollaborativeSpinEnd={() => {
-              // Keep spinning status as is until WinnerModal closes or we reset
+              completeSpin();
             }}
           />
         </div>
@@ -271,7 +272,7 @@ export default function CollaborativeRoom() {
         />
       )}
 
-      {spinEvent.status === 'spinning' && spinEvent.winner && (
+      {spinEvent.status === 'completed' && spinEvent.winner && (
         <WinnerModal
           winner={restaurants.find((r) => r.name === spinEvent.winner) || null}
           onClose={() => {
