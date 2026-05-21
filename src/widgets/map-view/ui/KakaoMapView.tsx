@@ -17,7 +17,6 @@ interface KakaoMapViewProps {
   onViewDetails?: (restaurant: Restaurant) => void;
   roulettePool: string[];
   onWinnerSelected?: (restaurant: Restaurant) => void;
-  onTogglePool?: (name: string) => void;
   isCollaborative?: boolean;
   collaborativeSpinStatus?: 'idle' | 'spinning' | 'completed';
   collaborativeWinnerName?: string;
@@ -34,7 +33,6 @@ export default function KakaoMapView({
   onViewDetails,
   roulettePool,
   onWinnerSelected,
-  onTogglePool,
   isCollaborative = false,
   collaborativeSpinStatus = 'idle',
   collaborativeWinnerName = '',
@@ -196,12 +194,11 @@ export default function KakaoMapView({
       content.addEventListener('click', () => {
         onSelectRestaurant(res);
         showCustomOverlay(res);
-        if (onTogglePool) onTogglePool(res.name);
       });
 
       markersRef.current.push(customMarker);
     });
-  }, [isSdkLoaded, restaurants, userLocation, roulettePool, onTogglePool]);
+  }, [isSdkLoaded, restaurants, userLocation, roulettePool]);
 
 
   // 4. Hover effect - Pan to and open temp overlay
