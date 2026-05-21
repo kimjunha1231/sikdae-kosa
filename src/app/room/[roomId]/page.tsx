@@ -125,88 +125,6 @@ export default function CollaborativeRoom() {
 
   return (
     <main className="w-full h-screen flex flex-col md:flex-row overflow-hidden bg-background text-foreground transition-colors duration-200">
-      {/* Dynamic Collaborative Header */}
-      <div className="absolute top-4 left-4 md:left-[480px] right-4 z-30 flex flex-wrap items-center justify-between gap-3 bg-card/90 backdrop-blur-md border border-border px-4 py-3 rounded-2xl shadow-lg">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => router.push('/')}
-            className="p-2 hover:bg-muted rounded-xl transition-colors cursor-pointer text-muted-foreground hover:text-foreground"
-          >
-            <ArrowLeft size={16} />
-          </button>
-          <div>
-            <h1 className="text-sm font-black tracking-tight flex items-center gap-2">
-              <span className="bg-primary/10 text-primary px-2 py-0.5 rounded-lg text-xs font-black">Room: {roomId}</span>
-              실시간 조별 식당 고르기
-            </h1>
-            <p className="text-[10px] text-muted-foreground mt-0.5">조원들과 공유 링크로 함께 식당을 고르고 추천을 받으세요!</p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          {/* User Nickname Settings */}
-          <div className="flex items-center gap-1.5 bg-muted/50 border border-border/40 px-3 py-1.5 rounded-xl text-xs">
-            {isEditingNickname ? (
-              <div className="flex items-center gap-1">
-                <input
-                  type="text"
-                  value={newNickname}
-                  onChange={(e) => setNewNickname(e.target.value)}
-                  placeholder={currentUser?.nickname}
-                  className="bg-background border border-border rounded px-1.5 py-0.5 w-24 text-[11px] focus:outline-none focus:border-primary"
-                  maxLength={10}
-                />
-                <button onClick={handleSaveNickname} className="text-primary font-bold text-[11px] px-1">저장</button>
-              </div>
-            ) : (
-              <>
-                <span className="font-extrabold text-foreground">나: {currentUser?.nickname}</span>
-                <button
-                  onClick={() => {
-                    setNewNickname(currentUser?.nickname || '');
-                    setIsEditingNickname(true);
-                  }}
-                  className="text-muted-foreground hover:text-foreground p-0.5 cursor-pointer"
-                >
-                  <Edit2 size={11} />
-                </button>
-              </>
-            )}
-          </div>
-
-          {/* Copy Share Link Button */}
-          <button
-            onClick={handleCopyLink}
-            className="flex items-center gap-1.5 bg-primary hover:bg-primary/90 text-white font-bold text-xs px-3 py-2 rounded-xl transition-colors cursor-pointer"
-          >
-            {copied ? <Check size={13} /> : <Copy size={13} />}
-            <span>{copied ? '복사 완료' : '초대 링크 복사'}</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Participants Float Badge */}
-      <div className="absolute top-22 md:top-22 right-4 z-30 flex items-center gap-2 bg-card/90 backdrop-blur border border-border px-3 py-1.5 rounded-full shadow-md text-[10px] font-bold">
-        <Users size={12} className="text-primary" />
-        <span>참여자 {participants.length}명</span>
-        <div className="flex -space-x-1 ml-1">
-          {participants.slice(0, 3).map((p) => (
-            <div
-              key={p.id}
-              className="w-4 h-4 rounded-full bg-primary/20 text-primary border border-background flex items-center justify-center font-extrabold text-[8px]"
-              title={p.nickname}
-            >
-              {p.nickname.charAt(0)}
-            </div>
-          ))}
-          {participants.length > 3 && (
-            <div className="w-4 h-4 rounded-full bg-muted border border-background flex items-center justify-center text-[7px] text-muted-foreground font-bold">
-              +{participants.length - 3}
-            </div>
-          )}
-        </div>
-      </div>
-
       <Sidebar
         isDarkMode={isDarkMode}
         onToggleDarkMode={() => setIsDarkMode(!isDarkMode)}
@@ -228,31 +146,118 @@ export default function CollaborativeRoom() {
         }}
       />
 
-      <section className="flex-grow h-full relative bg-muted/20">
-        <KakaoMapView
-          restaurants={filteredAndSorted}
-          hoveredRestaurant={hoveredRes}
-          selectedRestaurant={selectedRes}
-          onSelectRestaurant={(res) => setSelectedRes(res)}
-          userLocation={userLocation}
-          onViewDetails={(res) => {
-            setDetailRes(res);
-            setIsDetailOpen(true);
-          }}
-          roulettePool={roulettePool}
-          onWinnerSelected={(winner) => {
-            triggerSpin(winner.name);
-          }}
-          isCollaborative={true}
-          collaborativeSpinStatus={spinEvent.status}
-          collaborativeWinnerName={spinEvent.winner}
-          onTriggerCollaborativeSpin={(chosen) => {
-            triggerSpin(chosen.name);
-          }}
-          onCollaborativeSpinEnd={() => {
-            // Keep spinning status as is until WinnerModal closes or we reset
-          }}
-        />
+      <section className="flex-grow h-full flex flex-col relative bg-muted/20">
+        {/* Dynamic Collaborative Header */}
+        <div className="p-4 pb-0 z-30">
+          <div className="flex flex-wrap items-center justify-between gap-3 bg-card/90 backdrop-blur-md border border-border px-4 py-3 rounded-2xl shadow-lg">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => router.push('/')}
+                className="p-2 hover:bg-muted rounded-xl transition-colors cursor-pointer text-muted-foreground hover:text-foreground"
+              >
+                <ArrowLeft size={16} />
+              </button>
+              <div>
+                <h1 className="text-sm font-black tracking-tight flex items-center gap-2">
+                  <span className="bg-primary/10 text-primary px-2 py-0.5 rounded-lg text-xs font-black">Room: {roomId}</span>
+                  실시간 조별 식당 고르기
+                </h1>
+                <p className="text-[10px] text-muted-foreground mt-0.5">조원들과 공유 링크로 함께 식당을 고르고 추천을 받으세요!</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              {/* Participants Badge */}
+              <div className="flex items-center gap-1.5 bg-muted/50 border border-border/40 px-3 py-1.5 rounded-xl text-xs font-bold text-muted-foreground">
+                <Users size={12} className="text-primary animate-pulse" />
+                <span>참여자 {participants.length}명</span>
+                <div className="flex -space-x-1 ml-1">
+                  {participants.slice(0, 3).map((p) => (
+                    <div
+                      key={p.id}
+                      className="w-4 h-4 rounded-full bg-primary/20 text-primary border border-background flex items-center justify-center font-extrabold text-[8px]"
+                      title={p.nickname}
+                    >
+                      {p.nickname.charAt(0)}
+                    </div>
+                  ))}
+                  {participants.length > 3 && (
+                    <div className="w-4 h-4 rounded-full bg-muted border border-background flex items-center justify-center text-[7px] text-muted-foreground font-bold">
+                      +{participants.length - 3}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* User Nickname Settings */}
+              <div className="flex items-center gap-1.5 bg-muted/50 border border-border/40 px-3 py-1.5 rounded-xl text-xs">
+                {isEditingNickname ? (
+                  <div className="flex items-center gap-1">
+                    <input
+                      type="text"
+                      value={newNickname}
+                      onChange={(e) => setNewNickname(e.target.value)}
+                      placeholder={currentUser?.nickname}
+                      className="bg-background border border-border rounded px-1.5 py-0.5 w-24 text-[11px] focus:outline-none focus:border-primary"
+                      maxLength={10}
+                    />
+                    <button onClick={handleSaveNickname} className="text-primary font-bold text-[11px] px-1">저장</button>
+                  </div>
+                ) : (
+                  <>
+                    <span className="font-extrabold text-foreground">나: {currentUser?.nickname}</span>
+                    <button
+                      onClick={() => {
+                        setNewNickname(currentUser?.nickname || '');
+                        setIsEditingNickname(true);
+                      }}
+                      className="text-muted-foreground hover:text-foreground p-0.5 cursor-pointer"
+                    >
+                      <Edit2 size={11} />
+                    </button>
+                  </>
+                )}
+              </div>
+
+              {/* Copy Share Link Button */}
+              <button
+                onClick={handleCopyLink}
+                className="flex items-center gap-1.5 bg-primary hover:bg-primary/90 text-white font-bold text-xs px-3 py-2 rounded-xl transition-colors cursor-pointer"
+              >
+                {copied ? <Check size={13} /> : <Copy size={13} />}
+                <span>{copied ? '복사 완료' : '초대 링크 복사'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Map Area */}
+        <div className="flex-grow h-full relative p-4">
+          <KakaoMapView
+            restaurants={filteredAndSorted}
+            hoveredRestaurant={hoveredRes}
+            selectedRestaurant={selectedRes}
+            onSelectRestaurant={(res) => setSelectedRes(res)}
+            userLocation={userLocation}
+            onViewDetails={(res) => {
+              setDetailRes(res);
+              setIsDetailOpen(true);
+            }}
+            roulettePool={roulettePool}
+            onWinnerSelected={(winner) => {
+              triggerSpin(winner.name);
+            }}
+            isCollaborative={true}
+            collaborativeSpinStatus={spinEvent.status}
+            collaborativeWinnerName={spinEvent.winner}
+            onTriggerCollaborativeSpin={(chosen) => {
+              triggerSpin(chosen.name);
+            }}
+            onCollaborativeSpinEnd={() => {
+              // Keep spinning status as is until WinnerModal closes or we reset
+            }}
+          />
+        </div>
       </section>
 
       {isDetailOpen && detailRes && (
