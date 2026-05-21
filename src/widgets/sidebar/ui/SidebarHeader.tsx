@@ -28,13 +28,13 @@ export default function SidebarHeader({ isDarkMode, onToggleDarkMode, onCreateRo
         {/* Create Room Button */}
         {onCreateRoom && (
           <Button
-            variant="ghost"
-            size="icon"
+            variant="outline"
             onClick={onCreateRoom}
-            className="rounded-xl w-9 h-9 border border-border shrink-0 cursor-pointer hover:bg-primary/10 hover:text-primary transition-colors text-muted-foreground"
-            title="실시간 공유방 만들기"
+            className="rounded-xl px-3 py-1.5 h-9 border border-border shrink-0 cursor-pointer hover:bg-primary/10 hover:text-primary transition-colors text-[11px] font-extrabold flex items-center gap-1.5 text-muted-foreground hover:border-primary/50"
+            title="실시간 룰렛 공유방 만들기"
           >
-            <Users size={16} />
+            <Users size={14} className="text-primary" />
+            <span>룰렛 방 만들기</span>
           </Button>
         )}
 
