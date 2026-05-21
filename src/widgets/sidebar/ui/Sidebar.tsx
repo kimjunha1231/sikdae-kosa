@@ -22,6 +22,7 @@ interface SidebarProps {
   roulettePool: string[];
   onTogglePool: (name: string) => void;
   onViewDetail: (res: Restaurant) => void;
+  onCreateRoom?: () => void;
 }
 
 export default function Sidebar({
@@ -40,12 +41,14 @@ export default function Sidebar({
   roulettePool,
   onTogglePool,
   onViewDetail,
+  onCreateRoom,
 }: SidebarProps) {
   return (
     <section className="w-full md:w-[460px] h-full flex flex-col shrink-0 border-r border-border bg-card shadow-lg relative z-20">
       <SidebarHeader
         isDarkMode={isDarkMode}
         onToggleDarkMode={onToggleDarkMode}
+        onCreateRoom={onCreateRoom}
       />
 
       <SearchFilterPanel
