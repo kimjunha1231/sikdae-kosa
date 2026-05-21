@@ -1294,37 +1294,37 @@
     "menus": [
       {
         "name": "더블 한우불고기",
-        "price": 1300014900,
+        "price": "13000~14900",
         "imageUrl": "https://ldb-phinf.pstatic.net/20220624_74/1656032860163Q8Dnu_PNG/%C7%D1%BF%EC%B4%F5%BA%ED_%282%29.png"
       },
       {
         "name": "핫크리스피버거",
-        "price": 62008300,
+        "price": "6200~8300",
         "imageUrl": "https://ldb-phinf.pstatic.net/20220621_229/1655791556535N1qQ8_PNG/%C7%D6%C5%A9%B8%AE%BD%BA%C7%C7%B9%F6%B0%C5.png"
       },
       {
         "name": "리아 불고기 더블",
-        "price": 76009600,
+        "price": "7600~9600",
         "imageUrl": "https://ldb-phinf.pstatic.net/20220621_135/1655791489829GjmJS_PNG/%BA%F2%BA%D2.png"
       },
       {
         "name": "데리버거",
-        "price": 37006100,
+        "price": "3700~6100",
         "imageUrl": "https://ldb-phinf.pstatic.net/20220621_44/16557914273405eqEz_PNG/%B5%A5%B8%AE%B9%F6%B0%C5.png"
       },
       {
         "name": "리아 새우",
-        "price": 50007300,
+        "price": "5000~7300",
         "imageUrl": "https://ldb-phinf.pstatic.net/20220621_24/1655791319814iTAnP_PNG/%BB%F5%BF%EC%B9%F6%B0%C5.png"
       },
       {
         "name": "한우불고기버거",
-        "price": 900010900,
+        "price": "9000~10900",
         "imageUrl": "https://ldb-phinf.pstatic.net/20220621_291/1655791248393H3qoB_PNG/%C7%D1%BF%EC%BA%D2%B0%ED%B1%E2%B9%F6%B0%C5.png"
       },
       {
         "name": "리아 불고기",
-        "price": 50007300,
+        "price": "5000~7300",
         "imageUrl": "https://ldb-phinf.pstatic.net/20220621_261/1655791140177DHszn_JPEG/%C1%A6%B8%F1_%BE%F8%C0%BD.jpg"
       }
     ]
@@ -1374,37 +1374,37 @@
     "menus": [
       {
         "name": "더블 한우불고기",
-        "price": 1300014900,
+        "price": "13000~14900",
         "imageUrl": "https://ldb-phinf.pstatic.net/20220624_74/1656032860163Q8Dnu_PNG/%C7%D1%BF%EC%B4%F5%BA%ED_%282%29.png"
       },
       {
         "name": "핫크리스피버거",
-        "price": 62008300,
+        "price": "6200~8300",
         "imageUrl": "https://ldb-phinf.pstatic.net/20220621_229/1655791556535N1qQ8_PNG/%C7%D6%C5%A9%B8%AE%BD%BA%C7%C7%B9%F6%B0%C5.png"
       },
       {
         "name": "리아 불고기 더블",
-        "price": 76009600,
+        "price": "7600~9600",
         "imageUrl": "https://ldb-phinf.pstatic.net/20220621_135/1655791489829GjmJS_PNG/%BA%F2%BA%D2.png"
       },
       {
         "name": "데리버거",
-        "price": 37006100,
+        "price": "3700~6100",
         "imageUrl": "https://ldb-phinf.pstatic.net/20220621_44/16557914273405eqEz_PNG/%B5%A5%B8%AE%B9%F6%B0%C5.png"
       },
       {
         "name": "리아 새우",
-        "price": 50007300,
+        "price": "5000~7300",
         "imageUrl": "https://ldb-phinf.pstatic.net/20220621_24/1655791319814iTAnP_PNG/%BB%F5%BF%EC%B9%F6%B0%C5.png"
       },
       {
         "name": "한우불고기버거",
-        "price": 900010900,
+        "price": "9000~10900",
         "imageUrl": "https://ldb-phinf.pstatic.net/20220621_291/1655791248393H3qoB_PNG/%C7%D1%BF%EC%BA%D2%B0%ED%B1%E2%B9%F6%B0%C5.png"
       },
       {
         "name": "리아 불고기",
-        "price": 50007300,
+        "price": "5000~7300",
         "imageUrl": "https://ldb-phinf.pstatic.net/20220621_261/1655791140177DHszn_JPEG/%C1%A6%B8%F1_%BE%F8%C0%BD.jpg"
       }
     ]
@@ -1424,37 +1424,37 @@
     "menus": [
       {
         "name": "더블 한우불고기",
-        "price": 1300014900,
+        "price": "13000~14900",
         "imageUrl": "https://ldb-phinf.pstatic.net/20220624_74/1656032860163Q8Dnu_PNG/%C7%D1%BF%EC%B4%F5%BA%ED_%282%29.png"
       },
       {
         "name": "핫크리스피버거",
-        "price": 62008300,
+        "price": "6200~8300",
         "imageUrl": "https://ldb-phinf.pstatic.net/20220621_229/1655791556535N1qQ8_PNG/%C7%D6%C5%A9%B8%AE%BD%BA%C7%C7%B9%F6%B0%C5.png"
       },
       {
         "name": "리아 불고기 더블",
-        "price": 76009600,
+        "price": "7600~9600",
         "imageUrl": "https://ldb-phinf.pstatic.net/20220621_135/1655791489829GjmJS_PNG/%BA%F2%BA%D2.png"
       },
       {
         "name": "데리버거",
-        "price": 37006100,
+        "price": "3700~6100",
         "imageUrl": "https://ldb-phinf.pstatic.net/20220621_44/16557914273405eqEz_PNG/%B5%A5%B8%AE%B9%F6%B0%C5.png"
       },
       {
         "name": "리아 새우",
-        "price": 50007300,
+        "price": "5000~7300",
         "imageUrl": "https://ldb-phinf.pstatic.net/20220621_24/1655791319814iTAnP_PNG/%BB%F5%BF%EC%B9%F6%B0%C5.png"
       },
       {
         "name": "한우불고기버거",
-        "price": 900010900,
+        "price": "9000~10900",
         "imageUrl": "https://ldb-phinf.pstatic.net/20220621_291/1655791248393H3qoB_PNG/%C7%D1%BF%EC%BA%D2%B0%ED%B1%E2%B9%F6%B0%C5.png"
       },
       {
         "name": "리아 불고기",
-        "price": 50007300,
+        "price": "5000~7300",
         "imageUrl": "https://ldb-phinf.pstatic.net/20220621_261/1655791140177DHszn_JPEG/%C1%A6%B8%F1_%BE%F8%C0%BD.jpg"
       }
     ]
@@ -2949,7 +2949,7 @@
     "menus": [
       {
         "name": "반포식스 쌀국수",
-        "price": 1150013500,
+        "price": "11500~13500",
         "imageUrl": "https://ldb-phinf.pstatic.net/20240724_6/1721802630438kn9BR_JPEG/%B9%DD%C6%F7%BD%C4%BD%BA%BD%D2%B1%B9%BC%F6.JPG"
       },
       {
@@ -3074,7 +3074,7 @@
       },
       {
         "name": "양지, 차돌 쌀국수",
-        "price": 1100013000,
+        "price": "10000~13000",
         "imageUrl": "https://ldb-phinf.pstatic.net/20240724_35/1721802606829eYjRL_JPEG/%BE%E7%C1%F6%C2%F7%B5%B9%BD%D2%B1%B9%BC%F6.JPG"
       },
       {
@@ -3084,17 +3084,17 @@
       },
       {
         "name": "닭고기 쌀국수",
-        "price": 1100013000,
+        "price": "11000~13000",
         "imageUrl": "https://ldb-phinf.pstatic.net/20240724_149/1721802556672oGUBj_JPEG/%B4%DF%B0%ED%B1%E2%BD%D2%B1%B9%BC%F6.JPG"
       },
       {
         "name": "해산물 쌀국수",
-        "price": 1200014000,
+        "price": "12000~14000",
         "imageUrl": "https://ldb-phinf.pstatic.net/20240724_230/1721802540060VOmOu_JPEG/%C7%D8%BB%EA%B9%B0%BD%D2%B1%B9%BC%F6.JPG"
       },
       {
         "name": "매운 쌀국수",
-        "price": 1200014000,
+        "price": "12000~14000",
         "imageUrl": "https://ldb-phinf.pstatic.net/20240724_298/1721802521054wTqGD_JPEG/%B8%C5%BF%EE%BD%D2%B1%B9%BC%F6.JPG"
       },
       {
@@ -6894,7 +6894,7 @@
       },
       {
         "name": "글로벌 세트(비프,치킨)",
-        "price": 1240017000,
+        "price": "12400~17000",
         "imageUrl": "https://ldb-phinf.pstatic.net/20250616_210/1750075403516SYsGr_JPEG/KakaoTalk_20250429_234815358_01.jpg"
       },
       {
