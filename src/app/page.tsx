@@ -184,6 +184,7 @@ export default function Dashboard() {
           onWinnerSelected={(winner) => {
             setRouletteWinner(winner);
           }}
+          onTogglePool={toggleRouletteSelection}
         />
       </section>
 

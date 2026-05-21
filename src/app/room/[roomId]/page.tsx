@@ -249,6 +249,7 @@ export default function CollaborativeRoom() {
             onWinnerSelected={(winner) => {
               setSelectedRes(winner);
             }}
+            onTogglePool={toggleRouletteSelection}
             isCollaborative={true}
             collaborativeSpinStatus={spinEvent.status}
             collaborativeWinnerName={spinEvent.winner}

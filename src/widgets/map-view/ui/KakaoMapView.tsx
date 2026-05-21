@@ -17,6 +17,7 @@ interface KakaoMapViewProps {
   onViewDetails?: (restaurant: Restaurant) => void;
   roulettePool: string[];
   onWinnerSelected?: (restaurant: Restaurant) => void;
+  onTogglePool?: (name: string) => void;
   isCollaborative?: boolean;
   collaborativeSpinStatus?: 'idle' | 'spinning' | 'completed';
   collaborativeWinnerName?: string;
@@ -33,6 +34,7 @@ export default function KakaoMapView({
   onViewDetails,
   roulettePool,
   onWinnerSelected,
+  onTogglePool,
   isCollaborative = false,
   collaborativeSpinStatus = 'idle',
   collaborativeWinnerName = '',
@@ -134,6 +136,13 @@ export default function KakaoMapView({
         level: 3,
       };
       mapRef.current = new kakao.maps.Map(mapContainerRef.current, options);
+
+      // Close overlay when clicking on blank map area
+      kakao.maps.event.addListener(mapRef.current, 'click', () => {
+        if (customOverlayRef.current) {
+          customOverlayRef.current.setMap(null);
+        }
+      });
     }
 
     // Clear old markers
@@ -187,11 +196,12 @@ export default function KakaoMapView({
       content.addEventListener('click', () => {
         onSelectRestaurant(res);
         showCustomOverlay(res);
+        if (onTogglePool) onTogglePool(res.name);
       });
 
       markersRef.current.push(customMarker);
     });
-  }, [isSdkLoaded, restaurants, userLocation, roulettePool]);
+  }, [isSdkLoaded, restaurants, userLocation, roulettePool, onTogglePool]);
 
 
   // 4. Hover effect - Pan to and open temp overlay
