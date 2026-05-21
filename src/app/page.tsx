@@ -154,6 +154,7 @@ export default function Dashboard() {
         onSortByChange={setSortBy}
         onSearchQueryChange={setSearchQuery}
         filteredAndSorted={filteredAndSorted}
+        allRestaurants={restaurantsWithDistance}
         selectedRes={selectedRes}
         onSelectRes={(res) => setSelectedRes(res)}
         onHoverEnterRes={(res) => setHoveredRes(res)}
