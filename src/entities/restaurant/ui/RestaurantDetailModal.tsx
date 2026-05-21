@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/shared/ui/dialog';
 import { Button } from '@/shared/ui/button';
-import { MapPin, Clock, Star, ExternalLink, Utensils, X } from 'lucide-react';
+import { MapPin, Clock, Star, ExternalLink, Utensils, X, Check, Plus } from 'lucide-react';
 import { formatPrice } from '@/shared/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
@@ -15,9 +15,17 @@ interface RestaurantDetailModalProps {
   isOpen: boolean;
   onClose: () => void;
   restaurant: Restaurant | null;
+  isInPool?: boolean;
+  onTogglePool?: (name: string) => void;
 }
 
-export default function RestaurantDetailModal({ isOpen, onClose, restaurant }: RestaurantDetailModalProps) {
+export default function RestaurantDetailModal({ 
+  isOpen, 
+  onClose, 
+  restaurant,
+  isInPool = false,
+  onTogglePool
+}: RestaurantDetailModalProps) {
   const [selectedImage, setSelectedImage] = useState<{ name: string; imageUrl: string; index: number } | null>(null);
 
   // Close image preview when detail modal closes
@@ -42,9 +50,26 @@ export default function RestaurantDetailModal({ isOpen, onClose, restaurant }: R
                 {restaurant.distance}
               </span>
             </div>
-            <DialogTitle className="text-xl font-black tracking-tight text-foreground mt-1">
-              {restaurant.name}
-            </DialogTitle>
+            <div className="flex items-center justify-between gap-4 mt-1">
+              <DialogTitle className="text-xl font-black tracking-tight text-foreground truncate">
+                {restaurant.name}
+              </DialogTitle>
+              {onTogglePool && (
+                <Button
+                  size="icon-sm"
+                  variant={isInPool ? "default" : "outline"}
+                  className={`h-7 w-7 rounded-xl shrink-0 transition-all duration-200 cursor-pointer ${
+                    isInPool 
+                      ? 'bg-primary text-white hover:bg-primary/90' 
+                      : 'border-border/60 hover:bg-muted text-muted-foreground'
+                  }`}
+                  onClick={() => onTogglePool(restaurant.name)}
+                  title={isInPool ? "룰렛에서 제외" : "룰렛에 추가"}
+                >
+                  {isInPool ? <Check size={14} className="stroke-[3px]" /> : <Plus size={14} />}
+                </Button>
+              )}
+            </div>
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1.5">
               <span className="text-yellow-500 font-extrabold flex items-center gap-0.5">
                 <Star size={13} className="fill-yellow-500 text-yellow-500" />
