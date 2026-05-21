@@ -10,9 +10,23 @@ interface RouletteSpinnerProps {
   filteredRestaurants: Restaurant[];
   customPool: string[];
   onWinnerSelected: (winner: Restaurant) => void;
+  isCollaborative?: boolean;
+  collaborativeSpinStatus?: 'idle' | 'spinning' | 'completed';
+  collaborativeWinnerName?: string;
+  onTriggerCollaborativeSpin?: (winner: Restaurant) => void;
+  onCollaborativeSpinEnd?: () => void;
 }
 
-export default function RouletteSpinner({ filteredRestaurants, customPool, onWinnerSelected }: RouletteSpinnerProps) {
+export default function RouletteSpinner({
+  filteredRestaurants,
+  customPool,
+  onWinnerSelected,
+  isCollaborative = false,
+  collaborativeSpinStatus = 'idle',
+  collaborativeWinnerName = '',
+  onTriggerCollaborativeSpin,
+  onCollaborativeSpinEnd,
+}: RouletteSpinnerProps) {
   const [isSpinning, setIsSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
   
@@ -36,10 +50,15 @@ export default function RouletteSpinner({ filteredRestaurants, customPool, onWin
       return;
     }
 
-    setIsSpinning(true);
-
     const randomIndex = Math.floor(Math.random() * baseRestaurants.length);
     const chosen = baseRestaurants[randomIndex];
+
+    if (isCollaborative && onTriggerCollaborativeSpin) {
+      onTriggerCollaborativeSpin(chosen);
+      return;
+    }
+
+    setIsSpinning(true);
 
     const extraAngle = Math.floor(Math.random() * 360);
     const targetRotation = rotation + 1800 + extraAngle;
@@ -50,6 +69,29 @@ export default function RouletteSpinner({ filteredRestaurants, customPool, onWin
       onWinnerSelected(chosen);
     }, 3000);
   };
+
+  // Sync animation triggers on collaborative events
+  React.useEffect(() => {
+    if (!isCollaborative) return;
+
+    if (collaborativeSpinStatus === 'spinning' && collaborativeWinnerName && !isSpinning) {
+      setIsSpinning(true);
+      const extraAngle = Math.floor(Math.random() * 360);
+      const targetRotation = rotation + 1800 + extraAngle;
+      setRotation(targetRotation);
+
+      const chosen = filteredRestaurants.find(r => r.name === collaborativeWinnerName);
+      setTimeout(() => {
+        setIsSpinning(false);
+        if (chosen) {
+          onWinnerSelected(chosen);
+        }
+        if (onCollaborativeSpinEnd) {
+          onCollaborativeSpinEnd();
+        }
+      }, 3000);
+    }
+  }, [collaborativeSpinStatus, collaborativeWinnerName, isCollaborative, filteredRestaurants, onWinnerSelected, onCollaborativeSpinEnd]);
 
   return (
     <div className="bg-card/95 backdrop-blur-md text-card-foreground border border-border rounded-3xl p-5 relative overflow-hidden shadow-lg flex flex-col items-center w-full transition-all duration-200">

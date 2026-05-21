@@ -2,14 +2,15 @@
 
 import React from 'react';
 import { Button } from '@/shared/ui/button';
-import { UtensilsCrossed, Sun, Moon } from 'lucide-react';
+import { UtensilsCrossed, Sun, Moon, Users } from 'lucide-react';
 
 interface SidebarHeaderProps {
   isDarkMode: boolean;
   onToggleDarkMode: () => void;
+  onCreateRoom?: () => void;
 }
 
-export default function SidebarHeader({ isDarkMode, onToggleDarkMode }: SidebarHeaderProps) {
+export default function SidebarHeader({ isDarkMode, onToggleDarkMode, onCreateRoom }: SidebarHeaderProps) {
   return (
     <header className="p-5 border-b border-border flex items-center justify-between">
       <div className="flex items-center gap-2">
@@ -24,6 +25,19 @@ export default function SidebarHeader({ isDarkMode, onToggleDarkMode }: SidebarH
       </div>
 
       <div className="flex gap-2">
+        {/* Create Room Button */}
+        {onCreateRoom && (
+          <Button
+            variant="outline"
+            onClick={onCreateRoom}
+            className="rounded-xl px-3 py-1.5 h-9 border border-border shrink-0 cursor-pointer hover:bg-primary/10 hover:text-primary transition-colors text-[11px] font-extrabold flex items-center gap-1.5 text-muted-foreground hover:border-primary/50"
+            title="실시간 룰렛 공유방 만들기"
+          >
+            <Users size={14} className="text-primary" />
+            <span>룰렛 방 만들기</span>
+          </Button>
+        )}
+
         {/* Dark Mode Switcher */}
         <Button
           variant="ghost"
