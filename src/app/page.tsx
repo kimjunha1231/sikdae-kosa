@@ -182,6 +182,8 @@ export default function Dashboard() {
           setDetailRes(null);
         }}
         restaurant={detailRes}
+        isInPool={detailRes ? roulettePool.includes(detailRes.name) : false}
+        onTogglePool={toggleRouletteSelection}
       />
 
       {/* 4. Global Winner Modal */}
