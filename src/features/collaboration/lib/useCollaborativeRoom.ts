@@ -132,6 +132,11 @@ export function useCollaborativeRoom(roomId: string) {
     });
   };
 
+  const completeSpin = () => {
+    const spinRef = ref(db, `rooms/${roomId}/spinEvent`);
+    update(spinRef, { status: 'completed' });
+  };
+
   const resetSpin = () => {
     const spinRef = ref(db, `rooms/${roomId}/spinEvent`);
     set(spinRef, {
@@ -157,6 +162,7 @@ export function useCollaborativeRoom(roomId: string) {
     currentUser,
     toggleRouletteSelection,
     triggerSpin,
+    completeSpin,
     resetSpin,
     updateNickname,
   };
