@@ -56,17 +56,25 @@ export default function RestaurantDetailModal({
               </DialogTitle>
               {onTogglePool && (
                 <Button
-                  size="icon-sm"
-                  variant={isInPool ? "default" : "outline"}
-                  className={`h-7 w-7 rounded-xl shrink-0 transition-all duration-200 cursor-pointer ${
+                  size="sm"
+                  className={`h-7 px-3 rounded-xl shrink-0 text-xs font-bold gap-1 transition-all duration-200 cursor-pointer ${
                     isInPool 
-                      ? 'bg-primary text-white hover:bg-primary/90' 
-                      : 'border-border/60 hover:bg-muted text-muted-foreground'
+                      ? 'bg-muted text-muted-foreground hover:bg-muted/80' 
+                      : 'bg-primary text-white hover:bg-primary/90'
                   }`}
                   onClick={() => onTogglePool(restaurant.name)}
-                  title={isInPool ? "룰렛에서 제외" : "룰렛에 추가"}
                 >
-                  {isInPool ? <Check size={14} className="stroke-[3px]" /> : <Plus size={14} />}
+                  {isInPool ? (
+                    <>
+                      <Check size={12} className="stroke-[3px]" />
+                      <span>룰렛 제외하기</span>
+                    </>
+                  ) : (
+                    <>
+                      <Plus size={12} className="stroke-[3px]" />
+                      <span>룰렛 추가하기</span>
+                    </>
+                  )}
                 </Button>
               )}
             </div>
