@@ -17,6 +17,11 @@ interface KakaoMapViewProps {
   onViewDetails?: (restaurant: Restaurant) => void;
   roulettePool: string[];
   onWinnerSelected?: (restaurant: Restaurant) => void;
+  isCollaborative?: boolean;
+  collaborativeSpinStatus?: 'idle' | 'spinning' | 'completed';
+  collaborativeWinnerName?: string;
+  onTriggerCollaborativeSpin?: (winner: Restaurant) => void;
+  onCollaborativeSpinEnd?: () => void;
 }
 
 export default function KakaoMapView({
@@ -28,6 +33,11 @@ export default function KakaoMapView({
   onViewDetails,
   roulettePool,
   onWinnerSelected,
+  isCollaborative = false,
+  collaborativeSpinStatus = 'idle',
+  collaborativeWinnerName = '',
+  onTriggerCollaborativeSpin,
+  onCollaborativeSpinEnd,
 }: KakaoMapViewProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
@@ -320,6 +330,11 @@ export default function KakaoMapView({
               onSelectRestaurant(winner);
               if (onWinnerSelected) onWinnerSelected(winner);
             }} 
+            isCollaborative={isCollaborative}
+            collaborativeSpinStatus={collaborativeSpinStatus}
+            collaborativeWinnerName={collaborativeWinnerName}
+            onTriggerCollaborativeSpin={onTriggerCollaborativeSpin}
+            onCollaborativeSpinEnd={onCollaborativeSpinEnd}
           />
         </div>
       )}
