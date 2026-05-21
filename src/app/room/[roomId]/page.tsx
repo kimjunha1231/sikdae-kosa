@@ -146,7 +146,7 @@ export default function CollaborativeRoom() {
         }}
       />
 
-      <section className="flex-grow h-full flex flex-col relative bg-muted/20">
+      <section className="flex-grow min-w-0 h-full flex flex-col relative bg-muted/20">
         {/* Dynamic Collaborative Header */}
         <div className="p-4 pb-0 z-30">
           <div className="flex flex-wrap items-center justify-between gap-3 bg-card/90 backdrop-blur-md border border-border px-4 py-3 rounded-2xl shadow-lg">
@@ -232,7 +232,7 @@ export default function CollaborativeRoom() {
         </div>
 
         {/* Map Area */}
-        <div className="flex-grow h-full relative p-4">
+        <div className="flex-grow min-h-0 relative p-4">
           <KakaoMapView
             restaurants={filteredAndSorted}
             hoveredRestaurant={hoveredRes}
