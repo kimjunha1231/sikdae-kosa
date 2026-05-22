@@ -40,7 +40,7 @@ export default function RestaurantDetailModal({
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="max-w-lg w-full rounded-3xl bg-card border border-border p-6 shadow-2xl overflow-y-auto max-h-[85vh] scrollbar-none">
+        <DialogContent className="max-w-md sm:max-w-lg w-full rounded-3xl bg-card border border-border p-6 shadow-2xl overflow-y-auto max-h-[85vh] scrollbar-none">
           <DialogHeader className="space-y-1">
             <div className="flex items-center gap-2">
               <span className="text-[10px] bg-primary/10 text-primary px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider">
@@ -50,8 +50,8 @@ export default function RestaurantDetailModal({
                 {restaurant.distance}
               </span>
             </div>
-            <div className="flex items-center justify-between gap-4 mt-1">
-              <DialogTitle className="text-xl font-black tracking-tight text-foreground truncate min-w-0">
+            <div className="flex items-center justify-between gap-4 mt-1 w-full min-w-0">
+              <DialogTitle className="text-xl font-black tracking-tight text-foreground truncate min-w-0 flex-1">
                 {restaurant.name}
               </DialogTitle>
               {onTogglePool && (
