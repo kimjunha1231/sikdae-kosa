@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Input } from '@/shared/ui/input';
 import { Search } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const CATEGORIES = [
   '전체',
@@ -86,21 +87,31 @@ export default function SearchFilterPanel({
         </span>
 
         {/* Toss-style segment sorting controller */}
-        <div className="flex bg-muted/60 p-0.5 rounded-lg border border-border/20">
-          {(['distance', 'rating', 'name'] as const).map((sortOption) => (
-            <button
-              key={sortOption}
-              type="button"
-              onClick={() => onSortByChange(sortOption)}
-              className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase transition-all duration-150 cursor-pointer ${
-                sortBy === sortOption
-                  ? 'bg-card text-foreground shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              {sortOption === 'distance' ? '거리순' : sortOption === 'rating' ? '평점순' : '이름순'}
-            </button>
-          ))}
+        <div className="flex bg-muted/60 p-0.5 rounded-lg border border-border/20 relative">
+          {(['distance', 'rating', 'name'] as const).map((sortOption) => {
+            const isActive = sortBy === sortOption;
+            return (
+              <button
+                key={sortOption}
+                type="button"
+                onClick={() => onSortByChange(sortOption)}
+                className={`relative px-2 py-1 rounded-md text-[10px] font-bold uppercase transition-all duration-150 cursor-pointer z-10 ${
+                  isActive
+                    ? 'text-foreground font-black'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                {isActive && (
+                  <motion.div
+                    layoutId="activeSortBg"
+                    className="absolute inset-0 bg-card rounded-md shadow-sm z-[-1]"
+                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                  />
+                )}
+                {sortOption === 'distance' ? '거리순' : sortOption === 'rating' ? '평점순' : '이름순'}
+              </button>
+            );
+          })}
         </div>
       </div>
     </div>

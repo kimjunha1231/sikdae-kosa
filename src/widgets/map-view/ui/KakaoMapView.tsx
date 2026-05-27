@@ -332,7 +332,7 @@ export default function KakaoMapView({
 
   return (
     <Card className="relative w-full h-full min-h-[450px] bg-background border border-border overflow-hidden rounded-3xl shadow-lg">
-      <div ref={mapContainerRef} className="w-full h-full absolute inset-0" />
+      <div ref={mapContainerRef} className="w-full h-full absolute inset-0 kakao-map-container" />
       
       {/* Floating Roulette Overlay */}
       {isSdkLoaded && (

@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { Restaurant } from '../model/types';
 
-const MotionImage = motion(Image);
+const MotionImage = motion.create(Image);
 
 interface RestaurantDetailModalProps {
   isOpen: boolean;

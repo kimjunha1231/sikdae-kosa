@@ -125,3 +125,8 @@
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
+
+/* Sleek Dark Mode for Kakao Map Tiles */
+.dark .kakao-map-container img {
+  filter: invert(92%) hue-rotate(180deg) brightness(95%) contrast(90%) !important;
+}
