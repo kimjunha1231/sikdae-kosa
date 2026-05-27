@@ -90,18 +90,15 @@ def fetch_menu_details(place_id):
     return None, None
 
 def main():
-    place_name = "가락정초밥"
-    print(f"Searching place ID for '{place_name}'...")
-    place_id = search_place_id(place_name + " 가락동")
-    print(f"Found Place ID: {place_id}")
-    if place_id:
-        type_found, data_str = fetch_menu_details(place_id)
-        if data_str:
-            with open("scratch/extracted_data.json", "w", encoding="utf-8") as f:
-                f.write(data_str)
-            print(f"Saved extracted data type '{type_found}' to scratch/extracted_data.json")
-        else:
-            print("Could not find structured data block in HTML.")
+    place_id = "1177808297" # 예원
+    print(f"Fetching menu details for place ID '{place_id}'...")
+    type_found, data_str = fetch_menu_details(place_id)
+    if data_str:
+        with open("scratch/extracted_data.json", "w", encoding="utf-8") as f:
+            f.write(data_str)
+        print(f"Saved extracted data type '{type_found}' to scratch/extracted_data.json")
+    else:
+        print("Could not find structured data block in HTML.")
 
 if __name__ == "__main__":
     main()
