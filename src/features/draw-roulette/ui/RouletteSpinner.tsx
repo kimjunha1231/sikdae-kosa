@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { Button } from '@/shared/ui/button';
-import { Compass, RotateCw, ChevronUp, ChevronDown } from 'lucide-react';
+import { Compass, ChevronUp, ChevronDown } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Restaurant } from '@/entities/restaurant';
 
@@ -47,21 +47,15 @@ export default function RouletteSpinner({
 
   // Slices items to display
   const itemsToDisplay = useMemo(() => {
-    if (wheelRestaurants.length > 0) {
-      return wheelRestaurants.map(r => ({ name: r.name, category: r.category }));
+    if (drawMode === 'custom') {
+      if (wheelRestaurants.length > 0) {
+        return wheelRestaurants.map(r => ({ name: r.name, category: r.category }));
+      }
+      return [{ name: '선택된 맛집 없음', category: '없음' }];
     }
-    // Fallback: Default 8 food category slices
-    return [
-      { name: '한식', category: '한식' },
-      { name: '중식', category: '중식' },
-      { name: '일식', category: '일식' },
-      { name: '양식', category: '양식' },
-      { name: '분식', category: '분식' },
-      { name: '샐러드', category: '샐러드' },
-      { name: '카페', category: '카페/베이커리/패스트푸드' },
-      { name: '아시안', category: '아시안푸드' }
-    ];
-  }, [wheelRestaurants]);
+    // 'all2km' mode: Single unified circle
+    return [{ name: '2km 이내 전체', category: '전체' }];
+  }, [wheelRestaurants, drawMode]);
 
   const K = itemsToDisplay.length;
   const sliceAngle = 360 / K;
@@ -96,15 +90,22 @@ export default function RouletteSpinner({
   const handleSpin = () => {
     if (isSpinning) return;
 
-    if (wheelRestaurants.length === 0) {
+    // Determine candidate pool based on mode (custom uses user pool, all2km uses ALL matching restaurants without a cap)
+    let candidates = wheelRestaurants;
+    if (drawMode === 'all2km') {
+      const nearby = filteredRestaurants.filter(r => r.distanceVal !== undefined && r.distanceVal <= 2000);
+      candidates = nearby.length > 0 ? nearby : filteredRestaurants;
+    }
+
+    if (candidates.length === 0) {
       alert(drawMode === 'all2km'
         ? '추천해 드릴 식당이 근처에 없습니다. 거리 내에 식당이 활성화되어 있는지 확인해 주세요!' 
         : '선택하신 룰렛 후보 식당이 없습니다. 왼쪽 목록에서 룰렛에 추가할 식당들의 체크박스를 눌러주세요!');
       return;
     }
 
-    const randomIndex = Math.floor(Math.random() * wheelRestaurants.length);
-    const chosen = wheelRestaurants[randomIndex];
+    const randomIndex = Math.floor(Math.random() * candidates.length);
+    const chosen = candidates[randomIndex];
 
     if (isCollaborative && onTriggerCollaborativeSpin) {
       onTriggerCollaborativeSpin(chosen);
@@ -113,9 +114,12 @@ export default function RouletteSpinner({
 
     setIsSpinning(true);
 
-    // Calculate precise target rotation to land winning index under the top pointer (270 degrees)
-    const sliceCenterAngle = (randomIndex + 0.5) * sliceAngle;
-    const targetAngle = (270 - sliceCenterAngle + 720) % 360;
+    // Find target slice index (for custom mode it's randomIndex, for all2km mode it's always 0 since K=1)
+    const targetSliceIndex = drawMode === 'all2km' ? 0 : randomIndex;
+
+    // Calculate precise target rotation to land winning index under the top pointer (12 o'clock)
+    const sliceCenterAngle = (targetSliceIndex + 0.5) * sliceAngle;
+    const targetAngle = (360 - sliceCenterAngle + 720) % 360;
     // Perform exactly 5 full spins (1800 deg) plus the alignment offset
     const targetRotation = rotation + (360 - (rotation % 360)) + 1800 + targetAngle;
     setRotation(targetRotation);
@@ -131,18 +135,20 @@ export default function RouletteSpinner({
     if (!isCollaborative) return;
 
     if (collaborativeSpinStatus === 'spinning' && collaborativeWinnerName && !isSpinning) {
-      setIsSpinning(true);
-      
       const winnerIndex = wheelRestaurants.findIndex(r => r.name === collaborativeWinnerName);
-      const actualIndex = winnerIndex !== -1 ? winnerIndex : Math.floor(Math.random() * K);
+      const chosen = filteredRestaurants.find(r => r.name === collaborativeWinnerName);
       
-      const sliceCenterAngle = (actualIndex + 0.5) * sliceAngle;
-      const targetAngle = (270 - sliceCenterAngle + 720) % 360;
+      const targetSliceIndex = drawMode === 'all2km' ? 0 : (winnerIndex !== -1 ? winnerIndex : Math.floor(Math.random() * K));
+      
+      const sliceCenterAngle = (targetSliceIndex + 0.5) * sliceAngle;
+      const targetAngle = (360 - sliceCenterAngle + 720) % 360;
       const targetRotation = rotation + (360 - (rotation % 360)) + 1800 + targetAngle;
       
-      setRotation(targetRotation);
+      setTimeout(() => {
+        setIsSpinning(true);
+        setRotation(targetRotation);
+      }, 0);
 
-      const chosen = filteredRestaurants.find(r => r.name === collaborativeWinnerName);
       setTimeout(() => {
         setIsSpinning(false);
         if (chosen) {
@@ -153,7 +159,7 @@ export default function RouletteSpinner({
         }
       }, 3000);
     }
-  }, [collaborativeSpinStatus, collaborativeWinnerName, isCollaborative, filteredRestaurants, wheelRestaurants, onWinnerSelected, onCollaborativeSpinEnd, rotation, sliceAngle, K]);
+  }, [collaborativeSpinStatus, collaborativeWinnerName, isCollaborative, filteredRestaurants, wheelRestaurants, onWinnerSelected, onCollaborativeSpinEnd, rotation, sliceAngle, K, isSpinning, drawMode]);
 
   return (
     <div className="bg-card/95 backdrop-blur-md text-card-foreground border border-border rounded-3xl p-5 relative overflow-hidden shadow-lg flex flex-col items-center w-full transition-all duration-200">
@@ -235,11 +241,27 @@ export default function RouletteSpinner({
               className="w-36 h-36 rounded-full shadow-lg z-10 overflow-hidden relative bg-muted"
             >
               {K === 1 ? (
-                <div className="w-full h-full" style={{ backgroundColor: sliceColors[0] }}>
-                  <div className="w-full h-full flex items-center justify-center text-white font-extrabold text-[10px] px-2 text-center select-none">
-                    {itemsToDisplay[0].name}
-                  </div>
-                </div>
+                <svg width="100%" height="100%" viewBox="0 0 200 200">
+                  <circle cx="100" cy="100" r="100" fill={sliceColors[0]} />
+                  {[0, 90, 180, 270].map((angle) => {
+                    const rad = (angle - 90) * Math.PI / 180;
+                    const tx = 100 + 65 * Math.cos(rad);
+                    const ty = 100 + 65 * Math.sin(rad);
+                    return (
+                      <text
+                        key={angle}
+                        x={tx}
+                        y={ty}
+                        transform={`rotate(${angle}, ${tx}, ${ty})`}
+                        textAnchor="middle"
+                        dominantBaseline="middle"
+                        className="fill-white/95 font-black text-[9px] select-none pointer-events-none drop-shadow-[0_1px_1px_rgba(0,0,0,0.3)]"
+                      >
+                        랜덤 돌리기
+                      </text>
+                    );
+                  })}
+                </svg>
               ) : (
                 <svg width="100%" height="100%" viewBox="0 0 200 200" className="transform rotate-0">
                   {itemsToDisplay.map((item, idx) => {
