@@ -24,5 +24,6 @@ jobs:
         env:
           API_URL: ${{ secrets.API_URL }}
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          RAPIDAPI_KEY: ${{ secrets.RAPIDAPI_KEY }}
         run: |
           node scratch/scraper.js
