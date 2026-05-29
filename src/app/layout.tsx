@@ -22,6 +22,9 @@ const pretendard = localFont({
 export const metadata: Metadata = {
   title: "식권대장 - 송파 IT벤처타워 가락동 맛집 대시보드",
   description: "식권대장 84개 식당 목록 지도 매핑, 카카오 지도, 룰렛 추천 및 맛집 관리 대시보드",
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
+  },
 };
 
 export default function RootLayout({
