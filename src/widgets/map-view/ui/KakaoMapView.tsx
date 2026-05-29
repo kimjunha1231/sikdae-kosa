@@ -17,6 +17,11 @@ interface KakaoMapViewProps {
   onViewDetails?: (restaurant: Restaurant) => void;
   roulettePool: string[];
   onWinnerSelected?: (restaurant: Restaurant) => void;
+  isCollaborative?: boolean;
+  collaborativeSpinStatus?: 'idle' | 'spinning' | 'completed';
+  collaborativeWinnerName?: string;
+  onTriggerCollaborativeSpin?: (winner: Restaurant) => void;
+  onCollaborativeSpinEnd?: () => void;
 }
 
 export default function KakaoMapView({
@@ -28,6 +33,11 @@ export default function KakaoMapView({
   onViewDetails,
   roulettePool,
   onWinnerSelected,
+  isCollaborative = false,
+  collaborativeSpinStatus = 'idle',
+  collaborativeWinnerName = '',
+  onTriggerCollaborativeSpin,
+  onCollaborativeSpinEnd,
 }: KakaoMapViewProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
@@ -124,6 +134,13 @@ export default function KakaoMapView({
         level: 3,
       };
       mapRef.current = new kakao.maps.Map(mapContainerRef.current, options);
+
+      // Close overlay when clicking on blank map area
+      kakao.maps.event.addListener(mapRef.current, 'click', () => {
+        if (customOverlayRef.current) {
+          customOverlayRef.current.setMap(null);
+        }
+      });
     }
 
     // Clear old markers
@@ -146,6 +163,7 @@ export default function KakaoMapView({
         '아시안푸드': 'bg-sky-500',
       };
       const catColor = categoryColors[res.category] || 'bg-blue-500';
+      const inPool = roulettePool.includes(res.name);
 
       const content = document.createElement('div');
       content.className = 'cursor-pointer group relative w-8 h-8 flex items-center justify-center transition-transform duration-200 active:scale-95';
@@ -154,10 +172,15 @@ export default function KakaoMapView({
         <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-card/95 backdrop-blur-md border border-border/80 px-2 py-0.5 rounded-lg shadow-md text-[9px] font-extrabold text-foreground whitespace-nowrap transition-all duration-200 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary select-none">
           ${res.name}
         </div>
-        <!-- Dot -->
-        <div class="flex items-center justify-center w-8 h-8 rounded-full bg-card border-2 border-white shadow-md hover:shadow-xl hover:scale-110 transition-all duration-200">
-          <div class="w-2.5 h-2.5 rounded-full ${catColor}"></div>
-        </div>
+        <!-- Dot / Check Badge -->
+        ${inPool
+          ? `<div class="flex items-center justify-center w-8 h-8 rounded-full bg-emerald-500 border-2 border-white shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-200 ring-2 ring-emerald-300 ring-offset-1">
+               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+             </div>`
+          : `<div class="flex items-center justify-center w-8 h-8 rounded-full bg-card border-2 border-white shadow-md hover:shadow-xl hover:scale-110 transition-all duration-200">
+               <div class="w-2.5 h-2.5 rounded-full ${catColor}"></div>
+             </div>`
+        }
       `;
 
       const customMarker = new kakao.maps.CustomOverlay({
@@ -175,7 +198,8 @@ export default function KakaoMapView({
 
       markersRef.current.push(customMarker);
     });
-  }, [isSdkLoaded, restaurants, userLocation]);
+  }, [isSdkLoaded, restaurants, userLocation, roulettePool]);
+
 
   // 4. Hover effect - Pan to and open temp overlay
   useEffect(() => {
@@ -308,7 +332,7 @@ export default function KakaoMapView({
 
   return (
     <Card className="relative w-full h-full min-h-[450px] bg-background border border-border overflow-hidden rounded-3xl shadow-lg">
-      <div ref={mapContainerRef} className="w-full h-full absolute inset-0" />
+      <div ref={mapContainerRef} className="w-full h-full absolute inset-0 kakao-map-container" />
       
       {/* Floating Roulette Overlay */}
       {isSdkLoaded && (
@@ -320,6 +344,11 @@ export default function KakaoMapView({
               onSelectRestaurant(winner);
               if (onWinnerSelected) onWinnerSelected(winner);
             }} 
+            isCollaborative={isCollaborative}
+            collaborativeSpinStatus={collaborativeSpinStatus}
+            collaborativeWinnerName={collaborativeWinnerName}
+            onTriggerCollaborativeSpin={onTriggerCollaborativeSpin}
+            onCollaborativeSpinEnd={onCollaborativeSpinEnd}
           />
         </div>
       )}

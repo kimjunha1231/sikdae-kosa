@@ -6,10 +6,7 @@ import { Button } from '@/shared/ui/button';
 import { MapPin, Clock, Star, ExternalLink, Utensils, X, Check, Plus } from 'lucide-react';
 import { formatPrice } from '@/shared/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
-import Image from 'next/image';
 import { Restaurant } from '../model/types';
-
-const MotionImage = motion(Image);
 
 interface RestaurantDetailModalProps {
   isOpen: boolean;
@@ -40,7 +37,7 @@ export default function RestaurantDetailModal({
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="max-w-md w-full rounded-3xl bg-card border border-border p-6 shadow-2xl overflow-y-auto max-h-[85vh] scrollbar-none">
+        <DialogContent className="max-w-md sm:max-w-lg w-full rounded-3xl bg-card border border-border p-6 shadow-2xl overflow-y-auto max-h-[85vh] scrollbar-none">
           <DialogHeader className="space-y-1">
             <div className="flex items-center gap-2">
               <span className="text-[10px] bg-primary/10 text-primary px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider">
@@ -50,8 +47,8 @@ export default function RestaurantDetailModal({
                 {restaurant.distance}
               </span>
             </div>
-            <div className="flex items-center justify-between gap-4 mt-1">
-              <DialogTitle className="text-xl font-black tracking-tight text-foreground truncate">
+            <div className="flex items-center justify-between gap-4 mt-1 w-full min-w-0">
+              <DialogTitle className="text-xl font-black tracking-tight text-foreground truncate min-w-0 flex-1">
                 {restaurant.name}
               </DialogTitle>
               {onTogglePool && (
@@ -93,8 +90,13 @@ export default function RestaurantDetailModal({
 
           {/* Hero Image */}
           {restaurant.image_url ? (
-            <div className="w-full h-44 rounded-2xl overflow-hidden my-4 border border-border/50 relative shadow-sm bg-muted flex items-center justify-center">
-              <img
+            <motion.div 
+              layoutId={`hero-image-container-${restaurant.name}`}
+              className="w-full h-44 rounded-2xl overflow-hidden my-4 border border-border/50 relative shadow-sm bg-muted flex items-center justify-center cursor-zoom-in"
+              onClick={() => setSelectedImage({ name: restaurant.name, imageUrl: restaurant.image_url!, index: -1 })}
+            >
+              <motion.img
+                layoutId={`hero-image-img-${restaurant.name}`}
                 src={restaurant.image_url}
                 alt={restaurant.name}
                 className="w-full h-full object-cover transform hover:scale-102 transition-transform duration-500"
@@ -102,7 +104,7 @@ export default function RestaurantDetailModal({
                   (e.target as HTMLElement).style.display = 'none';
                 }}
               />
-            </div>
+            </motion.div>
           ) : (
             <div className="w-full h-24 rounded-2xl bg-muted/30 border border-dashed border-border/60 my-4 flex items-center justify-center text-xs text-muted-foreground font-bold">
               대표 이미지가 등록되지 않았습니다.
@@ -152,14 +154,12 @@ export default function RestaurantDetailModal({
                           className="w-11 h-11 rounded-lg overflow-hidden shrink-0 border border-border/40 bg-muted cursor-zoom-in"
                           onClick={() => setSelectedImage({ name: menu.name, imageUrl: menu.imageUrl!, index })}
                         >
-                          <MotionImage
+                          <motion.img
                             layoutId={`menu-image-img-${menu.name}-${index}`}
                             whileHover={{ scale: 1.25 }}
                             transition={{ duration: 0.2, ease: "easeOut" }}
                             src={menu.imageUrl}
                             alt={menu.name}
-                            width={44}
-                            height={44}
                             className="w-full h-full object-cover"
                             onError={(e) => {
                               (e.target as HTMLElement).style.display = 'none';
@@ -204,7 +204,7 @@ export default function RestaurantDetailModal({
             
             {/* Expanded Content Card */}
             <motion.div
-              layoutId={`menu-image-container-${selectedImage.name}-${selectedImage.index}`}
+              layoutId={selectedImage.index === -1 ? `hero-image-container-${restaurant.name}` : `menu-image-container-${selectedImage.name}-${selectedImage.index}`}
               className="relative bg-card border border-border max-w-sm w-full rounded-[32px] overflow-hidden shadow-2xl flex flex-col z-10"
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
             >
@@ -217,14 +217,11 @@ export default function RestaurantDetailModal({
               </button>
 
               <div className="aspect-[4/3] w-full overflow-hidden bg-muted relative">
-                <MotionImage
-                  layoutId={`menu-image-img-${selectedImage.name}-${selectedImage.index}`}
+                <motion.img
+                  layoutId={selectedImage.index === -1 ? `hero-image-img-${restaurant.name}` : `menu-image-img-${selectedImage.name}-${selectedImage.index}`}
                   src={selectedImage.imageUrl}
                   alt={selectedImage.name}
-                  fill
-                  className="object-cover"
-                  sizes="(max-w-md) 100vw, 384px"
-                  priority
+                  className="w-full h-full object-cover"
                 />
               </div>
               

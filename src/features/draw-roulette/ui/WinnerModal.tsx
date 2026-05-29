@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
 import { Button } from '@/shared/ui/button';
 import { X, Trophy, Clock, Map } from 'lucide-react';
 import { formatPrice } from '@/shared/lib/utils';
@@ -14,18 +13,35 @@ interface WinnerModalProps {
 }
 
 export default function WinnerModal({ winner, onClose }: WinnerModalProps) {
-  const [confetti, setConfetti] = useState<{ id: number; color: string; x: number; y: number }[]>([]);
+  const [confetti, setConfetti] = useState<{
+    id: number;
+    color: string;
+    x: number;
+    y: number;
+    size: number;
+    delay: number;
+    borderRadius: string;
+    rotateDir: number;
+  }[]>([]);
 
   // Trigger confetti particles when a winner is drawn
   useEffect(() => {
     if (winner) {
-      const colors = ['#3182f6', '#ff477e', '#ffb300', '#00c853', '#d500f9', '#00e5ff'];
-      const particles = Array.from({ length: 60 }).map((_, i) => ({
-        id: i,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        x: Math.random() * 100 - 50,
-        y: Math.random() * 100 - 150,
-      }));
+      const colors = ['#3182f6', '#ff477e', '#1aa273', '#ff9d00', '#a352ff', '#00b8d9'];
+      const particles = Array.from({ length: 80 }).map((_, i) => {
+        const rand = Math.random();
+        const borderRadius = rand > 0.6 ? '50%' : rand > 0.3 ? '2px' : '0%';
+        return {
+          id: i,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          x: Math.random() * 120 - 60,
+          y: Math.random() * 140 - 200,
+          size: Math.random() * 8 + 6,
+          delay: Math.random() * 0.25,
+          borderRadius,
+          rotateDir: Math.random() > 0.5 ? 720 : -720,
+        };
+      });
       setConfetti(particles);
     } else {
       setConfetti([]);
@@ -76,13 +92,10 @@ export default function WinnerModal({ winner, onClose }: WinnerModalProps) {
                 {/* Display Restaurant image */}
                 {winner.image_url ? (
                   <div className="w-full h-44 rounded-2xl overflow-hidden border border-border/50 mb-4 bg-muted relative">
-                    <Image
+                    <img
                       src={winner.image_url}
                       alt={winner.name}
-                      fill
-                      className="object-cover"
-                      sizes="(max-w-md) 100vw, 384px"
-                      priority
+                      className="w-full h-full object-cover"
                       onError={(e) => {
                         (e.target as HTMLElement).style.display = 'none';
                       }}
@@ -142,23 +155,23 @@ export default function WinnerModal({ winner, onClose }: WinnerModalProps) {
       {winner && confetti.map((c) => (
         <motion.div
           key={c.id}
-          initial={{ x: 0, y: 0, opacity: 1, scale: 1 }}
+          initial={{ x: 0, y: 0, opacity: 1, scale: 1, rotate: 0 }}
           animate={{
             x: `${c.x}vw`,
             y: `${c.y}vh`,
-            opacity: 0,
-            scale: 0.5,
-            rotate: 360,
+            opacity: [1, 1, 0],
+            scale: [1, 1.2, 0.4],
+            rotate: c.rotateDir,
           }}
-          transition={{ duration: 1.5, ease: 'easeOut' }}
+          transition={{ duration: 1.8, ease: 'easeOut', delay: c.delay }}
           style={{
             position: 'fixed',
             left: '50%',
             top: '40%',
-            width: '10px',
-            height: '10px',
+            width: `${c.size}px`,
+            height: `${c.size}px`,
             backgroundColor: c.color,
-            borderRadius: Math.random() > 0.5 ? '50%' : '0%',
+            borderRadius: c.borderRadius,
             zIndex: 9999,
             pointerEvents: 'none',
           }}

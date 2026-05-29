@@ -1,12 +1,14 @@
 'use client';
 
 import React, { useEffect, useState, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import { Sidebar } from '@/widgets/sidebar';
 import { KakaoMapView } from '@/widgets/map-view';
 import { RestaurantDetailModal, Restaurant } from '@/entities/restaurant';
 import { WinnerModal } from '@/features/draw-roulette';
 
 export default function Dashboard() {
+  const router = useRouter();
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('전체');
@@ -131,6 +133,15 @@ export default function Dashboard() {
     );
   };
 
+  const handleCreateRoom = () => {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let roomId = '';
+    for (let i = 0; i < 6; i++) {
+      roomId += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    router.push(`/room/${roomId}`);
+  };
+
   return (
     <main className="w-full h-screen flex flex-col md:flex-row overflow-hidden bg-background text-foreground transition-colors duration-200">
       {/* 1. Left Side Dashboard Sidebar Widget */}
@@ -143,6 +154,7 @@ export default function Dashboard() {
         onSortByChange={setSortBy}
         onSearchQueryChange={setSearchQuery}
         filteredAndSorted={filteredAndSorted}
+        allRestaurants={restaurantsWithDistance}
         selectedRes={selectedRes}
         onSelectRes={(res) => setSelectedRes(res)}
         onHoverEnterRes={(res) => setHoveredRes(res)}
@@ -153,6 +165,7 @@ export default function Dashboard() {
           setDetailRes(res);
           setIsDetailOpen(true);
         }}
+        onCreateRoom={handleCreateRoom}
       />
 
       {/* 2. Right Side Fullscreen Maps Widget */}

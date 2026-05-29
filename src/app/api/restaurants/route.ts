@@ -24,8 +24,59 @@ async function writeData(data: any) {
   }
 }
 
+const FIREBASE_DB_URL = process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL;
+
+function getKSTDateString() {
+  const d = new Date();
+  // KST is UTC+9
+  const kst = new Date(d.getTime() + (9 * 60 * 60 * 1000));
+  return kst.toISOString().split('T')[0];
+}
+
 export async function GET() {
   const restaurants = await readData();
+  
+  if (!FIREBASE_DB_URL) {
+    return NextResponse.json(restaurants);
+  }
+
+  try {
+    // 1. Firebase에서 오늘 자 K밥상 메뉴 이미지 데이터 가져오기
+    const res = await fetch(`${FIREBASE_DB_URL}/kbabsang/today.json`, {
+      cache: 'no-store',
+      // Timeout after 2 seconds to avoid blocking the main restaurants API if Firebase is slow
+      signal: AbortSignal.timeout(2000),
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      const todayStr = getKSTDateString();
+
+      // 2. 오늘 날짜와 일치하는 메뉴가 등록되어 있는지 검증
+      if (data && data.lastUpdated === todayStr && data.imageUrl) {
+        const kIndex = restaurants.findIndex((r: any) => r.name === 'K밥상');
+        if (kIndex !== -1) {
+          // 3. K밥상의 대표 이미지 및 메뉴 데이터를 동적으로 교체
+          restaurants[kIndex] = {
+            ...restaurants[kIndex],
+            image_url: data.imageUrl,
+            menus: [
+              {
+                name: '오늘의 한식뷔페 (인스타 식단표)',
+                price: 10000,
+                imageUrl: data.imageUrl,
+              }
+            ],
+            // 인스타그램 원본 링크도 필요하다면 metadata 등에 넣어두거나 활용 가능
+            instagram_link: data.postUrl || null,
+          };
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Failed to merge K-Babsang menu, returning original data:', error);
+  }
+
   return NextResponse.json(restaurants);
 }
 
