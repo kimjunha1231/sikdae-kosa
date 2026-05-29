@@ -1,60 +1,56 @@
 /**
- * K-Babsang Instagram Menu Scraper (via Instagram Web API)
+ * K-Babsang Instagram Menu Scraper (via RapidAPI Instagram Scraper)
  *
- * Uses Instagram's internal web_profile_info API to fetch the latest post
- * from @kbabsang_official. No browser (Playwright) required.
- *
- * This API endpoint returns JSON data for public profiles when called with
- * the correct headers (x-ig-app-id, sec-fetch-* headers).
+ * Uses RapidAPI's "Instagram API - Fast & Reliable Data Scraper" to fetch
+ * the latest posts from @kbabsang_official (User ID: 23044319852).
  *
  * Flow:
- * 1. Fetch profile data via Instagram Web API
- * 2. Extract first post's image URL and caption
+ * 1. Fetch user feed via RapidAPI Feed endpoint
+ * 2. Extract first post's image URL, caption, and shortcode
  * 3. Check if the caption contains today's date (KST)
  * 4. If today's post → send data to Next.js API → Firebase RTDB update
  */
 
 async function scrapeKbabsang() {
-  console.log('Starting K-Babsang menu scraping via Instagram Web API...');
+  console.log('Starting K-Babsang menu scraping via RapidAPI Instagram Scraper...');
 
-  // 1. Fetch profile data
-  const apiEndpoint =
-    'https://www.instagram.com/api/v1/users/web_profile_info/?username=kbabsang_official';
+  const userId = '23044319852'; // kbabsang_official's permanent numeric user ID
+  const apiEndpoint = `https://instagram-api-fast-reliable-data-scraper.p.rapidapi.com/feed?user_id=${userId}`;
+  const rapidApiKey = process.env.RAPIDAPI_KEY;
 
-  console.log('Fetching profile data...');
+  if (!rapidApiKey) {
+    throw new Error('RAPIDAPI_KEY is not defined in environment variables');
+  }
+
+  console.log('Fetching profile feed from RapidAPI...');
   const response = await fetch(apiEndpoint, {
+    method: 'GET',
     headers: {
-      'User-Agent':
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-      'x-ig-app-id': '936619743392459',
-      'x-requested-with': 'XMLHttpRequest',
-      'sec-fetch-site': 'same-origin',
-      'sec-fetch-mode': 'cors',
-      'sec-fetch-dest': 'empty',
-      Referer: 'https://www.instagram.com/kbabsang_official/',
+      'x-rapidapi-key': rapidApiKey,
+      'x-rapidapi-host': 'instagram-api-fast-reliable-data-scraper.p.rapidapi.com',
+      'Content-Type': 'application/json',
     },
   });
 
   if (!response.ok) {
     throw new Error(
-      `Instagram API responded with status: ${response.status} ${response.statusText}`
+      `RapidAPI responded with status: ${response.status} ${response.statusText}`
     );
   }
 
   const data = await response.json();
-  const edges = data.data?.user?.edge_owner_to_timeline_media?.edges;
+  const items = data.items;
 
-  if (!edges || edges.length === 0) {
-    throw new Error('No posts found in profile data.');
+  if (!items || items.length === 0) {
+    throw new Error('No posts found in profile feed.');
   }
 
   // 2. Extract first (latest) post
-  const firstPost = edges[0].node;
-  const caption =
-    firstPost.edge_media_to_caption?.edges?.[0]?.node?.text || '';
-  const imageUrl = firstPost.display_url || firstPost.thumbnail_src || '';
-  const shortcode = firstPost.shortcode;
-  const postUrl = `https://www.instagram.com/p/${shortcode}/`;
+  const firstPost = items[0];
+  const caption = firstPost.caption?.text || firstPost.caption_text || (typeof firstPost.caption === 'string' ? firstPost.caption : '');
+  const imageUrl = firstPost.image_versions2?.candidates?.[0]?.url || firstPost.thumbnail_url || firstPost.display_url || '';
+  const code = firstPost.code || firstPost.shortcode || '';
+  const postUrl = code ? `https://www.instagram.com/p/${code}/` : (firstPost.link || firstPost.url || '');
 
   console.log('=== Scraped Data ===');
   console.log('Post URL:', postUrl);
@@ -98,12 +94,17 @@ async function scrapeKbabsang() {
     console.log(
       `Today's date (${month}/${date}) was not found in the post caption.`
     );
-    console.log('Assuming this post is older. Skipping Firebase update.');
-    return;
+    // Allow forcing bypass for manual local testing if FORCED_UPDATE env var is set
+    if (process.env.FORCED_UPDATE === 'true') {
+      console.log('FORCED_UPDATE is true. Bypassing date check...');
+    } else {
+      console.log('Assuming this post is older. Skipping Firebase update.');
+      return;
+    }
   }
 
   // 4. Send update to Next.js API
-  console.log("Today's post confirmed! Sending update to Next.js API...");
+  console.log("Sending update to Next.js API...");
   const nextApiUrl =
     process.env.API_URL || 'http://localhost:3000/api/menu/kbabsang';
   const cronSecret = process.env.CRON_SECRET;
