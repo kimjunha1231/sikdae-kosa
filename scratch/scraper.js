@@ -105,8 +105,14 @@ async function scrapeKbabsang() {
 
   // 4. Send update to Next.js API
   console.log("Sending update to Next.js API...");
-  const nextApiUrl =
-    process.env.API_URL || 'http://localhost:3000/api/menu/kbabsang';
+  let nextApiUrl = process.env.API_URL || 'http://localhost:3000/api/menu/kbabsang';
+  
+  // If API_URL is just the base URL, append the API route path automatically
+  if (nextApiUrl && !nextApiUrl.includes('/api/menu/')) {
+    nextApiUrl = nextApiUrl.replace(/\/$/, '') + '/api/menu/kbabsang';
+  }
+  
+  console.log(`Target API URL: ${nextApiUrl}`);
   const cronSecret = process.env.CRON_SECRET;
 
   const headers = {
