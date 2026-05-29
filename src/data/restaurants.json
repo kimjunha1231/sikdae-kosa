@@ -9536,73 +9536,12 @@
     "distance": "100m",
     "rating": "5.00",
     "operating_hours": "-",
-    "naver_link": "https://pcmap.place.naver.com/restaurant/1389839334/home",
+    "naver_link": "https://place.map.kakao.com/508757532",
     "place_id": "1389839334",
     "image_url": "https://ldb-phinf.pstatic.net/20250522_133/1747890031494RESGM_JPEG/1000006217.jpg",
     "lat": 37.4951039,
     "lng": 127.1224441,
-    "menus": [
-      {
-        "name": "대구탕",
-        "price": 15000,
-        "imageUrl": "https://ldb-phinf.pstatic.net/20250522_133/1747890031494RESGM_JPEG/1000006217.jpg"
-      },
-      {
-        "name": "생선정식2인분",
-        "price": 29000,
-        "imageUrl": "https://ldb-phinf.pstatic.net/20240803_50/1722651163932wmHAw_JPEG/1000003442.jpg"
-      },
-      {
-        "name": "주마전",
-        "price": 10000,
-        "imageUrl": "https://ldb-phinf.pstatic.net/20240803_114/1722651385886yPQCO_JPEG/1000001892.jpg"
-      },
-      {
-        "name": "도토리묵무침",
-        "price": 7000,
-        "imageUrl": "https://ldb-phinf.pstatic.net/20240803_282/1722651461545049oz_JPEG/93.jpg"
-      },
-      {
-        "name": "제육볶음(대)",
-        "price": 58000,
-        "imageUrl": "https://ldb-phinf.pstatic.net/20240914_113/1726301111938153kV_JPEG/1000003747.jpg"
-      },
-      {
-        "name": "제육볶음(중)",
-        "price": 44000,
-        "imageUrl": null
-      },
-      {
-        "name": "제육볶음(소)",
-        "price": 30000,
-        "imageUrl": "https://ldb-phinf.pstatic.net/20240316_165/17105901157621g3Qf_JPEG/1000001684.jpg"
-      },
-      {
-        "name": "한방토종닭백숙",
-        "price": 75000,
-        "imageUrl": "https://ldb-phinf.pstatic.net/20240802_269/1722563572118r6gv5_JPEG/Screenshot_20240802_105216_KakaoTalk.jpg"
-      },
-      {
-        "name": "닭도리탕",
-        "price": 50000,
-        "imageUrl": "https://ldb-phinf.pstatic.net/20240914_289/1726300902308SvHgw_JPEG/1000003736.jpg"
-      },
-      {
-        "name": "냉동삼겹살",
-        "price": 16000,
-        "imageUrl": "https://ldb-phinf.pstatic.net/20240803_101/1722651328268ycXIo_JPEG/1000003447.jpg"
-      },
-      {
-        "name": "임연수어구이",
-        "price": 13000,
-        "imageUrl": null
-      },
-      {
-        "name": "차돌된장찌개",
-        "price": 10000,
-        "imageUrl": null
-      }
-    ]
+    "menus": []
   },
   {
     "id": "F56EAFB4-3BA1-40E6-92AB-24C5004B60E8",
