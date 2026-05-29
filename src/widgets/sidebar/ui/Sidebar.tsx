@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import SidebarHeader from './SidebarHeader';
 import { SearchFilterPanel } from '@/features/search-filter-restaurants';
 import { RestaurantCard, Restaurant } from '@/entities/restaurant';
@@ -79,36 +79,48 @@ export default function Sidebar({
       />
 
       {/* Mode Tabs */}
-      <div className="px-4 py-2 border-b border-border/50 flex gap-2 bg-background/20 shrink-0">
-        <button
-          onClick={() => setActiveTab('all')}
-          className={`flex-grow py-2 text-xs font-black rounded-xl cursor-pointer transition-all duration-200 toss-btn-active ${
-            activeTab === 'all'
-              ? 'bg-primary text-white shadow-sm'
-              : 'bg-muted text-muted-foreground hover:bg-muted/80'
-          }`}
-        >
-          맛집 전체보기
-        </button>
-        <button
-          onClick={() => setActiveTab('pool')}
-          className={`flex-grow py-2 text-xs font-black rounded-xl cursor-pointer transition-all duration-200 flex items-center justify-center gap-1.5 toss-btn-active ${
-            activeTab === 'pool'
-              ? 'bg-primary text-white shadow-sm'
-              : 'bg-muted text-muted-foreground hover:bg-muted/80'
-          }`}
-        >
-          <span>선택된 맛집</span>
-          <span
-            className={`px-1.5 py-0.5 rounded-lg text-[9px] font-black transition-all ${
-              activeTab === 'pool'
-                ? 'bg-white/20 text-white'
-                : 'bg-primary/10 text-primary'
+      <div className="px-4 py-2 border-b border-border/50 bg-background/20 shrink-0">
+        <div className="relative flex bg-muted/60 p-0.5 rounded-2xl border border-border/20 w-full">
+          {/* Active sliding background */}
+          <motion.div
+            layout
+            className="absolute top-0.5 bottom-0.5 left-0.5 right-0.5 bg-card rounded-xl shadow-sm z-0"
+            style={{
+              width: 'calc(50% - 0.25rem)',
+              left: activeTab === 'all' ? '0.125rem' : 'calc(50% + 0.125rem)',
+            }}
+            transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+          />
+          <button
+            onClick={() => setActiveTab('all')}
+            className={`relative z-10 flex-grow py-2.5 text-xs font-black rounded-xl cursor-pointer transition-colors duration-200 toss-btn-active ${
+              activeTab === 'all'
+                ? 'text-foreground'
+                : 'text-muted-foreground hover:text-foreground'
             }`}
           >
-            {roulettePool.length}
-          </span>
-        </button>
+            맛집 전체보기
+          </button>
+          <button
+            onClick={() => setActiveTab('pool')}
+            className={`relative z-10 flex-grow py-2.5 text-xs font-black rounded-xl cursor-pointer transition-colors duration-200 flex items-center justify-center gap-1.5 toss-btn-active ${
+              activeTab === 'pool'
+                ? 'text-foreground'
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            <span>선택된 맛집</span>
+            <span
+              className={`px-1.5 py-0.5 rounded-lg text-[9px] font-black transition-all duration-200 ${
+                activeTab === 'pool'
+                  ? 'bg-primary text-white'
+                  : 'bg-primary/10 text-primary'
+              }`}
+            >
+              {roulettePool.length}
+            </span>
+          </button>
+        </div>
       </div>
 
       {activeTab === 'all' ? (

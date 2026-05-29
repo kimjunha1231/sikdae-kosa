@@ -1,4 +1,5 @@
 import json
+import os
 
 def main():
     with open("scratch/extracted_data.json", "r", encoding="utf-8") as f:
@@ -6,45 +7,32 @@ def main():
     
     print("Content length:", len(content))
     
-    # Try parsing directly
     try:
-        data = json.loads(content)
-        print("Success loading direct JSON!")
-    except json.JSONDecodeError as e:
-        print(f"JSONDecodeError: {e}")
-        pos = e.pos
-        print("Context around error:")
-        start_pos = max(0, pos - 100)
-        end_pos = min(len(content), pos + 100)
-        print(f"[{start_pos}:{end_pos}]")
-        print(content[start_pos:end_pos])
-        
-        # Let's see if we can slice it to make it valid JSON
-        # If there's extra data, it means it's valid JSON up to pos.
-        # Let's try parsing content[:pos]
-        try:
-            data = json.loads(content[:pos])
-            print("Successfully parsed sliced JSON up to position:", pos)
+        # Slicing like before
+        pos = content.find("window.__PLACE_STATE__")
+        if pos != -1:
+            # strip trailing semicolon/whitespace before placing in loads
+            json_str = content[:pos].strip()
+            if json_str.endswith(";"):
+                json_str = json_str[:-1].strip()
+            data = json.loads(json_str)
+            print("Successfully parsed sliced JSON up to PLACE_STATE!")
+        else:
+            data = json.loads(content)
+            print("Successfully parsed full JSON!")
             
-            # Let's look for menu items in this parsed data
-            found_items = []
-            for k, v in data.items():
-                if isinstance(v, dict):
-                    if "name" in v and ("price" in v or "priceType" in v):
-                        found_items.append((k, v))
-                        
-            print(f"\nFound {len(found_items)} dicts containing 'name' and ('price' or 'priceType'). Samples:")
-            for k, v in found_items[:15]:
-                name = v.get("name")
-                price = v.get("price")
-                images = v.get("images") or v.get("image") or v.get("imageUrl")
-                print(f"  Key: {k}")
-                print(f"    Name: {name}")
-                print(f"    Price: {price}")
-                print(f"    Images/Image: {images}")
-                
-        except Exception as ex:
-            print("Failed to parse slice:", ex)
+        matching_keys = []
+        for k in data.keys():
+            if k.startswith("Menu:") or "menu" in k.lower():
+                matching_keys.append(k)
+        
+        print(f"Found {len(matching_keys)} keys starting with Menu or containing menu:")
+        for k in matching_keys[:30]:
+            print(f"  Key: {k}")
+            print(f"    Value: {repr(data[k])[:200]}")
+            
+    except Exception as ex:
+        print("Failed to parse:", ex)
 
 if __name__ == "__main__":
     main()
