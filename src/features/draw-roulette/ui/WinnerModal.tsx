@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
 import { Button } from '@/shared/ui/button';
 import { X, Trophy, Clock, Map } from 'lucide-react';
 import { formatPrice } from '@/shared/lib/utils';

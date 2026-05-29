@@ -1,7 +1,5 @@
 'use client';
 
-import React from 'react';
-import Image from 'next/image';
 import { Card } from '@/shared/ui/card';
 import { Badge } from '@/shared/ui/badge';
 import { Button } from '@/shared/ui/button';

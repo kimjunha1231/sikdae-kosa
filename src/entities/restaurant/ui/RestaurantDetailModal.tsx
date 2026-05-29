@@ -6,10 +6,7 @@ import { Button } from '@/shared/ui/button';
 import { MapPin, Clock, Star, ExternalLink, Utensils, X, Check, Plus } from 'lucide-react';
 import { formatPrice } from '@/shared/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
-import Image from 'next/image';
 import { Restaurant } from '../model/types';
-
-const MotionImage = motion.create(Image);
 
 interface RestaurantDetailModalProps {
   isOpen: boolean;
@@ -98,14 +95,11 @@ export default function RestaurantDetailModal({
               className="w-full h-44 rounded-2xl overflow-hidden my-4 border border-border/50 relative shadow-sm bg-muted flex items-center justify-center cursor-zoom-in"
               onClick={() => setSelectedImage({ name: restaurant.name, imageUrl: restaurant.image_url!, index: -1 })}
             >
-              <MotionImage
+              <motion.img
                 layoutId={`hero-image-img-${restaurant.name}`}
                 src={restaurant.image_url}
                 alt={restaurant.name}
-                fill
                 className="w-full h-full object-cover transform hover:scale-102 transition-transform duration-500"
-                sizes="(max-w-md) 100vw, 448px"
-                priority
                 onError={(e) => {
                   (e.target as HTMLElement).style.display = 'none';
                 }}
@@ -160,14 +154,12 @@ export default function RestaurantDetailModal({
                           className="w-11 h-11 rounded-lg overflow-hidden shrink-0 border border-border/40 bg-muted cursor-zoom-in"
                           onClick={() => setSelectedImage({ name: menu.name, imageUrl: menu.imageUrl!, index })}
                         >
-                          <MotionImage
+                          <motion.img
                             layoutId={`menu-image-img-${menu.name}-${index}`}
                             whileHover={{ scale: 1.25 }}
                             transition={{ duration: 0.2, ease: "easeOut" }}
                             src={menu.imageUrl}
                             alt={menu.name}
-                            width={44}
-                            height={44}
                             className="w-full h-full object-cover"
                             onError={(e) => {
                               (e.target as HTMLElement).style.display = 'none';
@@ -225,14 +217,11 @@ export default function RestaurantDetailModal({
               </button>
 
               <div className="aspect-[4/3] w-full overflow-hidden bg-muted relative">
-                <MotionImage
+                <motion.img
                   layoutId={selectedImage.index === -1 ? `hero-image-img-${restaurant.name}` : `menu-image-img-${selectedImage.name}-${selectedImage.index}`}
                   src={selectedImage.imageUrl}
                   alt={selectedImage.name}
-                  fill
-                  className="object-cover"
-                  sizes="(max-w-md) 100vw, 384px"
-                  priority
+                  className="w-full h-full object-cover"
                 />
               </div>
               
