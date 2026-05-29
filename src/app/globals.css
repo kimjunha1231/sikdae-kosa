@@ -126,6 +126,26 @@
   scrollbar-width: none;  /* Firefox */
 }
 
+/* Custom thin scrollbar for category tabs */
+.category-scrollbar::-webkit-scrollbar {
+  height: 4px;
+}
+.category-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 9999px;
+}
+.category-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 9999px;
+}
+.category-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-foreground);
+}
+.category-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
 /* Sleek Dark Mode for Kakao Map Tiles */
 .dark .kakao-map-container img {
   filter: invert(92%) hue-rotate(180deg) brightness(95%) contrast(90%) !important;
