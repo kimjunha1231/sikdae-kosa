@@ -20,14 +20,6 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install dependencies
-        run: |
-          npm install playwright
-
-      - name: Install Playwright Browsers
-        run: |
-          npx playwright install chromium --with-deps
-
       - name: Run Scraper
         env:
           API_URL: ${{ secrets.API_URL }}
