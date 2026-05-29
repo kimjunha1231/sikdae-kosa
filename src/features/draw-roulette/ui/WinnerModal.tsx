@@ -93,13 +93,10 @@ export default function WinnerModal({ winner, onClose }: WinnerModalProps) {
                 {/* Display Restaurant image */}
                 {winner.image_url ? (
                   <div className="w-full h-44 rounded-2xl overflow-hidden border border-border/50 mb-4 bg-muted relative">
-                    <Image
+                    <img
                       src={winner.image_url}
                       alt={winner.name}
-                      fill
-                      className="object-cover"
-                      sizes="(max-w-md) 100vw, 384px"
-                      priority
+                      className="w-full h-full object-cover"
                       onError={(e) => {
                         (e.target as HTMLElement).style.display = 'none';
                       }}

@@ -71,11 +71,9 @@ export default function RestaurantCard({
             {/* Thumbnail Image */}
             {restaurant.image_url ? (
               <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-border/50 bg-muted flex items-center justify-center">
-                <Image
+                <img
                   src={restaurant.image_url}
                   alt={restaurant.name}
-                  width={64}
-                  height={64}
                   className="w-full h-full object-cover"
                   onError={(e) => {
                     (e.target as HTMLElement).style.display = 'none';

@@ -93,16 +93,24 @@ export default function RestaurantDetailModal({
 
           {/* Hero Image */}
           {restaurant.image_url ? (
-            <div className="w-full h-44 rounded-2xl overflow-hidden my-4 border border-border/50 relative shadow-sm bg-muted flex items-center justify-center">
-              <img
+            <motion.div 
+              layoutId={`hero-image-container-${restaurant.name}`}
+              className="w-full h-44 rounded-2xl overflow-hidden my-4 border border-border/50 relative shadow-sm bg-muted flex items-center justify-center cursor-zoom-in"
+              onClick={() => setSelectedImage({ name: restaurant.name, imageUrl: restaurant.image_url!, index: -1 })}
+            >
+              <MotionImage
+                layoutId={`hero-image-img-${restaurant.name}`}
                 src={restaurant.image_url}
                 alt={restaurant.name}
+                fill
                 className="w-full h-full object-cover transform hover:scale-102 transition-transform duration-500"
+                sizes="(max-w-md) 100vw, 448px"
+                priority
                 onError={(e) => {
                   (e.target as HTMLElement).style.display = 'none';
                 }}
               />
-            </div>
+            </motion.div>
           ) : (
             <div className="w-full h-24 rounded-2xl bg-muted/30 border border-dashed border-border/60 my-4 flex items-center justify-center text-xs text-muted-foreground font-bold">
               대표 이미지가 등록되지 않았습니다.
@@ -204,7 +212,7 @@ export default function RestaurantDetailModal({
             
             {/* Expanded Content Card */}
             <motion.div
-              layoutId={`menu-image-container-${selectedImage.name}-${selectedImage.index}`}
+              layoutId={selectedImage.index === -1 ? `hero-image-container-${restaurant.name}` : `menu-image-container-${selectedImage.name}-${selectedImage.index}`}
               className="relative bg-card border border-border max-w-sm w-full rounded-[32px] overflow-hidden shadow-2xl flex flex-col z-10"
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
             >
@@ -218,7 +226,7 @@ export default function RestaurantDetailModal({
 
               <div className="aspect-[4/3] w-full overflow-hidden bg-muted relative">
                 <MotionImage
-                  layoutId={`menu-image-img-${selectedImage.name}-${selectedImage.index}`}
+                  layoutId={selectedImage.index === -1 ? `hero-image-img-${restaurant.name}` : `menu-image-img-${selectedImage.name}-${selectedImage.index}`}
                   src={selectedImage.imageUrl}
                   alt={selectedImage.name}
                   fill
