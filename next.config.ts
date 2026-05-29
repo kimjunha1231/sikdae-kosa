@@ -34,6 +34,14 @@ const nextConfig: NextConfig = {
       {
         protocol: 'http',
         hostname: '*.smartbaedal.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.cdninstagram.com',
+      },
+      {
+        protocol: 'http',
+        hostname: '*.cdninstagram.com',
       }
     ],
   },
