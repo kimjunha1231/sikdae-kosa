@@ -62,12 +62,12 @@ export function CrocodileGame({
       </div>
 
       {/* Interactive Crocodile Dentist Area */}
-      <div className="relative w-[320px] h-[300px] flex items-center justify-center">
+      <div className="relative w-[320px] h-[320px] flex items-center justify-center">
         
         {/* Upper Jaw (Snaps down when bitten) */}
         <motion.div
           animate={{
-            y: status === 'bitten' ? 82 : 0,
+            y: status === 'bitten' ? 85 : 0,
             rotate: status === 'bitten' ? 0.5 : 0
           }}
           transition={{
@@ -75,7 +75,7 @@ export function CrocodileGame({
             stiffness: status === 'bitten' ? 500 : 250,
             damping: status === 'bitten' ? 18 : 25
           }}
-          className="absolute top-8 left-[10px] w-[300px] h-[160px] bg-gradient-to-b from-emerald-500 to-emerald-600 rounded-t-[100px] rounded-b-[30px] border-4 border-emerald-800 shadow-lg z-20 origin-top"
+          className="absolute top-0 left-[10px] w-[300px] h-[160px] bg-gradient-to-b from-emerald-500 to-emerald-600 rounded-t-[100px] rounded-b-[30px] border-4 border-emerald-800 shadow-lg z-20 origin-top"
         >
           {/* Nostrils */}
           <div className="absolute bottom-5 left-[120px] w-[60px] flex justify-between">
@@ -108,9 +108,9 @@ export function CrocodileGame({
         </motion.div>
 
         {/* Lower Jaw and Mouth Cavity */}
-        <div className="absolute bottom-4 left-[10px] w-[300px] h-[180px] bg-gradient-to-t from-emerald-700 to-emerald-600 rounded-t-[40px] rounded-b-[90px] border-4 border-emerald-800 shadow-inner z-10">
+        <div className="absolute bottom-0 left-[10px] w-[300px] h-[180px] bg-gradient-to-t from-emerald-700 to-emerald-600 rounded-t-[40px] rounded-b-[90px] border-4 border-emerald-800 shadow-inner z-10">
           {/* Inner Crimson Red Mouth */}
-          <div className="absolute top-[12px] left-[12px] w-[268px] h-[146px] bg-gradient-to-b from-rose-600 to-rose-950 rounded-t-[30px] rounded-b-[75px] overflow-hidden">
+          <div className="absolute top-[15px] left-[15px] w-[270px] h-[140px] bg-gradient-to-b from-rose-600 to-rose-950 rounded-t-[30px] rounded-b-[75px] overflow-hidden">
             
             {/* 8 Clickable Lower Teeth */}
             {teethConfig.map((style, idx) => {
@@ -130,7 +130,9 @@ export function CrocodileGame({
                     ${isPressed ? 'opacity-10 translate-y-3 cursor-not-allowed border-rose-950 bg-rose-900 shadow-none' : 'hover:bg-white hover:translate-y-0.5 hover:scale-105 active:scale-95'}
                     ${isMyTurn && !isPressed ? 'border-[#3182f6] ring-2 ring-[#3182f6]/40' : ''}
                   `}
-                />
+                >
+                  <span className="absolute top-0 left-0 right-0 h-1 bg-[#ffe4e6] rounded-t-sm" />
+                </button>
               );
             })}
           </div>
