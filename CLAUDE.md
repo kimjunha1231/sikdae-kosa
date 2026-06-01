@@ -8,6 +8,7 @@
 
 ## Project Quirks & Architecture Decisions
 - **Roulette Pool**: Managed globally in `src/app/page.tsx` as a `roulettePool` state (`string[]` of restaurant names) and synced across the sidebar, map popup overlays, and the `RestaurantDetailModal`.
+- **Crocodile Dentist Game**: Real-time multiplayer betting game synced via Firebase Realtime Database at `rooms/${roomId}/crocodileGame`. The state is controlled using the `useCollaborativeRoom` hook, and the Room page conditionally swaps the map view overlay with the game view when the game is active (`playing` or `bitten`). Automatic turn recovery skips players who disconnect.
 - **Detail Modal Toggle**: `RestaurantDetailModal` accepts `isInPool` and `onTogglePool` to toggle a restaurant in/out of the roulette pool directly from the detailed view.
 - **Sidebar Tabs**: Displays "맛집 전체보기" (all restaurants) and "선택된 맛집" (roulette pool). The selected tab provides a quick-add search input allowing users to search and add restaurants directly into the pool.
 - **Scraper Schedule**: Migrated from GitHub Actions schedule to Vercel Cron (`/api/cron/kbabsang`, scheduled in `vercel.json` at `10 2 * * *` UTC / 11:10 AM KST) to bypass GitHub Actions scheduler queue delays and enforce timely lunch menu updates. Vercel Hobby plan 10s timeout constraints apply.
