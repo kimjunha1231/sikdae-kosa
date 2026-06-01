@@ -8,6 +8,7 @@ import { RestaurantDetailModal, Restaurant } from '@/entities/restaurant';
 import { WinnerModal } from '@/features/draw-roulette';
 import { useCollaborativeRoom } from '@/features/collaboration/lib/useCollaborativeRoom';
 import { Users, Copy, Check, ArrowLeft, Edit2 } from 'lucide-react';
+import { CrocodileGame } from '@/features/crocodile-game';
 
 export default function CollaborativeRoom() {
   const params = useParams();
@@ -44,6 +45,10 @@ export default function CollaborativeRoom() {
     completeSpin,
     resetSpin,
     updateNickname,
+    crocodileGame,
+    startCrocodileGame,
+    pressCrocodileTooth,
+    resetCrocodileGame,
   } = useCollaborativeRoom(roomId);
 
   const fetchRestaurants = async () => {
@@ -221,6 +226,16 @@ export default function CollaborativeRoom() {
                 )}
               </div>
 
+              {/* Crocodile Game Start Button */}
+              {crocodileGame?.status === 'idle' && (
+                <button
+                  onClick={() => startCrocodileGame(participants)}
+                  className="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3 py-2 rounded-xl transition-colors cursor-pointer"
+                >
+                  <span>🐊 내기 게임 시작</span>
+                </button>
+              )}
+
               {/* Copy Share Link Button */}
               <button
                 onClick={handleCopyLink}
@@ -233,32 +248,46 @@ export default function CollaborativeRoom() {
           </div>
         </div>
 
-        {/* Map Area */}
+        {/* Map or Crocodile Game Area */}
         <div className="flex-grow min-h-0 relative p-4">
-          <KakaoMapView
-            restaurants={filteredAndSorted}
-            hoveredRestaurant={hoveredRes}
-            selectedRestaurant={selectedRes}
-            onSelectRestaurant={(res) => setSelectedRes(res)}
-            userLocation={userLocation}
-            onViewDetails={(res) => {
-              setDetailRes(res);
-              setIsDetailOpen(true);
-            }}
-            roulettePool={roulettePool}
-            onWinnerSelected={(winner) => {
-              setSelectedRes(winner);
-            }}
-            isCollaborative={true}
-            collaborativeSpinStatus={spinEvent.status}
-            collaborativeWinnerName={spinEvent.winner}
-            onTriggerCollaborativeSpin={(chosen) => {
-              triggerSpin(chosen.name);
-            }}
-            onCollaborativeSpinEnd={() => {
-              completeSpin();
-            }}
-          />
+          {crocodileGame && (crocodileGame.status === 'playing' || crocodileGame.status === 'bitten') ? (
+            <CrocodileGame
+              status={crocodileGame.status}
+              teeth={crocodileGame.teeth || {}}
+              turnUserId={crocodileGame.turnUserId}
+              loserNickname={crocodileGame.loserNickname}
+              currentUser={currentUser}
+              participants={participants}
+              onPressTooth={(idx) => pressCrocodileTooth(idx, participants)}
+              onReset={() => startCrocodileGame(participants)}
+              onClose={resetCrocodileGame}
+            />
+          ) : (
+            <KakaoMapView
+              restaurants={filteredAndSorted}
+              hoveredRestaurant={hoveredRes}
+              selectedRestaurant={selectedRes}
+              onSelectRestaurant={(res) => setSelectedRes(res)}
+              userLocation={userLocation}
+              onViewDetails={(res) => {
+                setDetailRes(res);
+                setIsDetailOpen(true);
+              }}
+              roulettePool={roulettePool}
+              onWinnerSelected={(winner) => {
+                setSelectedRes(winner);
+              }}
+              isCollaborative={true}
+              collaborativeSpinStatus={spinEvent.status}
+              collaborativeWinnerName={spinEvent.winner}
+              onTriggerCollaborativeSpin={(chosen) => {
+                triggerSpin(chosen.name);
+              }}
+              onCollaborativeSpinEnd={() => {
+                completeSpin();
+              }}
+            />
+          )}
         </div>
       </section>
 
