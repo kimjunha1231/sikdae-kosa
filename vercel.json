@@ -2,7 +2,7 @@
   "crons": [
     {
       "path": "/api/cron/kbabsang",
-      "schedule": "34 2 * * *"
+      "schedule": "10 2 * * *"
     }
   ]
 }
