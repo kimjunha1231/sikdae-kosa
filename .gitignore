@@ -43,6 +43,8 @@ next-env.d.ts
 # worktrees
 .worktrees/
 
-# documentation
-/docs/
+# superpowers visual companion
+.superpowers/
+
+
 
