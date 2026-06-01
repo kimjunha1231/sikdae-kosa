@@ -148,6 +148,20 @@ export function useCollaborativeRoom(roomId: string) {
     };
   }, [roomId]);
 
+  useEffect(() => {
+    if (!currentUser?.isHost || !crocodileGame || crocodileGame.status !== 'playing') return;
+    
+    const turnUserExists = participants.some(p => p.id === crocodileGame.turnUserId);
+    if (!turnUserExists && participants.length > 0) {
+      const sorted = [...participants].sort((a, b) => a.id.localeCompare(b.id));
+      const newTurnUserId = sorted[0].id;
+      
+      update(ref(db, `rooms/${roomId}/crocodileGame`), {
+        turnUserId: newTurnUserId
+      });
+    }
+  }, [participants, crocodileGame, currentUser, roomId]);
+
   const toggleRouletteSelection = async (name: string) => {
     const isAdding = !restaurants.includes(name);
     await update(ref(db, `rooms/${roomId}/restaurants`), {
