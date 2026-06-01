@@ -16,6 +16,14 @@ export interface SpinEvent {
   triggerUserId: string;
 }
 
+export interface CrocodileGameState {
+  status: 'idle' | 'playing' | 'bitten';
+  teeth: Record<string, 'unpressed' | 'pressed'>;
+  dangerIndex: number;
+  turnUserId: string;
+  loserNickname: string;
+}
+
 const NICKNAMES = [
   '배고픈 토끼', '행복한 쿼카', '맛있는 피자', '신선한 샐러드', 
   '달콤한 와플', '바삭한 치킨', '매콤한 떡볶이', '따뜻한 우동'
@@ -31,6 +39,13 @@ export function useCollaborativeRoom(roomId: string) {
     triggerUserId: '',
   });
   const [currentUser, setCurrentUser] = useState<Participant | null>(null);
+  const [crocodileGame, setCrocodileGame] = useState<CrocodileGameState>({
+    status: 'idle',
+    teeth: {},
+    dangerIndex: -1,
+    turnUserId: '',
+    loserNickname: '',
+  });
 
   useEffect(() => {
     if (!roomId) return;
@@ -96,6 +111,18 @@ export function useCollaborativeRoom(roomId: string) {
             triggerUserId: '',
           });
         }
+
+        if (data.crocodileGame) {
+          setCrocodileGame(data.crocodileGame);
+        } else {
+          setCrocodileGame({
+            status: 'idle',
+            teeth: {},
+            dangerIndex: -1,
+            turnUserId: '',
+            loserNickname: '',
+          });
+        }
       } else {
         setRestaurants([]);
         setParticipants([]);
@@ -104,6 +131,13 @@ export function useCollaborativeRoom(roomId: string) {
           startedAt: 0,
           winner: '',
           triggerUserId: '',
+        });
+        setCrocodileGame({
+          status: 'idle',
+          teeth: {},
+          dangerIndex: -1,
+          turnUserId: '',
+          loserNickname: '',
         });
       }
     });
@@ -155,6 +189,53 @@ export function useCollaborativeRoom(roomId: string) {
     set(ref(db, `rooms/${roomId}/users/${currentUser.id}`), updatedUser);
   };
 
+  const startCrocodileGame = (activeParticipants: Participant[]) => {
+    if (activeParticipants.length === 0) return;
+    const sorted = [...activeParticipants].sort((a, b) => a.id.localeCompare(b.id));
+    const randomDanger = Math.floor(Math.random() * 8);
+    const initialTeeth: Record<string, 'unpressed' | 'pressed'> = {};
+    for (let i = 0; i < 8; i++) {
+      initialTeeth[i.toString()] = 'unpressed';
+    }
+
+    set(ref(db, `rooms/${roomId}/crocodileGame`), {
+      status: 'playing',
+      teeth: initialTeeth,
+      dangerIndex: randomDanger,
+      turnUserId: sorted[0].id,
+      loserNickname: '',
+    });
+  };
+
+  const pressCrocodileTooth = async (toothIndex: number, activeParticipants: Participant[]) => {
+    if (!crocodileGame || crocodileGame.status !== 'playing' || !currentUser) return;
+    
+    const isDanger = toothIndex === crocodileGame.dangerIndex;
+    const gameRef = ref(db, `rooms/${roomId}/crocodileGame`);
+
+    if (isDanger) {
+      await update(gameRef, {
+        status: 'bitten',
+        loserNickname: currentUser.nickname,
+        [`teeth/${toothIndex}`]: 'pressed'
+      });
+    } else {
+      const sorted = [...activeParticipants].sort((a, b) => a.id.localeCompare(b.id));
+      const myIdx = sorted.findIndex(p => p.id === currentUser.id);
+      if (myIdx !== -1 && sorted.length > 0) {
+        const nextIdx = (myIdx + 1) % sorted.length;
+        await update(gameRef, {
+          turnUserId: sorted[nextIdx].id,
+          [`teeth/${toothIndex}`]: 'pressed'
+        });
+      }
+    }
+  };
+
+  const resetCrocodileGame = () => {
+    remove(ref(db, `rooms/${roomId}/crocodileGame`));
+  };
+
   return {
     roulettePool: restaurants,
     participants,
@@ -165,5 +246,9 @@ export function useCollaborativeRoom(roomId: string) {
     completeSpin,
     resetSpin,
     updateNickname,
+    crocodileGame,
+    startCrocodileGame,
+    pressCrocodileTooth,
+    resetCrocodileGame,
   };
 }
