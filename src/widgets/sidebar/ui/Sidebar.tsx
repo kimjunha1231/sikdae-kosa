@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo, useEffect } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, useDragControls, PanInfo } from 'framer-motion';
 import SidebarHeader from './SidebarHeader';
 import { SearchFilterPanel } from '@/features/search-filter-restaurants';
 import { RestaurantCard, Restaurant } from '@/entities/restaurant';
@@ -51,6 +51,7 @@ export default function Sidebar({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isMobileExpanded, setIsMobileExpanded] = useState(false);
+  const dragControls = useDragControls();
 
   useEffect(() => {
     const handleResize = () => {
@@ -60,6 +61,15 @@ export default function Sidebar({
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  const handleDragEnd = (_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    const threshold = 50;
+    if (info.offset.y < -threshold) {
+      setIsMobileExpanded(true);
+    } else if (info.offset.y > threshold) {
+      setIsMobileExpanded(false);
+    }
+  };
 
   const poolRestaurants = useMemo(() => {
     return allRestaurants.filter((res) => roulettePool.includes(res.name));
@@ -83,21 +93,43 @@ export default function Sidebar({
 
   return (
     <motion.section
-      className="fixed bottom-0 left-0 right-0 z-30 h-[75vh] rounded-t-[28px] border-t border-border bg-card shadow-2xl flex flex-col md:relative md:bottom-auto md:left-auto md:right-auto md:z-20 md:w-[460px] md:h-full md:rounded-none md:border-t-0 md:border-r md:shadow-lg overflow-hidden"
+      className="fixed bottom-0 left-0 right-0 z-30 h-[75vh] rounded-t-[28px] border-t border-border bg-card shadow-2xl flex flex-col md:relative md:bottom-auto md:left-auto md:right-auto md:z-20 md:w-[460px] md:h-full md:rounded-none md:border-t-0 md:border-r md:shadow-lg overflow-hidden touch-none md:touch-auto"
+      drag={isMobile ? "y" : false}
+      dragControls={dragControls}
+      dragListener={false}
+      dragConstraints={{ top: 0, bottom: 0 }}
+      dragElastic={{ top: 0.1, bottom: 0.8 }}
+      onDragEnd={handleDragEnd}
       animate={isMobile ? { y: isMobileExpanded ? 0 : 'calc(75vh - 96px)' } : { y: 0 }}
       transition={{ type: 'spring', damping: 25, stiffness: 200 }}
     >
       {isMobile && (
         <div
-          className="w-full py-2.5 flex justify-center items-center cursor-pointer select-none bg-card hover:bg-muted/10 rounded-t-[28px]"
+          className="w-full py-2.5 flex justify-center items-center cursor-pointer select-none bg-card hover:bg-muted/10 rounded-t-[28px] touch-none"
+          onPointerDown={(e) => dragControls.start(e)}
           onClick={() => setIsMobileExpanded(!isMobileExpanded)}
         >
           <div className="w-12 h-1.5 rounded-full bg-muted-foreground/30" />
         </div>
       )}
       <div 
-        className={isMobile ? "cursor-pointer" : ""} 
-        onClick={() => isMobile && setIsMobileExpanded(!isMobileExpanded)}
+        className={isMobile ? "cursor-pointer touch-none" : ""} 
+        onPointerDown={(e) => {
+          if (isMobile) {
+            const target = e.target as HTMLElement;
+            if (!target.closest('button') && !target.closest('a') && !target.closest('input')) {
+              dragControls.start(e);
+            }
+          }
+        }}
+        onClick={(e) => {
+          if (isMobile) {
+            const target = e.target as HTMLElement;
+            if (!target.closest('button') && !target.closest('a') && !target.closest('input')) {
+              setIsMobileExpanded(!isMobileExpanded);
+            }
+          }
+        }}
       >
         <SidebarHeader
           isDarkMode={isDarkMode}
