@@ -4,8 +4,11 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { Sidebar } from '@/widgets/sidebar';
 import { KakaoMapView } from '@/widgets/map-view';
-import { RestaurantDetailModal, Restaurant } from '@/entities/restaurant';
+import { RestaurantDetailModal, Restaurant, Review } from '@/entities/restaurant';
 import { WinnerModal } from '@/features/draw-roulette';
+import { ref, onValue } from 'firebase/database';
+import { db } from '@/shared/lib/firebase';
+
 
 export default function Dashboard() {
   const router = useRouter();
@@ -13,6 +16,7 @@ export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('전체');
   const [sortBy, setSortBy] = useState<'distance' | 'rating' | 'name'>('distance');
+  const [allReviews, setAllReviews] = useState<Record<string, Record<string, Review>>>({});
 
   // Theme state
   const [isDarkMode, setIsDarkMode] = useState(true);
@@ -37,6 +41,20 @@ export default function Dashboard() {
     lng: 127.122270,
   });
 
+  // Subscribe to reviews in Realtime DB
+  useEffect(() => {
+    const reviewsRef = ref(db, 'reviews');
+    const unsubscribe = onValue(reviewsRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        setAllReviews(data);
+      } else {
+        setAllReviews({});
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
   // Fetch restaurant list
   const fetchRestaurants = async () => {
     try {
@@ -49,6 +67,7 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchRestaurants();
   }, []);
 
@@ -98,6 +117,28 @@ export default function Dashboard() {
     });
   }, [restaurants, userLocation]);
 
+  // Inject dynamic rating from database reviews
+  const restaurantsWithDbRatings = useMemo(() => {
+    return restaurantsWithDistance.map((res) => {
+      const resReviews = allReviews[res.id || ''] || {};
+      const reviewsArray = Object.values(resReviews);
+      if (reviewsArray.length > 0) {
+        const sum = reviewsArray.reduce((acc: number, curr: Review) => acc + (curr.rating || 0), 0);
+        const avg = (sum / reviewsArray.length).toFixed(2);
+        return {
+          ...res,
+          rating: avg,
+          reviewCount: reviewsArray.length,
+        };
+      }
+      return {
+        ...res,
+        rating: '0',
+        reviewCount: 0,
+      };
+    });
+  }, [restaurantsWithDistance, allReviews]);
+
   // Clean rating helper for numeric sorting
   const getNumericRating = (ratingStr?: string) => {
     if (!ratingStr || ratingStr === '-') return 0;
@@ -107,7 +148,7 @@ export default function Dashboard() {
 
   // Memoized filtered & sorted list of restaurants
   const filteredAndSorted = useMemo(() => {
-    return restaurantsWithDistance
+    return restaurantsWithDbRatings
       .filter((res) => {
         const matchesSearch =
           res.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -125,7 +166,7 @@ export default function Dashboard() {
         }
         return a.name.localeCompare(b.name, 'ko');
       });
-  }, [restaurantsWithDistance, searchQuery, selectedCategory, sortBy]);
+  }, [restaurantsWithDbRatings, searchQuery, selectedCategory, sortBy]);
 
   const toggleRouletteSelection = (name: string) => {
     setRoulettePool((prev) =>
@@ -154,7 +195,7 @@ export default function Dashboard() {
         onSortByChange={setSortBy}
         onSearchQueryChange={setSearchQuery}
         filteredAndSorted={filteredAndSorted}
-        allRestaurants={restaurantsWithDistance}
+        allRestaurants={restaurantsWithDbRatings}
         selectedRes={selectedRes}
         onSelectRes={(res) => setSelectedRes(res)}
         onHoverEnterRes={(res) => setHoveredRes(res)}
@@ -197,6 +238,7 @@ export default function Dashboard() {
         restaurant={detailRes}
         isInPool={detailRes ? roulettePool.includes(detailRes.name) : false}
         onTogglePool={toggleRouletteSelection}
+        reviews={detailRes && allReviews[detailRes.id || ''] ? Object.values(allReviews[detailRes.id || '']) : []}
       />
 
       {/* 4. Global Winner Modal */}

@@ -2,8 +2,7 @@
 
 import { Card } from '@/shared/ui/card';
 import { Badge } from '@/shared/ui/badge';
-import { Button } from '@/shared/ui/button';
-import { Check, Eye } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { formatPrice } from '@/shared/lib/utils';
 import { motion } from 'framer-motion';
 import { Restaurant } from '../model/types';
@@ -39,7 +38,10 @@ export default function RestaurantCard({
       transition={index < 15 ? { duration: 0.2, delay: Math.min(index * 0.02, 0.2) } : { duration: 0 }}
       onMouseEnter={onHoverEnter}
       onMouseLeave={onHoverLeave}
-      onClick={onSelect}
+      onClick={() => {
+        onSelect();
+        onViewDetail();
+      }}
     >
       <Card
         className={`group relative p-3.5 rounded-2xl cursor-pointer border transition-all duration-300 shadow-sm ${
@@ -103,7 +105,8 @@ export default function RestaurantCard({
                   <span className="text-primary font-bold">{restaurant.distance}</span>
                   <span>•</span>
                   <span className="text-yellow-500">
-                    {restaurant.rating && restaurant.rating !== '-' ? '★ ' + restaurant.rating : '평가없음'}
+                    ★ {restaurant.rating && restaurant.rating !== '0' ? restaurant.rating : '0'}
+                    {restaurant.reviewCount ? ` (${restaurant.reviewCount})` : ' (0)'}
                   </span>
                   <span>•</span>
                   <span className="truncate max-w-[120px]">{restaurant.operating_hours || '정보 없음'}</span>
@@ -125,22 +128,6 @@ export default function RestaurantCard({
               )}
             </div>
           </div>
-        </div>
-
-        {/* Float Hover Controls: Details */}
-        <div className="absolute right-2 top-2 flex items-center gap-0.5 opacity-0 hover:opacity-100 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-200 bg-card rounded-lg border border-border/60 p-0.5 shadow-sm">
-          <Button
-            size="icon"
-            variant="ghost"
-            className="h-7 w-7 rounded-md text-muted-foreground hover:text-primary cursor-pointer"
-            onClick={(e) => {
-              e.stopPropagation();
-              onViewDetail();
-            }}
-            title="상세보기"
-          >
-            <Eye size={12} />
-          </Button>
         </div>
       </Card>
     </motion.div>

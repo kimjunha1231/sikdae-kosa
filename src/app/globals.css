@@ -26,6 +26,7 @@
 }
 
 :root {
+  color-scheme: light;
   /* Light Mode (Toss UI Light) */
   --background: #f2f4f6;
   --foreground: #191f28;
@@ -54,6 +55,7 @@
 }
 
 .dark {
+  color-scheme: dark;
   /* Dark Mode (Toss UI Dark - Default) */
   --background: #0f1015;
   --foreground: #f9fafb;
@@ -85,6 +87,8 @@
   * {
     @apply border-border outline-ring/50;
     transition: background-color 0.2s ease, border-color 0.2s ease;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
   }
   body {
     @apply bg-background text-foreground;

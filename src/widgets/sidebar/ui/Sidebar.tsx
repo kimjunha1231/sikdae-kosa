@@ -259,7 +259,7 @@ export default function Sidebar({
                   <span className="text-[10px] text-muted-foreground/80 leading-relaxed">
                     위의 검색창에서 바로 추가하거나,
                     <br />
-                    '맛집 전체보기' 탭에서 식당을 추가해 보세요!
+                    &apos;맛집 전체보기&apos; 탭에서 식당을 추가해 보세요!
                   </span>
                 </div>
               )}

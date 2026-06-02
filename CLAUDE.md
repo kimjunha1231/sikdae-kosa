@@ -12,6 +12,9 @@
 - **Detail Modal Toggle**: `RestaurantDetailModal` accepts `isInPool` and `onTogglePool` to toggle a restaurant in/out of the roulette pool directly from the detailed view.
 - **Sidebar Tabs**: Displays "맛집 전체보기" (all restaurants) and "선택된 맛집" (roulette pool). The selected tab provides a quick-add search input allowing users to search and add restaurants directly into the pool.
 - **Scraper Schedule**: Migrated from GitHub Actions schedule to Vercel Cron (`/api/cron/kbabsang`, scheduled in `vercel.json` at `10 2 * * *` UTC / 11:10 AM KST and `0 0 * * *` UTC / 9:00 AM KST) to bypass GitHub Actions scheduler queue delays and enforce timely lunch menu updates. Vercel Hobby plan 10s timeout constraints apply.
+- **Reviews & Ratings System**: Real-time reviews are persisted in Firebase RTDB under `reviews/${restaurantId}/${reviewId}`. Parent views subscribe to this path via `onValue` to dynamically compute average ratings and counts. These live ratings override the static `"rating": "0"` values in `restaurants.json` for live-sorting in the main sidebar.
+- **Client-side Image Compression & Storage**: Attached review images are compressed client-side using `HTML5 Canvas` (max 500x500 pixels, `0.6` JPEG quality) before uploading to Firebase RTDB as small Base64 strings (~15-25KB). This avoids standard Firebase Storage bucket requirements while maintaining fast real-time synchronization.
+- **Review List Filters & Framer Motion**: Reviews can be sorted (latest, highest, lowest) and filtered by menu (excluding the "식당 전체" label from the filter selector). Image thumbnails inside reviews support full-screen lightbox expansions animated via matching container and image `layoutId` tags.
 
 ## Git Workflow & Commit Guidelines
 - **Branching Policy**: Always create a feature branch (`feature/<feature-name>`) for new feature development.

@@ -4,11 +4,14 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Sidebar } from '@/widgets/sidebar';
 import { KakaoMapView } from '@/widgets/map-view';
-import { RestaurantDetailModal, Restaurant } from '@/entities/restaurant';
+import { RestaurantDetailModal, Restaurant, Review } from '@/entities/restaurant';
 import { WinnerModal } from '@/features/draw-roulette';
 import { useCollaborativeRoom } from '@/features/collaboration/lib/useCollaborativeRoom';
 import { Users, Copy, Check, ArrowLeft, Edit2 } from 'lucide-react';
 import { CrocodileGame } from '@/features/crocodile-game';
+import { ref, onValue } from 'firebase/database';
+import { db } from '@/shared/lib/firebase';
+
 
 export default function CollaborativeRoom() {
   const params = useParams();
@@ -29,11 +32,26 @@ export default function CollaborativeRoom() {
   const [copied, setCopied] = useState(false);
   const [isEditingNickname, setIsEditingNickname] = useState(false);
   const [newNickname, setNewNickname] = useState('');
+  const [allReviews, setAllReviews] = useState<Record<string, Record<string, Review>>>({});
 
   const [userLocation] = useState<{ lat: number; lng: number } | null>({
     lat: 37.495055,
     lng: 127.122270,
   });
+
+  // Subscribe to reviews in Realtime DB
+  useEffect(() => {
+    const reviewsRef = ref(db, 'reviews');
+    const unsubscribe = onValue(reviewsRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        setAllReviews(data);
+      } else {
+        setAllReviews({});
+      }
+    });
+    return () => unsubscribe();
+  }, []);
 
   const {
     roulettePool,
@@ -62,6 +80,7 @@ export default function CollaborativeRoom() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchRestaurants();
   }, []);
 
@@ -92,13 +111,35 @@ export default function CollaborativeRoom() {
     return restaurants.map((res) => {
       const activeCenter = userLocation || { lat: 37.495055, lng: 127.122270 };
       const distM = getHaversineDistance(activeCenter.lat, activeCenter.lng, res.lat, res.lng);
-      let formattedDistance = distM < 1000 ? `${Math.round(distM)}m` : `${(distM / 1000).toFixed(1)}km`;
+      const formattedDistance = distM < 1000 ? `${Math.round(distM)}m` : `${(distM / 1000).toFixed(1)}km`;
       return { ...res, distanceVal: distM, distance: formattedDistance };
     });
   }, [restaurants, userLocation]);
 
+  // Inject dynamic rating from database reviews
+  const restaurantsWithDbRatings = useMemo(() => {
+    return restaurantsWithDistance.map((res) => {
+      const resReviews = allReviews[res.id || ''] || {};
+      const reviewsArray = Object.values(resReviews);
+      if (reviewsArray.length > 0) {
+        const sum = reviewsArray.reduce((acc: number, curr: Review) => acc + (curr.rating || 0), 0);
+        const avg = (sum / reviewsArray.length).toFixed(2);
+        return {
+          ...res,
+          rating: avg,
+          reviewCount: reviewsArray.length,
+        };
+      }
+      return {
+        ...res,
+        rating: '0',
+        reviewCount: 0,
+      };
+    });
+  }, [restaurantsWithDistance, allReviews]);
+
   const filteredAndSorted = useMemo(() => {
-    return restaurantsWithDistance
+    return restaurantsWithDbRatings
       .filter((res) => {
         const matchesSearch =
           res.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -114,7 +155,7 @@ export default function CollaborativeRoom() {
         }
         return a.name.localeCompare(b.name, 'ko');
       });
-  }, [restaurantsWithDistance, searchQuery, selectedCategory, sortBy]);
+  }, [restaurantsWithDbRatings, searchQuery, selectedCategory, sortBy]);
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(window.location.href);
@@ -140,7 +181,7 @@ export default function CollaborativeRoom() {
         onSortByChange={setSortBy}
         onSearchQueryChange={setSearchQuery}
         filteredAndSorted={filteredAndSorted}
-        allRestaurants={restaurantsWithDistance}
+        allRestaurants={restaurantsWithDbRatings}
         selectedRes={selectedRes}
         onSelectRes={(res) => setSelectedRes(res)}
         onHoverEnterRes={(res) => setHoveredRes(res)}
@@ -298,6 +339,7 @@ export default function CollaborativeRoom() {
           restaurant={detailRes}
           isInPool={roulettePool.includes(detailRes.name)}
           onTogglePool={toggleRouletteSelection}
+          reviews={detailRes && allReviews[detailRes.id || ''] ? Object.values(allReviews[detailRes.id || '']) : []}
         />
       )}
 
