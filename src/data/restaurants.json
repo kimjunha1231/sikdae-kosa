@@ -8523,18 +8523,78 @@
     "lng": 127.1201854,
     "menus": [
       {
-        "name": "김치찌개 반상",
-        "price": 9500,
+        "name": "세종대왕꼬치",
+        "price": 28000,
         "imageUrl": null
       },
       {
-        "name": "제육볶음 정식",
-        "price": 10000,
+        "name": "수라한상",
+        "price": 36000,
         "imageUrl": null
       },
       {
-        "name": "전통 비빔밥",
-        "price": 9000,
+        "name": "와인슬러시(레드)",
+        "price": 2900,
+        "imageUrl": null
+      },
+      {
+        "name": "조선하이볼",
+        "price": 3900,
+        "imageUrl": null
+      },
+      {
+        "name": "조선모둠꼬치",
+        "price": 21000,
+        "imageUrl": null
+      },
+      {
+        "name": "와인슬러시(화이트)",
+        "price": 2900,
+        "imageUrl": null
+      },
+      {
+        "name": "와인슬러시(반반)",
+        "price": 2900,
+        "imageUrl": null
+      },
+      {
+        "name": "오미자하이볼",
+        "price": 6900,
+        "imageUrl": null
+      },
+      {
+        "name": "유자하이볼",
+        "price": 6900,
+        "imageUrl": null
+      },
+      {
+        "name": "복분자하이볼",
+        "price": 5900,
+        "imageUrl": null
+      },
+      {
+        "name": "닭목살 꼬치 (3p)",
+        "price": 7900,
+        "imageUrl": null
+      },
+      {
+        "name": "닭다리살 꼬치 (3p)",
+        "price": 7900,
+        "imageUrl": null
+      },
+      {
+        "name": "닭근위 꼬치 (3p)",
+        "price": 7900,
+        "imageUrl": null
+      },
+      {
+        "name": "닭엉덩이살 꼬치 (2p)",
+        "price": 7900,
+        "imageUrl": null
+      },
+      {
+        "name": "닭염통 꼬치 (3p)",
+        "price": 6900,
         "imageUrl": null
       }
     ]
