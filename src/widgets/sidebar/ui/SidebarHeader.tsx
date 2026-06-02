@@ -29,7 +29,10 @@ export default function SidebarHeader({ isDarkMode, onToggleDarkMode, onCreateRo
         {onCreateRoom && (
           <Button
             variant="outline"
-            onClick={onCreateRoom}
+            onClick={(e) => {
+              e.stopPropagation();
+              onCreateRoom();
+            }}
             className="rounded-xl px-3 py-1.5 h-9 border border-border shrink-0 cursor-pointer hover:bg-primary/10 hover:text-primary transition-colors text-[11px] font-extrabold flex items-center gap-1.5 text-muted-foreground hover:border-primary/50"
             title="실시간 룰렛 공유방 만들기"
           >
@@ -42,7 +45,10 @@ export default function SidebarHeader({ isDarkMode, onToggleDarkMode, onCreateRo
         <Button
           variant="ghost"
           size="icon"
-          onClick={onToggleDarkMode}
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleDarkMode();
+          }}
           className="rounded-xl w-9 h-9 border border-border shrink-0 cursor-pointer"
           title={isDarkMode ? '라이트 모드로 변경' : '다크 모드로 변경'}
         >

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import SidebarHeader from './SidebarHeader';
 import { SearchFilterPanel } from '@/features/search-filter-restaurants';
@@ -49,6 +49,17 @@ export default function Sidebar({
   const [activeTab, setActiveTab] = useState<'all' | 'pool'>('all');
   const [addSearchInput, setAddSearchInput] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isMobileExpanded, setIsMobileExpanded] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const poolRestaurants = useMemo(() => {
     return allRestaurants.filter((res) => roulettePool.includes(res.name));
@@ -71,12 +82,29 @@ export default function Sidebar({
   }, [allRestaurants, roulettePool, addSearchInput]);
 
   return (
-    <section className="w-full md:w-[460px] h-full flex flex-col shrink-0 border-r border-border bg-card shadow-lg relative z-20">
-      <SidebarHeader
-        isDarkMode={isDarkMode}
-        onToggleDarkMode={onToggleDarkMode}
-        onCreateRoom={onCreateRoom}
-      />
+    <motion.section
+      className="fixed bottom-0 left-0 right-0 z-30 h-[75vh] rounded-t-[28px] border-t border-border bg-card shadow-2xl flex flex-col md:relative md:bottom-auto md:left-auto md:right-auto md:z-20 md:w-[460px] md:h-full md:rounded-none md:border-t-0 md:border-r md:shadow-lg overflow-hidden"
+      animate={isMobile ? { y: isMobileExpanded ? 0 : 'calc(75vh - 96px)' } : { y: 0 }}
+      transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+    >
+      {isMobile && (
+        <div
+          className="w-full py-2.5 flex justify-center items-center cursor-pointer select-none bg-card hover:bg-muted/10 rounded-t-[28px]"
+          onClick={() => setIsMobileExpanded(!isMobileExpanded)}
+        >
+          <div className="w-12 h-1.5 rounded-full bg-muted-foreground/30" />
+        </div>
+      )}
+      <div 
+        className={isMobile ? "cursor-pointer" : ""} 
+        onClick={() => isMobile && setIsMobileExpanded(!isMobileExpanded)}
+      >
+        <SidebarHeader
+          isDarkMode={isDarkMode}
+          onToggleDarkMode={onToggleDarkMode}
+          onCreateRoom={onCreateRoom}
+        />
+      </div>
 
       {/* Mode Tabs */}
       <div className="px-4 py-2 border-b border-border/50 bg-background/20 shrink-0">
@@ -267,6 +295,6 @@ export default function Sidebar({
           </div>
         </>
       )}
-    </section>
+    </motion.section>
   );
 }
