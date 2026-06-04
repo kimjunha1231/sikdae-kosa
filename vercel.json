@@ -6,7 +6,7 @@
     },
     {
       "path": "/api/cron/kbabsang",
-      "schedule": "35 3 * * *"
+      "schedule": "40 1 * * *"
     }
   ]
 }
