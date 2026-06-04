@@ -8,7 +8,8 @@ import { formatPrice } from '@/shared/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Restaurant, Review } from '../model/types';
 import { ref, push, set } from 'firebase/database';
-import { db } from '@/shared/lib/firebase';
+import { db, storage } from '@/shared/lib/firebase';
+import { ref as sRef, uploadString, getDownloadURL } from 'firebase/storage';
 
 interface RestaurantDetailModalProps {
   isOpen: boolean;
@@ -19,7 +20,7 @@ interface RestaurantDetailModalProps {
   reviews?: Review[];
 }
 
-const compressImage = (file: File, maxWidth = 500, maxHeight = 500): Promise<string> => {
+const compressImage = (file: File, maxWidth = 1600, maxHeight = 1600): Promise<string> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -51,7 +52,7 @@ const compressImage = (file: File, maxWidth = 500, maxHeight = 500): Promise<str
           return;
         }
         ctx.drawImage(img, 0, 0, width, height);
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
         resolve(dataUrl);
       };
       img.onerror = (err) => reject(err);
@@ -78,6 +79,7 @@ export default function RestaurantDetailModal({
   const [hoverRating, setHoverRating] = useState<number | null>(null);
   const [reviewImageBase64, setReviewImageBase64] = useState('');
   const [isCompressing, setIsCompressing] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
   // Review list filter & sort states
   const [sortByReviews, setSortByReviews] = useState<'latest' | 'highest' | 'lowest'>('latest');
@@ -156,35 +158,51 @@ export default function RestaurantDetailModal({
     setReviewImageBase64('');
   };
 
-  // Submit review to Firebase RTDB
-  const handleSubmitReview = (e: React.FormEvent) => {
+  // Submit review to Firebase RTDB and upload image to Storage
+  const handleSubmitReview = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!restaurant) return;
     if (!nicknameInput.trim() || !commentInput.trim()) return;
 
     localStorage.setItem('kosa_user_nickname', nicknameInput.trim());
+    setIsUploading(true);
 
-    const reviewRef = ref(db, `reviews/${restaurant.id}`);
-    const newReviewRef = push(reviewRef);
-    
-    const newReview = {
-      id: newReviewRef.key || Date.now().toString(),
-      nickname: nicknameInput.trim(),
-      menuName: selectedMenuInput,
-      rating: ratingInput,
-      comment: commentInput.trim(),
-      createdAt: Date.now(),
-      reviewImage: reviewImageBase64 || undefined
-    };
+    try {
+      let uploadedImageUrl = '';
+      
+      if (reviewImageBase64) {
+        const fileExtension = 'jpg';
+        const fileName = `${Date.now()}_review.${fileExtension}`;
+        const imageRef = sRef(storage, `reviews/${restaurant.id}/${fileName}`);
+        
+        await uploadString(imageRef, reviewImageBase64, 'data_url');
+        uploadedImageUrl = await getDownloadURL(imageRef);
+      }
 
-    set(newReviewRef, newReview)
-      .then(() => {
-        setCommentInput('');
-        setReviewImageBase64('');
-      })
-      .catch((err) => {
-        console.error('Failed to submit review:', err);
-      });
+      const reviewRef = ref(db, `reviews/${restaurant.id}`);
+      const newReviewRef = push(reviewRef);
+      
+      const newReview: Review = {
+        id: newReviewRef.key || Date.now().toString(),
+        nickname: nicknameInput.trim(),
+        menuName: selectedMenuInput,
+        rating: ratingInput,
+        comment: commentInput.trim(),
+        createdAt: Date.now()
+      };
+
+      if (uploadedImageUrl) {
+        newReview.reviewImage = uploadedImageUrl;
+      }
+
+      await set(newReviewRef, newReview);
+      setCommentInput('');
+      setReviewImageBase64('');
+    } catch (err) {
+      console.error('Failed to submit review:', err);
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   if (!restaurant) return null;
@@ -432,7 +450,7 @@ export default function RestaurantDetailModal({
                           accept="image/*"
                           onChange={handleImageChange}
                           className="hidden"
-                          disabled={isCompressing}
+                          disabled={isCompressing || isUploading}
                         />
                         <Plus size={16} className="text-muted-foreground" />
                       </label>
@@ -440,6 +458,12 @@ export default function RestaurantDetailModal({
                       {isCompressing && (
                         <span className="text-[10px] text-muted-foreground font-bold animate-pulse">
                           사진 최적화 중...
+                        </span>
+                      )}
+
+                      {isUploading && (
+                        <span className="text-[10px] text-primary font-bold animate-pulse">
+                          사진 업로드 중...
                         </span>
                       )}
 
@@ -480,10 +504,10 @@ export default function RestaurantDetailModal({
                       />
                       <button
                         type="submit"
-                        disabled={!nicknameInput.trim() || !commentInput.trim() || isCompressing}
+                        disabled={!nicknameInput.trim() || !commentInput.trim() || isCompressing || isUploading}
                         className="absolute right-1 top-1 bottom-1 px-3 bg-primary text-white text-[10px] font-black rounded-lg hover:bg-primary/95 disabled:bg-muted disabled:text-muted-foreground transition-all cursor-pointer shadow-sm"
                       >
-                        등록
+                        {isUploading ? '업로드...' : '등록'}
                       </button>
                     </div>
                   </div>
