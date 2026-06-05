@@ -66,10 +66,9 @@ async function scrapeKbabsang() {
   }
 
   // 3. Check if the post is for today (KST)
-  const d = new Date();
-  const kst = new Date(d.getTime() + 9 * 60 * 60 * 1000);
-  const month = kst.getMonth() + 1;
-  const date = kst.getDate();
+  const kstDate = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Seoul' }));
+  const month = kstDate.getMonth() + 1;
+  const date = kstDate.getDate();
 
   const datePatterns = [
     `${month}월\\s*${date}일`,
@@ -122,10 +121,14 @@ async function scrapeKbabsang() {
     headers['Authorization'] = `Bearer ${cronSecret}`;
   }
 
+  const year = kstDate.getFullYear();
+  const monthStr = String(month).padStart(2, '0');
+  const dateStr = String(date).padStart(2, '0');
+
   const payload = {
     imageUrl,
     postUrl,
-    lastUpdated: kst.toISOString().split('T')[0],
+    lastUpdated: `${year}-${monthStr}-${dateStr}`,
   };
 
   const apiResponse = await fetch(nextApiUrl, {

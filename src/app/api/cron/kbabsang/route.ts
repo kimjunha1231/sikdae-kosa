@@ -70,11 +70,9 @@ export async function GET(request: Request) {
     }
 
     // Check if the post is for today (KST)
-    const d = new Date();
-    // KST is UTC+9
-    const kst = new Date(d.getTime() + 9 * 60 * 60 * 1000);
-    const month = kst.getMonth() + 1;
-    const date = kst.getDate();
+    const kstDate = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Seoul' }));
+    const month = kstDate.getMonth() + 1;
+    const date = kstDate.getDate();
 
     const datePatterns = [
       `${month}월\\s*${date}일`,
@@ -109,10 +107,13 @@ export async function GET(request: Request) {
     }
 
     // 4. Firebase RTDB에 오늘 자 데이터 기록
+    const year = kstDate.getFullYear();
+    const monthStr = String(month).padStart(2, '0');
+    const dateStr = String(date).padStart(2, '0');
     const firebasePayload = {
       imageUrl,
       postUrl,
-      lastUpdated: kst.toISOString().split('T')[0], // Format: YYYY-MM-DD
+      lastUpdated: `${year}-${monthStr}-${dateStr}`, // Format: YYYY-MM-DD
     };
 
     const dbUrl = FIREBASE_SECRET
