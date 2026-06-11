@@ -101,71 +101,110 @@ def search_naver_place(query):
     return None, None
 
 def estimate_gimgane_price(menu_name):
-    # Gimgane default price map
+    # Gimgane default price map (updated 2025/2026)
     GIMGANE_PRICE_MAP = {
-        "김가네김밥": 4500,
-        "참치김밥": 5000,
-        "치즈김밥": 5000,
-        "멸추김밥": 5300,
-        "돈까스김밥": 5300,
-        "소고기김밥": 5500,
-        "라볶이": 7000,
-        "쌀떡볶이": 6000,
-        "쫄면": 7500,
-        "라면": 4500,
-        "돈까스": 9500,
-        "치즈돈까스": 10500,
-        "오믈렛": 8500,
-        "김치볶음밥": 8000,
-        "제육덮밥": 8500,
-        "낙지덮밥": 9000,
-        "육개장": 9000,
-        "순두부찌개": 8000,
-        "부대찌개": 8500,
-        "찐만두": 5500,
-        "갈비만두": 6000,
-        "어린이돈까스": 7500,
-        "물쫄면": 7500,
-        "뚝배기불고기": 9000,
-        "꼬마김밥": 3500,
-        "더블치즈김밥": 5300,
-        "통새우롤": 6000,
-        "돈까스롤": 6000,
-        "소고기주먹밥": 4000,
-        "철판치즈불닭쫄면": 9000,
-        "떡만두국": 8000,
-        "냉소바": 8000,
-        "잔치국수": 6500,
-        "김치말이국수": 7500,
-        "초계국수": 8500,
-        "물냉면": 7500,
+        "김가네김밥": 5500,
+        "참치김밥": 6500,
+        "참치마요김밥": 6500,
+        "치즈김밥": 6500,
+        "더블치즈김밥": 6500,
+        "멸추김밥": 7000,
+        "돈까스김밥": 7000,
+        "소고기김밥": 7000,
+        "에그스팸김밥": 7000,
+        "와사비크래미김밥": 7000,
+        "꼬마김밥": 4500,
+        "소고기주먹밥": 5000,
+        "라볶이": 9000,
+        "쌀떡볶이": 8000,
+        "쫄면": 9000,
+        "철판치즈불닭쫄면": 10000,
+        "물쫄면": 9000,
+        "라면": 5500,
+        "떡만두국": 9500,
+        "냉소바": 9000,
+        "잔치국수": 8000,
+        "김치말이국수": 9000,
+        "초계국수": 10000,
+        "물냉면": 9000,
+        "비빔냉면": 9000,
+        "콩국수": 9500,
+        "철판야끼우동": 9500,
+        "튀김우동": 8500,
+        "유부우동": 8000,
+        "모듬오뎅": 8000,
+        "돈까스": 10500,
+        "등심돈까스": 10500,
+        "치즈돈까스": 11500,
+        "어린이돈까스": 8500,
+        "돈까스롤": 7000,
+        "통새우롤": 7000,
+        "오믈렛": 9500,
+        "오므라이스": 9500,
+        "김치볶음밥": 9000,
+        "스팸김치볶음밥": 9500,
+        "철판치즈김치볶음밥": 10000,
+        "매콤철판해물볶음밥": 10000,
+        "김치불고기돌솥밥": 10000,
+        "야채비빔밥": 9000,
+        "소고기돌솥비빔밥": 10000,
+        "제육덮밥": 9500,
+        "치킨마요덮밥": 9000,
+        "철판낙지덮밥": 10500,
+        "낙지덮밥": 10500,
+        "커리덮밥": 9500,
+        "닭갈비덮밥": 10000,
+        "김치가츠동": 9500,
+        "스팸옛날도시락": 8000,
+        "차돌된장찌개": 9500,
+        "김치찌개": 9000,
+        "육개장": 10000,
+        "부대찌개": 9500,
+        "순두부찌개": 9000,
+        "뚝배기불고기": 10500,
+        "소떡소떡 (1ea)": 3500,
+        "떡꼬치 (1ea)": 2500,
+        "야채튀김 (1ea)": 2000,
+        "군만두": 6000,
+        "왕새우튀김 (1ea)": 2500,
+        "오징어튀김 (2ea)": 3500,
+        "김말이튀김 (4ea)": 3500,
+        "갈비만두": 7000,
+        "찐만두(고기/김치)": 6500,
+        "찐만두": 6500
     }
     
-    # Exact match check
+    # 1. Exact Match Check
+    if menu_name in GIMGANE_PRICE_MAP:
+        return GIMGANE_PRICE_MAP[menu_name]
+        
+    # 2. Substring Match Check
     for k, v in GIMGANE_PRICE_MAP.items():
         if k in menu_name or menu_name in k:
             return v
             
-    # Keyword match check
+    # 3. Generic Keyword Fallback
     if "김밥" in menu_name:
-        return 5000
-    elif "라면" in menu_name:
-        return 4500
-    elif "우동" in menu_name:
         return 6500
-    elif "돈까스" in menu_name or "돈카츠" in menu_name:
-        return 9500
-    elif "볶음밥" in menu_name or "덮밥" in menu_name or "비빔밥" in menu_name:
-        return 8000
-    elif "찌개" in menu_name or "국밥" in menu_name:
-        return 8500
-    elif "만두" in menu_name:
+    elif "라면" in menu_name:
         return 5500
+    elif "우동" in menu_name:
+        return 8500
+    elif "돈까스" in menu_name or "돈카츠" in menu_name or "가츠" in menu_name:
+        return 10500
+    elif "볶음밥" in menu_name or "덮밥" in menu_name or "비빔밥" in menu_name or "동" in menu_name:
+        return 9500
+    elif "찌개" in menu_name or "국밥" in menu_name or "탕" in menu_name:
+        return 9000
+    elif "만두" in menu_name:
+        return 6500
     elif "떡볶이" in menu_name or "라볶이" in menu_name:
-        return 6000
+        return 8500
+    elif "튀김" in menu_name or "꼬치" in menu_name or "소떡" in menu_name:
+        return 3000
     elif "면" in menu_name or "국수" in menu_name or "소바" in menu_name:
-        return 7500
-    return 7000  # Default fallback price
+        return 9000
+    return 9000  # Default fallback price
 
 def fetch_menu_details(place_id):
     if not place_id:
@@ -399,7 +438,11 @@ def main():
             print(f"[{idx+1}/{len(restaurants)}] Cache MISS: Scraping Naver Place for '{query}'...")
             
             # Naver search to find ID and thumbnail
-            place_id, search_image = search_naver_place(query)
+            if name == "김가네(가락본동점)":
+                place_id = "21597534"
+                search_image = None
+            else:
+                place_id, search_image = search_naver_place(query)
             
             if place_id:
                 print(f"  Found Place ID: {place_id}. Fetching menus...")
