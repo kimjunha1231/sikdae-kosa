@@ -5043,7 +5043,7 @@
     "operating_hours": "-",
     "naver_link": "https://search.naver.com/search.naver?query=%EB%AA%A8%EC%8A%A4%EB%B2%84%EA%B1%B0%28%EB%8C%80%ED%95%99%EB%A1%9C%EC%A0%90%29",
     "place_id": null,
-    "image_url": "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNjAxMjVfMTU0%2FMDAxNzY5MzQxNTcyMzM1.cnh5n2z1lulDGXXj0q4mV0OvStGy5D193yM05VSUHtog.bPg_vuplfvg9-43wlxXfMroYi4gm_dl4OAIGkXq9Fj4g.JPEG%2FKakaoTalk_20260123_201834476_08.jpg",
+    "image_url": "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNjAxMjVfMjE0%2FMDAxNzY5MzQxNzMwNzU3.9lk2Hd_SUSGbN_12Y8sFfbSwRCIyOP37EuNXEy0teD0g.F17SFUGIAhXLwsVivxPAUCxJtqKnsCLHeAZQS43vyHwg.JPEG%2FKakaoTalk_20260123_201834476_11.jpg",
     "lat": 37.5827031,
     "lng": 127.0015306,
     "menus": [
@@ -10343,7 +10343,7 @@
     "operating_hours": "운영시간",
     "naver_link": "https://search.naver.com/search.naver?query=%EC%A1%B0%EC%84%A0%EB%8B%AD%EA%BC%AC%EC%B9%98%28%EA%B0%80%EB%9D%BD%EC%A0%90%29",
     "place_id": null,
-    "image_url": "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDA2MjFfMTEg%2FMDAxNzE4OTczNDkwNTMw.CxKzaPk4VO6txH0pNsDTHtrPsuL2gsQZ9FPbxRQ6V10g.M-MU-GYJAJzEpLDmPpHXl1_Pd8Y6LJaFj-QkQ-7X33kg.JPEG%2F%25B4%25D9%25BF%25EE%25B7%25CE%25B5%25E5.jpg",
+    "image_url": "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDA4MjVfMTE4%2FMDAxNzI0NTU2ODUxNDE4.XRH9mvocTmYGSH5MBF_xrsYHGLZS4YBBRcesr380j5Ug.zgXfkQ_tY6b-3eMEw3qOoqvtv9BaDvT0baCOHj76Fisg.JPEG%2F%25BF%25DC%25B0%25FC2.jpeg",
     "lat": 37.4955249,
     "lng": 127.1201854,
     "menus": [
@@ -11436,25 +11436,20 @@
     "distance": "100m",
     "rating": "-",
     "operating_hours": "-",
-    "naver_link": "https://pcmap.place.naver.com/restaurant/4377139/home",
-    "place_id": "4377139",
-    "image_url": null,
+    "naver_link": "https://pcmap.place.naver.com/restaurant/1754338463/home",
+    "place_id": "1754338463",
+    "image_url": "https://ldb-phinf.pstatic.net/20210804_105/1628075539663ufE4W_JPEG/J7KkUFrotiQHwaJH1fBHgHyj.jpeg.jpg",
     "lat": 37.4953726,
     "lng": 127.1310836,
     "menus": [
       {
-        "name": "아메리카노",
-        "price": 4000,
-        "imageUrl": null
+        "name": "아메리카노 HOT",
+        "price": 2000,
+        "imageUrl": "https://ldb-phinf.pstatic.net/20210804_105/1628075539663ufE4W_JPEG/J7KkUFrotiQHwaJH1fBHgHyj.jpeg.jpg"
       },
       {
-        "name": "시그니처 라떼",
-        "price": 4800,
-        "imageUrl": null
-      },
-      {
-        "name": "수제 샌드위치 세트",
-        "price": 8500,
+        "name": "아메리카노 ICE",
+        "price": 2500,
         "imageUrl": null
       }
     ]
@@ -11468,7 +11463,7 @@
     "operating_hours": "-",
     "naver_link": "https://pcmap.place.naver.com/restaurant/4378818/home",
     "place_id": "4378818",
-    "image_url": "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNTA4MjlfNDQg%2FMDAxNzU2NDc2ODg5ODYw.ADeaDMYTcVyRbjwPzEIxlgXvz9XUi2sT_FKMAc76ITsg.uAGU37xEvR2MzU-xLDOX0DDk9DKGDSspZt6SOWeEA2Eg.JPEG%2F900%25A3%25DF20250820%25A3%25DF101918.jpg%23900x900&type=ff192_192",
+    "image_url": "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNTA1MTRfMjcz%2FMDAxNzQ3MjI4OTI1MDY2.AjHwuYFeFJQ8H0ewYJnXGJz5r9Exs-dtfcPslBCrjn4g.cqyN1b-YfaT7maGCPv4xA4A6XZ22xHWFXccNJdkce4Yg.JPEG%2FIMG_8528.jpg%23900x676&type=ff192_192",
     "lat": 37.4942778,
     "lng": 127.1227896,
     "menus": [
@@ -12096,26 +12091,41 @@
     "distance": "100m",
     "rating": "-",
     "operating_hours": "운영시간 오전7시 ~ 오후10시",
-    "naver_link": "https://pcmap.place.naver.com/restaurant/0/home",
-    "place_id": "0",
-    "image_url": "https://search.pstatic.net/common?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNTA3MTlfMzEg%2FMDAxNzUyOTA5MzM0ODY1.n4uiNvZEbNUqZ6x0yKLFn03Kz72LOty2jkUG0RQP2Bwg.bK8VtiBsfQiroLWwO4Ym8qunoJpybRLEQXNw7PH3qCsg.JPEG%2FIMG%25A3%25DF8848.jpg&type=fff208_208_ar",
+    "naver_link": "https://pcmap.place.naver.com/restaurant/1674945696/home",
+    "place_id": "1674945696",
+    "image_url": "https://ldb-phinf.pstatic.net/20230630_257/1688086965915YJQFb_JPEG/%B9%B0%B3%C3%B8%E9.jpg",
     "lat": 37.4951039,
     "lng": 127.1224441,
     "menus": [
       {
-        "name": "김치찌개 반상",
-        "price": 9500,
-        "imageUrl": null
-      },
-      {
-        "name": "제육볶음 정식",
+        "name": "물냉면",
         "price": 10000,
-        "imageUrl": null
+        "imageUrl": "https://ldb-phinf.pstatic.net/20230630_257/1688086965915YJQFb_JPEG/%B9%B0%B3%C3%B8%E9.jpg"
       },
       {
-        "name": "전통 비빔밥",
-        "price": 9000,
-        "imageUrl": null
+        "name": "누룽지반계탕",
+        "price": 15000,
+        "imageUrl": "https://ldb-phinf.pstatic.net/20230630_125/1688086946381ihUuk_JPEG/%B4%A9%B7%EE%C1%F6%B9%DD%B0%E8%C5%C1.jpg"
+      },
+      {
+        "name": "도가니탕",
+        "price": 20000,
+        "imageUrl": "https://ldb-phinf.pstatic.net/20230630_187/1688086920354kBa2X_JPEG/%B5%B5%B0%A1%B4%CF%C5%C1.jpg"
+      },
+      {
+        "name": "수만두설렁탕",
+        "price": 11000,
+        "imageUrl": "https://ldb-phinf.pstatic.net/20230630_12/1688086906634xyXB0_JPEG/%BC%F6%B8%B8%B5%CE%BC%B3%B7%B7%C5%C1.jpg"
+      },
+      {
+        "name": "얼큰설렁탕",
+        "price": 11000,
+        "imageUrl": "https://ldb-phinf.pstatic.net/20230630_50/1688086885698GfVz0_JPEG/%BE%F3%C5%AB%BC%B3%B7%B7%C5%C1.jpg"
+      },
+      {
+        "name": "설렁탕",
+        "price": 10000,
+        "imageUrl": "https://ldb-phinf.pstatic.net/20230630_49/168808686187039iz0_JPEG/%BC%B3%B7%B7%C5%C1.jpg"
       }
     ]
   },
@@ -12428,18 +12438,13 @@
         "imageUrl": "https://ldb-phinf.pstatic.net/20260329_148/1774758194002Ep7Jn_PNG/KakaoTalk_20260324_171619998.png"
       },
       {
-        "name": "파워함박",
-        "price": 12000,
-        "imageUrl": "https://ldb-phinf.pstatic.net/20251026_293/1761465502495iVDby_JPEG/%C6%C4%BF%F6%C7%D4%B9%DA.jpg"
-      },
-      {
         "name": "파워함박세트",
         "price": 13000,
         "imageUrl": "https://ldb-phinf.pstatic.net/20251026_277/1761465493836G2iSk_JPEG/%C6%C4%BF%F6%C7%D4%B9%DA%BC%BC%C6%AE.jpg"
       },
       {
         "name": "치즈킹 스테이크",
-        "price": 17900,
+        "price": 19900,
         "imageUrl": "https://ldb-phinf.pstatic.net/20260103_161/1767430281071Uuts7_PNG/%C4%A1%C1%EE%C5%B7.png"
       },
       {
@@ -12448,13 +12453,8 @@
         "imageUrl": "https://ldb-phinf.pstatic.net/20250616_115/1750075326614fGv0E_JPEG/KakaoTalk_20250429_235148254_03.jpg"
       },
       {
-        "name": "불고기 버터밥",
-        "price": 8900,
-        "imageUrl": "https://ldb-phinf.pstatic.net/20250616_18/1750075593887XLPQI_JPEG/KakaoTalk_20250429_234607424_01.jpg"
-      },
-      {
         "name": "글로벌 세트(비프,치킨)",
-        "price": 1240017000,
+        "price": 12400,
         "imageUrl": "https://ldb-phinf.pstatic.net/20250616_210/1750075403516SYsGr_JPEG/KakaoTalk_20250429_234815358_01.jpg"
       },
       {
@@ -12476,6 +12476,11 @@
         "name": "치즈불고기",
         "price": 8500,
         "imageUrl": "https://ldb-phinf.pstatic.net/20260329_172/17747582029970vL8w_PNG/KakaoTalk_20260324_171619998_02.png"
+      },
+      {
+        "name": "파워함박",
+        "price": 12000,
+        "imageUrl": "https://ldb-phinf.pstatic.net/20251026_293/1761465502495iVDby_JPEG/%C6%C4%BF%F6%C7%D4%B9%DA.jpg"
       }
     ]
   },
@@ -12678,7 +12683,7 @@
     "operating_hours": "-",
     "naver_link": "https://pcmap.place.naver.com/restaurant/12165843/home",
     "place_id": "12165843",
-    "image_url": "https://search.pstatic.net/common/?autoRotate=true&quality=100&type=f640_380&src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20190909_31%2F1568029121469QDD5m_JPEG%2FNTQ2FVPVimOAvhpsv4omETX-.jpg",
+    "image_url": "https://search.pstatic.net/common/?autoRotate=true&type=w560_sharpen&src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20190909_31%2F1568029121469QDD5m_JPEG%2FNTQ2FVPVimOAvhpsv4omETX-.jpg",
     "lat": 37.5834726,
     "lng": 126.9998487,
     "menus": [
