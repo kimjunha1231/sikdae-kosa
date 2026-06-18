@@ -31,4 +31,4 @@ def fetch_menu_details(place_id):
     except Exception as e:
         print(f"Error: {e}")
 
-fetch_menu_details("21597534")
+fetch_menu_details("21037816")

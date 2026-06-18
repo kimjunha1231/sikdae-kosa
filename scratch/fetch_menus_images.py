@@ -441,6 +441,9 @@ def main():
             if name == "김가네(가락본동점)":
                 place_id = "21597534"
                 search_image = None
+            elif name == "함경도찹쌀순대(가락점)":
+                place_id = "21037816"
+                search_image = "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2F20150317_283%2Fkslshljy_1426568098479pI6CL_JPEG%2FCYMERA_20150317_132934.jpg"
             else:
                 place_id, search_image = search_naver_place(query)
             
