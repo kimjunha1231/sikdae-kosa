@@ -7,10 +7,30 @@ import { KakaoMapView } from '@/widgets/map-view';
 import { RestaurantDetailModal, Restaurant, Review } from '@/entities/restaurant';
 import { WinnerModal } from '@/features/draw-roulette';
 import { useCollaborativeRoom } from '@/features/collaboration/lib/useCollaborativeRoom';
-import { Users, Copy, Check, ArrowLeft, Edit2 } from 'lucide-react';
+import { Users, Copy, Check, ArrowLeft, Edit2, Crown, ChevronRight, ChevronLeft } from 'lucide-react';
 import { CrocodileGame } from '@/features/crocodile-game';
 import { ref, onValue } from 'firebase/database';
 import { db } from '@/shared/lib/firebase';
+
+const MEMBER_COLORS = [
+  { border: 'border-blue-500/30', bg: 'bg-blue-500/5', text: 'text-blue-400' },
+  { border: 'border-emerald-500/30', bg: 'bg-emerald-500/5', text: 'text-emerald-400' },
+  { border: 'border-purple-500/30', bg: 'bg-purple-500/5', text: 'text-purple-400' },
+  { border: 'border-amber-500/30', bg: 'bg-amber-500/5', text: 'text-amber-400' },
+  { border: 'border-rose-500/30', bg: 'bg-rose-500/5', text: 'text-rose-400' },
+  { border: 'border-cyan-500/30', bg: 'bg-cyan-500/5', text: 'text-cyan-400' },
+  { border: 'border-pink-500/30', bg: 'bg-pink-500/5', text: 'text-pink-400' },
+  { border: 'border-indigo-500/30', bg: 'bg-indigo-500/5', text: 'text-indigo-400' },
+];
+
+export const getMemberColorClass = (id: string) => {
+  let hash = 0;
+  for (let i = 0; i < id.length; i++) {
+    hash = id.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const index = Math.abs(hash) % MEMBER_COLORS.length;
+  return MEMBER_COLORS[index];
+};
 
 
 export default function CollaborativeRoom() {
@@ -33,6 +53,7 @@ export default function CollaborativeRoom() {
   const [isEditingNickname, setIsEditingNickname] = useState(false);
   const [newNickname, setNewNickname] = useState('');
   const [allReviews, setAllReviews] = useState<Record<string, Record<string, Review>>>({});
+  const [isMembersOpen, setIsMembersOpen] = useState(true);
 
   const [userLocation] = useState<{ lat: number; lng: number } | null>({
     lat: 37.495055,
@@ -215,25 +236,34 @@ export default function CollaborativeRoom() {
             </div>
 
             <div className="flex items-center gap-2">
-              {/* Participants Badge */}
-              <div className="flex items-center gap-1.5 bg-muted/50 border border-border/40 px-3 py-1.5 rounded-xl text-xs font-bold text-muted-foreground">
-                <Users size={12} className="text-primary animate-pulse" />
-                <span>참여자 {participants.length}명</span>
-                <div className="flex -space-x-1 ml-1">
-                  {participants.slice(0, 3).map((p) => (
-                    <div
-                      key={p.id}
-                      className="w-4 h-4 rounded-full bg-primary/20 text-primary border border-background flex items-center justify-center font-extrabold text-[8px]"
-                      title={p.nickname}
-                    >
-                      {p.nickname.charAt(0)}
-                    </div>
-                  ))}
-                  {participants.length > 3 && (
-                    <div className="w-4 h-4 rounded-full bg-muted border border-background flex items-center justify-center text-[7px] text-muted-foreground font-bold">
-                      +{participants.length - 3}
-                    </div>
-                  )}
+              {/* Participants List */}
+              <div className="flex items-center gap-2 bg-muted/30 border border-border/40 p-1.5 rounded-2xl max-w-[200px] sm:max-w-[320px] md:max-w-[450px] lg:max-w-[600px] overflow-x-auto no-scrollbar scroll-smooth">
+                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-xs font-bold text-muted-foreground bg-card border border-border/50 shrink-0 shadow-sm">
+                  <Users size={12} className="text-primary animate-pulse" />
+                  <span>팀원 {participants.length}명</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  {participants.map((p) => {
+                    const isMe = p.id === currentUser?.id;
+                    const userColors = getMemberColorClass(p.id);
+                    return (
+                      <div
+                        key={p.id}
+                        className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold border shrink-0 transition-all duration-200 ${
+                          isMe
+                            ? 'bg-primary/15 border-primary/50 text-primary shadow-sm shadow-primary/10 scale-105'
+                            : `${userColors.bg} ${userColors.border} ${userColors.text}`
+                        }`}
+                        title={p.nickname}
+                      >
+                        {p.isHost && (
+                          <Crown size={10} className="text-amber-500 fill-amber-500 shrink-0 animate-bounce" style={{ animationDuration: '3s' }} />
+                        )}
+                        <span className="max-w-[80px] truncate">{p.nickname}</span>
+                        {isMe && <span className="text-[9px] opacity-75 font-normal">(나)</span>}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -299,35 +329,99 @@ export default function CollaborativeRoom() {
               loserNickname={crocodileGame.loserNickname}
               currentUser={currentUser}
               participants={participants}
+              turnOrder={crocodileGame.turnOrder}
               onPressTooth={(idx) => pressCrocodileTooth(idx, participants)}
               onReset={() => startCrocodileGame(participants)}
               onClose={resetCrocodileGame}
             />
           ) : (
-            <KakaoMapView
-              restaurants={filteredAndSorted}
-              hoveredRestaurant={hoveredRes}
-              selectedRestaurant={selectedRes}
-              onSelectRestaurant={(res) => setSelectedRes(res)}
-              userLocation={userLocation}
-              onViewDetails={(res) => {
-                setDetailRes(res);
-                setIsDetailOpen(true);
-              }}
-              roulettePool={roulettePool}
-              onWinnerSelected={(winner) => {
-                setSelectedRes(winner);
-              }}
-              isCollaborative={true}
-              collaborativeSpinStatus={spinEvent.status}
-              collaborativeWinnerName={spinEvent.winner}
-              onTriggerCollaborativeSpin={(chosen) => {
-                triggerSpin(chosen.name);
-              }}
-              onCollaborativeSpinEnd={() => {
-                completeSpin();
-              }}
-            />
+            <>
+              <KakaoMapView
+                restaurants={filteredAndSorted}
+                hoveredRestaurant={hoveredRes}
+                selectedRestaurant={selectedRes}
+                onSelectRestaurant={(res) => setSelectedRes(res)}
+                userLocation={userLocation}
+                onViewDetails={(res) => {
+                  setDetailRes(res);
+                  setIsDetailOpen(true);
+                }}
+                roulettePool={roulettePool}
+                onWinnerSelected={(winner) => {
+                  setSelectedRes(winner);
+                }}
+                isCollaborative={true}
+                collaborativeSpinStatus={spinEvent.status}
+                collaborativeWinnerName={spinEvent.winner}
+                onTriggerCollaborativeSpin={(chosen) => {
+                  triggerSpin(chosen.name);
+                }}
+                onCollaborativeSpinEnd={() => {
+                  completeSpin();
+                }}
+              />
+
+              {/* Floating Collaborative Members Card */}
+              <div className="absolute top-4 right-4 z-20 flex flex-col items-end gap-2 pointer-events-auto">
+                {isMembersOpen ? (
+                  <div className="bg-card/90 backdrop-blur-md border border-border p-4 rounded-2xl shadow-2xl w-60 flex flex-col gap-3 transition-all duration-300 transform scale-100 origin-top-right">
+                    <div className="flex items-center justify-between border-b border-border/40 pb-2">
+                      <span className="text-xs font-black tracking-tight text-foreground flex items-center gap-1.5">
+                        <Users size={13} className="text-primary animate-pulse" />
+                        실시간 팀원 ({participants.length})
+                      </span>
+                      <button
+                        onClick={() => setIsMembersOpen(false)}
+                        className="p-1 hover:bg-muted rounded-lg text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                        title="접기"
+                      >
+                        <ChevronRight size={14} />
+                      </button>
+                    </div>
+                    
+                    <div className="flex flex-col gap-1.5 max-h-48 overflow-y-auto pr-1">
+                      {participants.map((p) => {
+                        const isMe = p.id === currentUser?.id;
+                        const userColors = getMemberColorClass(p.id);
+                        return (
+                          <div
+                            key={p.id}
+                            className={`flex items-center justify-between text-xs px-3 py-2 rounded-xl border transition-all duration-150 ${
+                              isMe
+                                ? 'bg-primary/10 border-primary/30 text-primary font-bold shadow-sm shadow-primary/5'
+                                : `${userColors.bg} ${userColors.border} ${userColors.text}`
+                            }`}
+                          >
+                            <span className="truncate max-w-[120px]">{p.nickname}</span>
+                            <div className="flex items-center gap-1.5 flex-shrink-0">
+                              {p.isHost && (
+                                <span title="방장">
+                                  <Crown size={11} className="text-amber-500 fill-amber-500" />
+                                </span>
+                              )}
+                              {isMe && (
+                                <span className="text-[9px] bg-primary text-white px-1.5 py-0.5 rounded font-black scale-90">
+                                  나
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setIsMembersOpen(true)}
+                    className="flex items-center gap-2 bg-card/95 backdrop-blur-md border border-border px-3.5 py-2.5 rounded-2xl shadow-xl hover:bg-muted text-foreground transition-all duration-300 transform scale-100 hover:scale-105 cursor-pointer font-bold text-xs"
+                  >
+                    <Users size={14} className="text-primary animate-pulse" />
+                    <span>팀원 보기 ({participants.length})</span>
+                    <ChevronLeft size={14} />
+                  </button>
+                )}
+              </div>
+            </>
           )}
         </div>
       </section>

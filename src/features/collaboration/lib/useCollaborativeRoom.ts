@@ -22,6 +22,7 @@ export interface CrocodileGameState {
   dangerIndex: number;
   turnUserId: string;
   loserNickname: string;
+  turnOrder?: string[];
 }
 
 const NICKNAMES = [
@@ -205,7 +206,15 @@ export function useCollaborativeRoom(roomId: string) {
 
   const startCrocodileGame = (activeParticipants: Participant[]) => {
     if (activeParticipants.length === 0) return;
-    const sorted = [...activeParticipants].sort((a, b) => a.id.localeCompare(b.id));
+    
+    // 피셔-예이츠 셔플 알고리즘으로 참여자 순서 랜덤화
+    const shuffled = [...activeParticipants];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    const turnOrder = shuffled.map(p => p.id);
+    
     const randomDanger = Math.floor(Math.random() * 8);
     const initialTeeth: Record<string, 'unpressed' | 'pressed'> = {};
     for (let i = 0; i < 8; i++) {
@@ -216,7 +225,8 @@ export function useCollaborativeRoom(roomId: string) {
       status: 'playing',
       teeth: initialTeeth,
       dangerIndex: randomDanger,
-      turnUserId: sorted[0].id,
+      turnUserId: turnOrder[0],
+      turnOrder: turnOrder,
       loserNickname: '',
     });
   };
@@ -234,12 +244,13 @@ export function useCollaborativeRoom(roomId: string) {
         [`teeth/${toothIndex}`]: 'pressed'
       });
     } else {
-      const sorted = [...activeParticipants].sort((a, b) => a.id.localeCompare(b.id));
-      const myIdx = sorted.findIndex(p => p.id === currentUser.id);
-      if (myIdx !== -1 && sorted.length > 0) {
-        const nextIdx = (myIdx + 1) % sorted.length;
+      // 저장된 turnOrder 기반으로 다음 턴 계산, 없을 시 fallback으로 ID 정렬
+      const order = crocodileGame.turnOrder || activeParticipants.map(p => p.id).sort((a, b) => a.localeCompare(b));
+      const myIdx = order.indexOf(currentUser.id);
+      if (myIdx !== -1 && order.length > 0) {
+        const nextIdx = (myIdx + 1) % order.length;
         await update(gameRef, {
-          turnUserId: sorted[nextIdx].id,
+          turnUserId: order[nextIdx],
           [`teeth/${toothIndex}`]: 'pressed'
         });
       }

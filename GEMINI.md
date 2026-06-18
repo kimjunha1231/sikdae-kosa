@@ -1,0 +1,18 @@
+# GEMINI.md - 지식 축적 (Knowledge Compounding)
+
+본 파일은 후속 AI 에이전트 세션의 원활한 업무 연계를 위해 작성되었습니다. 이번 작업에서 구현된 핵심 아키텍처 변경점과 UI 디자인 의사결정을 명시합니다.
+
+## 1. 구현된 기능 개요
+- **실시간 참여 팀원 시각화 강화**:
+  - `src/app/room/[roomId]/page.tsx` 헤더 및 지도의 플로팅 카드로 실시간 참여 닉네임과 권한(방장, 본인)을 칩 리스트 형태로 렌더링.
+- **악어 게임 (내기 게임) UI/UX 개선**:
+  - `src/features/crocodile-game/ui/CrocodileGame.tsx` 가로 2단 레이아웃 분할 및 게임 진행 순서 타임라인 구축.
+  - 내 차례 시각 포커싱(테두리 Glowing, 상단 알림 배너, 조작 가능한 이빨 위 깜빡이는 인디케이터 탑재).
+
+## 2. 기술적 의사결정 및 규칙
+- **Lucide React 아이콘 타입 제약**:
+  - Lucide 컴포넌트(`Crown` 등)에는 직접 `title` 속성을 주면 TS 컴파일 에러(`TS2322`)가 발생합니다. HTML 툴팁 제공 시에는 반드시 `span` 태그 래퍼로 감싼 후 `title` 속성을 적용해야 합니다.
+- **반응형 2단 레이아웃**:
+  - `lg:flex-row` 브레이크포인트를 적용해 데스크톱 환경에서는 악어 보드(왼쪽)와 타임라인 패널(오른쪽)이 2단 가로 정렬되며, 화면이 좁아지는 모바일 환경에서는 `flex-col`로 안전하게 흘러내리도록 설계했습니다.
+- **상태 관리**:
+  - 룰렛 방 참여자 수 및 현재 턴 유저(`turnUserId`), 벌칙 패배자(`loserNickname`) 등은 `useCollaborativeRoom.ts` 훅을 통해 Firebase Realtime DB와 실시간 동기화됩니다. UI 측에서 `participants`를 `id` 오름차순으로 정렬하면 Firebase 내 게임 턴 이동 인덱스 계산법과 일관되게 정렬할 수 있습니다.
