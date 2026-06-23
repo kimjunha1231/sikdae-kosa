@@ -84,12 +84,29 @@ export async function GET(request: Request) {
     ];
 
     let isTodayPost = false;
-    for (const pattern of datePatterns) {
-      const regex = new RegExp(pattern);
-      if (regex.test(caption)) {
+
+    // 1. Check by post timestamp (taken_at) in KST
+    if (firstPost.taken_at) {
+      const postKstDate = new Date(new Date(firstPost.taken_at * 1000).toLocaleString('en-US', { timeZone: 'Asia/Seoul' }));
+      if (
+        postKstDate.getFullYear() === kstDate.getFullYear() &&
+        (postKstDate.getMonth() + 1) === month &&
+        postKstDate.getDate() === date
+      ) {
         isTodayPost = true;
-        console.log(`Matched date pattern in caption: "${pattern}"`);
-        break;
+        console.log(`Matched today's date by post timestamp (taken_at KST): ${month}/${date}`);
+      }
+    }
+
+    // 2. Fallback to caption date pattern matching
+    if (!isTodayPost && caption) {
+      for (const pattern of datePatterns) {
+        const regex = new RegExp(pattern);
+        if (regex.test(caption)) {
+          isTodayPost = true;
+          console.log(`Matched date pattern in caption: "${pattern}"`);
+          break;
+        }
       }
     }
 

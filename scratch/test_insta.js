@@ -35,6 +35,8 @@ async function main() {
   const items = data.items || [];
   console.log(`Found ${items.length} items.`);
   
+  console.log('Item [0] structure:', JSON.stringify(items[0], null, 2));
+  
   items.slice(0, 5).forEach((item, index) => {
     const caption = item.caption?.text || item.caption_text || (typeof item.caption === 'string' ? item.caption : '');
     const code = item.code || item.shortcode || '';

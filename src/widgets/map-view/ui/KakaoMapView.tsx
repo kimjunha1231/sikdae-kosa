@@ -8,6 +8,14 @@ import { Key, AlertCircle } from 'lucide-react';
 import { RouletteSpinner } from '@/features/draw-roulette';
 import { Restaurant } from '@/entities/restaurant';
 
+interface KakaoMap {
+  panTo: (latlng: any) => void;
+}
+
+interface KakaoCustomOverlay {
+  setMap: (map: KakaoMap | null) => void;
+}
+
 interface KakaoMapViewProps {
   restaurants: Restaurant[];
   hoveredRestaurant: Restaurant | null;
@@ -40,9 +48,9 @@ export default function KakaoMapView({
   onCollaborativeSpinEnd,
 }: KakaoMapViewProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<any>(null);
-  const markersRef = useRef<any[]>([]);
-  const customOverlayRef = useRef<any>(null);
+  const mapRef = useRef<KakaoMap | null>(null);
+  const markersRef = useRef<KakaoCustomOverlay[]>([]);
+  const customOverlayRef = useRef<KakaoCustomOverlay | null>(null);
 
   const [apiKey, setApiKey] = useState<string>('');
   const [isSdkLoaded, setIsSdkLoaded] = useState(false);
@@ -267,7 +275,7 @@ export default function KakaoMapView({
       clickable: true
     });
 
-    customOverlayRef.current.setMap(mapRef.current);
+    customOverlayRef.current?.setMap(mapRef.current);
   };
 
   // Handle manual API key submit

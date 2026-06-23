@@ -2,28 +2,16 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Participant } from '@/features/collaboration/lib/useCollaborativeRoom';
 import { Crown, ChevronDown, Skull, Gamepad2 } from 'lucide-react';
+import { getMemberColorClass } from '@/shared/lib/utils';
 
-const MEMBER_COLORS = [
-  { border: 'border-blue-500/30', bg: 'bg-blue-500/5', text: 'text-blue-400' },
-  { border: 'border-emerald-500/30', bg: 'bg-emerald-500/5', text: 'text-emerald-400' },
-  { border: 'border-purple-500/30', bg: 'bg-purple-500/5', text: 'text-purple-400' },
-  { border: 'border-amber-500/30', bg: 'bg-amber-500/5', text: 'text-amber-400' },
-  { border: 'border-rose-500/30', bg: 'bg-rose-500/5', text: 'text-rose-400' },
-  { border: 'border-cyan-500/30', bg: 'bg-cyan-500/5', text: 'text-cyan-400' },
-  { border: 'border-pink-500/30', bg: 'bg-pink-500/5', text: 'text-pink-400' },
-  { border: 'border-indigo-500/30', bg: 'bg-indigo-500/5', text: 'text-indigo-400' },
-];
+interface Participant {
+  id: string;
+  nickname: string;
+  isHost: boolean;
+}
 
-export const getMemberColorClass = (id: string) => {
-  let hash = 0;
-  for (let i = 0; i < id.length; i++) {
-    hash = id.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  const index = Math.abs(hash) % MEMBER_COLORS.length;
-  return MEMBER_COLORS[index];
-};
+
 
 interface CrocodileGameProps {
   status: 'playing' | 'bitten';

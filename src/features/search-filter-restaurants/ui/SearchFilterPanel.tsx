@@ -93,81 +93,80 @@ export default function SearchFilterPanel({
     };
   }, []);
 
-  // Global mouse move and mouse up event listeners for ultra-smooth drag scroll
+  const handleGlobalMouseMove = (e: MouseEvent) => {
+    // 1. Category container drag-to-scroll
+    if (isDownRef.current) {
+      const container = containerRef.current;
+      if (!container) return;
+      
+      e.preventDefault();
+      
+      const x = e.pageX - container.offsetLeft;
+      const walk = (x - startXRef.current) * 1.5; // Drag speed multiplier
+      
+      if (Math.abs(x - startXRef.current) > 5) {
+        dragMovedRef.current = true;
+      }
+      
+      container.style.scrollBehavior = 'auto'; // Instant response during drag
+      container.scrollLeft = scrollLeftStartRef.current - walk;
+      checkScrollLimits();
+      return;
+    }
+
+    // 2. Scrollbar thumb drag-to-scroll
+    if (isDownScrollbarRef.current) {
+      const container = containerRef.current;
+      const track = scrollbarTrackRef.current;
+      if (!container || !track) return;
+
+      e.preventDefault();
+
+      const deltaX = e.clientX - scrollbarStartXRef.current;
+      const trackWidth = track.clientWidth;
+      const { scrollWidth } = container;
+      
+      const scrollDelta = deltaX * (scrollWidth / trackWidth);
+      
+      container.style.scrollBehavior = 'auto'; // Instant response during drag
+      container.scrollLeft = scrollbarStartScrollLeftRef.current + scrollDelta;
+      checkScrollLimits();
+    }
+  };
+
+  const handleGlobalMouseUp = () => {
+    // Reset category container drag
+    if (isDownRef.current) {
+      isDownRef.current = false;
+      const container = containerRef.current;
+      if (container) {
+        container.style.cursor = 'grab';
+        container.style.removeProperty('user-select');
+        container.style.scrollBehavior = 'smooth';
+      }
+    }
+
+    // Reset scrollbar drag
+    if (isDownScrollbarRef.current) {
+      isDownScrollbarRef.current = false;
+      document.body.style.removeProperty('user-select');
+      const container = containerRef.current;
+      if (container) {
+        container.style.scrollBehavior = 'smooth';
+      }
+    }
+
+    window.removeEventListener('mousemove', handleGlobalMouseMove);
+    window.removeEventListener('mouseup', handleGlobalMouseUp);
+  };
+
+  // Ensure clean up if unmounted during drag
   useEffect(() => {
-    const handleGlobalMouseMove = (e: MouseEvent) => {
-      // 1. Category container drag-to-scroll
-      if (isDownRef.current) {
-        const container = containerRef.current;
-        if (!container) return;
-        
-        e.preventDefault();
-        
-        const x = e.pageX - container.offsetLeft;
-        const walk = (x - startXRef.current) * 1.5; // Drag speed multiplier
-        
-        if (Math.abs(x - startXRef.current) > 5) {
-          dragMovedRef.current = true;
-        }
-        
-        container.style.scrollBehavior = 'auto'; // Instant response during drag
-        container.scrollLeft = scrollLeftStartRef.current - walk;
-        checkScrollLimits();
-        return;
-      }
-
-      // 2. Scrollbar thumb drag-to-scroll
-      if (isDownScrollbarRef.current) {
-        const container = containerRef.current;
-        const track = scrollbarTrackRef.current;
-        if (!container || !track) return;
-
-        e.preventDefault();
-
-        const deltaX = e.clientX - scrollbarStartXRef.current;
-        const trackWidth = track.clientWidth;
-        const { scrollWidth } = container;
-        
-        const scrollDelta = deltaX * (scrollWidth / trackWidth);
-        
-        container.style.scrollBehavior = 'auto'; // Instant response during drag
-        container.scrollLeft = scrollbarStartScrollLeftRef.current + scrollDelta;
-        checkScrollLimits();
-      }
-    };
-
-    const handleGlobalMouseUp = () => {
-      // Reset category container drag
-      if (isDownRef.current) {
-        isDownRef.current = false;
-        const container = containerRef.current;
-        if (container) {
-          container.style.cursor = 'grab';
-          container.style.removeProperty('user-select');
-          container.style.scrollBehavior = 'smooth';
-        }
-      }
-
-      // Reset scrollbar drag
-      if (isDownScrollbarRef.current) {
-        isDownScrollbarRef.current = false;
-        document.body.style.removeProperty('user-select');
-        const container = containerRef.current;
-        if (container) {
-          container.style.scrollBehavior = 'smooth';
-        }
-      }
-    };
-
-    window.addEventListener('mousemove', handleGlobalMouseMove, { passive: false });
-    window.addEventListener('mouseup', handleGlobalMouseUp);
-
     return () => {
       window.removeEventListener('mousemove', handleGlobalMouseMove);
       window.removeEventListener('mouseup', handleGlobalMouseUp);
     };
   }, []);
-
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     const container = containerRef.current;
@@ -181,6 +180,9 @@ export default function SearchFilterPanel({
     // Temporarily change cursor to grabbing
     container.style.cursor = 'grabbing';
     container.style.userSelect = 'none';
+
+    window.addEventListener('mousemove', handleGlobalMouseMove, { passive: false });
+    window.addEventListener('mouseup', handleGlobalMouseUp);
   };
 
   const handleScrollbarMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -218,6 +220,9 @@ export default function SearchFilterPanel({
     scrollbarStartScrollLeftRef.current = container.scrollLeft;
 
     document.body.style.userSelect = 'none';
+
+    window.addEventListener('mousemove', handleGlobalMouseMove, { passive: false });
+    window.addEventListener('mouseup', handleGlobalMouseUp);
   };
 
   const handleContainerClickCapture = (e: React.MouseEvent<HTMLDivElement>) => {

@@ -51,6 +51,8 @@ export function useCollaborativeRoom(roomId: string) {
   useEffect(() => {
     if (!roomId) return;
 
+    let isMounted = true;
+
     let userId = localStorage.getItem('kosa_user_id');
     let nickname = localStorage.getItem('kosa_user_nickname');
     if (!userId) {
@@ -68,6 +70,8 @@ export function useCollaborativeRoom(roomId: string) {
     
     let isHost = false;
     onValue(hostCheckRef, (snapshot) => {
+      if (!isMounted) return;
+
       const usersData = snapshot.val();
       if (!usersData || Object.keys(usersData).length === 0) {
         isHost = true;
@@ -88,6 +92,8 @@ export function useCollaborativeRoom(roomId: string) {
     }, { onlyOnce: true });
 
     const unsubscribe = onValue(roomRef, (snapshot) => {
+      if (!isMounted) return;
+
       const data = snapshot.val();
       if (data) {
         if (data.restaurants) {
@@ -144,6 +150,7 @@ export function useCollaborativeRoom(roomId: string) {
     });
 
     return () => {
+      isMounted = false;
       unsubscribe();
       remove(userRef);
     };
