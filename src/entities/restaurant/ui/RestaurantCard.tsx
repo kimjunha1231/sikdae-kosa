@@ -6,6 +6,8 @@ import { Check } from 'lucide-react';
 import { formatPrice } from '@/shared/lib/utils';
 import { motion } from 'framer-motion';
 import { Restaurant } from '../model/types';
+import Image from 'next/image';
+import { memo } from 'react';
 
 interface RestaurantCardProps {
   restaurant: Restaurant;
@@ -19,7 +21,7 @@ interface RestaurantCardProps {
   onViewDetail: () => void;
 }
 
-export default function RestaurantCard({
+const RestaurantCard = memo(({
   restaurant,
   index,
   isSelected,
@@ -29,7 +31,7 @@ export default function RestaurantCard({
   onHoverEnter,
   onHoverLeave,
   onViewDetail,
-}: RestaurantCardProps) {
+}: RestaurantCardProps) => {
   return (
     <motion.div
       initial={index < 15 ? { opacity: 0, y: 15 } : { opacity: 1, y: 0 }}
@@ -70,13 +72,15 @@ export default function RestaurantCard({
           <div className="flex gap-3 flex-grow min-w-0">
             {/* Thumbnail Image */}
             {restaurant.image_url ? (
-              <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-border/50 bg-muted flex items-center justify-center">
-                <img
+              <div className="relative w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-border/50 bg-muted flex items-center justify-center">
+                <Image
                   src={restaurant.image_url}
                   alt={restaurant.name}
-                  className="w-full h-full object-cover"
+                  fill
+                  sizes="64px"
+                  className="object-cover"
                   onError={(e) => {
-                    (e.target as HTMLElement).style.display = 'none';
+                    (e.currentTarget as HTMLElement).style.display = 'none';
                   }}
                 />
               </div>
@@ -132,4 +136,7 @@ export default function RestaurantCard({
       </Card>
     </motion.div>
   );
-}
+});
+
+RestaurantCard.displayName = 'RestaurantCard';
+export default RestaurantCard;

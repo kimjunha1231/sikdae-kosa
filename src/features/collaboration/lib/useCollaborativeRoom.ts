@@ -47,6 +47,7 @@ export function useCollaborativeRoom(roomId: string) {
     turnUserId: '',
     loserNickname: '',
   });
+  const [firebaseError, setFirebaseError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!roomId) return;
@@ -89,6 +90,8 @@ export function useCollaborativeRoom(roomId: string) {
       setCurrentUser(me);
       set(userRef, me);
       onDisconnect(userRef).remove();
+    }, (error) => {
+      setFirebaseError(error.message);
     }, { onlyOnce: true });
 
     const unsubscribe = onValue(roomRef, (snapshot) => {
@@ -147,6 +150,8 @@ export function useCollaborativeRoom(roomId: string) {
           loserNickname: '',
         });
       }
+    }, (error) => {
+      setFirebaseError(error.message);
     });
 
     return () => {
@@ -282,5 +287,6 @@ export function useCollaborativeRoom(roomId: string) {
     startCrocodileGame,
     pressCrocodileTooth,
     resetCrocodileGame,
+    firebaseError,
   };
 }

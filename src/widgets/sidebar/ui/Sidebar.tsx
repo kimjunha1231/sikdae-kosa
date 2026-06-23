@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, memo } from 'react';
 import { AnimatePresence, motion, useDragControls, PanInfo } from 'framer-motion';
 import SidebarHeader from './SidebarHeader';
 import { SearchFilterPanel } from '@/features/search-filter-restaurants';
 import { RestaurantCard, Restaurant } from '@/entities/restaurant';
 import { Plus, Sparkles } from 'lucide-react';
+import { Skeleton } from '@/shared/ui/skeleton';
 
 interface SidebarProps {
   isDarkMode: boolean;
@@ -25,9 +26,10 @@ interface SidebarProps {
   onTogglePool: (name: string) => void;
   onViewDetail: (res: Restaurant) => void;
   onCreateRoom?: () => void;
+  isLoading?: boolean;
 }
 
-export default function Sidebar({
+const Sidebar = memo(function Sidebar({
   isDarkMode,
   onToggleDarkMode,
   selectedCategory,
@@ -45,6 +47,7 @@ export default function Sidebar({
   onTogglePool,
   onViewDetail,
   onCreateRoom,
+  isLoading = false,
 }: SidebarProps) {
   const [activeTab, setActiveTab] = useState<'all' | 'pool'>('all');
   const [addSearchInput, setAddSearchInput] = useState('');
@@ -197,7 +200,22 @@ export default function Sidebar({
           {/* Scrollable Restaurant Cards List */}
           <div className="flex-grow overflow-y-auto p-4 space-y-3 scrollbar bg-background/5">
             <AnimatePresence>
-              {filteredAndSorted.map((res, index) => {
+              {isLoading ? (
+                // Skeleton Cards for loading state
+                Array.from({ length: 5 }).map((_, idx) => (
+                  <div key={idx} className="p-4 rounded-2xl border border-border/40 bg-card space-y-3 shadow-sm">
+                    <div className="flex items-center justify-between">
+                      <Skeleton className="h-4 w-28 rounded-lg" />
+                      <Skeleton className="h-3 w-12 rounded-lg" />
+                    </div>
+                    <Skeleton className="h-3 w-full rounded-lg" />
+                    <div className="flex items-center gap-2 pt-1">
+                      <Skeleton className="h-6 w-16 rounded-xl" />
+                      <Skeleton className="h-6 w-16 rounded-xl" />
+                    </div>
+                  </div>
+                ))
+              ) : filteredAndSorted.map((res, index) => {
                 const isSelected =
                   selectedRes?.name === res.name &&
                   selectedRes?.distance === res.distance;
@@ -218,7 +236,7 @@ export default function Sidebar({
                 );
               })}
 
-              {filteredAndSorted.length === 0 && (
+              {!isLoading && filteredAndSorted.length === 0 && (
                 <div className="text-center py-16 text-muted-foreground text-xs border border-dashed border-border/50 rounded-2xl">
                   검색 조건에 맞는 맛집이 없습니다.
                 </div>
@@ -329,4 +347,6 @@ export default function Sidebar({
       )}
     </motion.section>
   );
-}
+});
+
+export default Sidebar;

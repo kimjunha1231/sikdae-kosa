@@ -10,6 +10,8 @@ import { Restaurant } from '@/entities/restaurant';
 
 interface KakaoMap {
   panTo: (latlng: any) => void;
+  getLevel: () => number;
+  setLevel: (level: number, options?: { animate: boolean }) => void;
 }
 
 interface KakaoCustomOverlay {
@@ -56,6 +58,7 @@ export default function KakaoMapView({
   const [isSdkLoaded, setIsSdkLoaded] = useState(false);
   const [inputKey, setInputKey] = useState('');
   const [loadError, setLoadError] = useState(false);
+  const [zoomLevel, setZoomLevel] = useState(3);
 
   // 1. Resolve API Key (from env or localStorage)
   useEffect(() => {
@@ -149,47 +152,81 @@ export default function KakaoMapView({
           customOverlayRef.current.setMap(null);
         }
       });
+
+      // Listen to zoom changes to trigger client-side clustering
+      kakao.maps.event.addListener(mapRef.current, 'zoom_changed', () => {
+        if (mapRef.current) {
+          setZoomLevel(mapRef.current.getLevel());
+        }
+      });
     }
 
     // Clear old markers
     markersRef.current.forEach((marker) => marker.setMap(null));
     markersRef.current = [];
 
-    // Render Markers for current restaurants list
-    restaurants.forEach((res) => {
-      const position = new kakao.maps.LatLng(res.lat, res.lng);
+    // Helper function for approximate coordinate distance in meters
+    const getApproxDistance = (lat1: number, lng1: number, lat2: number, lng2: number) => {
+      const dy = (lat1 - lat2) * 111000;
+      const dx = (lng1 - lng2) * 88000;
+      return Math.sqrt(dx * dx + dy * dy);
+    };
 
-      // Create Custom HTML Marker mimicking Toss style
-      const categoryColors: Record<string, string> = {
-        '한식': 'bg-amber-500',
-        '중식': 'bg-red-500',
-        '일식': 'bg-teal-500',
-        '양식': 'bg-pink-500',
-        '분식': 'bg-orange-500',
-        '샐러드': 'bg-green-500',
-        '카페/베이커리/패스트푸드': 'bg-purple-500',
-        '아시안푸드': 'bg-sky-500',
-      };
-      const catColor = categoryColors[res.category] || 'bg-blue-500';
-      const inPool = roulettePool.includes(res.name);
+    // Client-side clustering setup
+    let threshold = 80;
+    if (zoomLevel === 5) threshold = 200;
+    else if (zoomLevel === 6) threshold = 500;
+    else if (zoomLevel >= 7) threshold = 1200;
 
+    const renderCluster = (cluster: { center: { lat: number; lng: number }; items: Restaurant[] }) => {
+      const position = new kakao.maps.LatLng(cluster.center.lat, cluster.center.lng);
       const content = document.createElement('div');
-      content.className = 'cursor-pointer group relative w-8 h-8 flex items-center justify-center transition-transform duration-200 active:scale-95';
-      content.innerHTML = `
-        <!-- Floating Restaurant Name Label -->
-        <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-card/95 backdrop-blur-md border border-border/80 px-2 py-0.5 rounded-lg shadow-md text-[9px] font-extrabold text-foreground whitespace-nowrap transition-all duration-200 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary select-none">
-          ${res.name}
-        </div>
-        <!-- Dot / Check Badge -->
-        ${inPool
-          ? `<div class="flex items-center justify-center w-8 h-8 rounded-full bg-emerald-500 border-2 border-white shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-200 ring-2 ring-emerald-300 ring-offset-1">
-               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-             </div>`
-          : `<div class="flex items-center justify-center w-8 h-8 rounded-full bg-card border-2 border-white shadow-md hover:shadow-xl hover:scale-110 transition-all duration-200">
-               <div class="w-2.5 h-2.5 rounded-full ${catColor}"></div>
-             </div>`
-        }
-      `;
+      
+      if (cluster.items.length === 1) {
+        const res = cluster.items[0];
+        const categoryColors: Record<string, string> = {
+          '한식': 'bg-amber-500',
+          '중식': 'bg-red-500',
+          '일식': 'bg-teal-500',
+          '양식': 'bg-pink-500',
+          '분식': 'bg-orange-500',
+          '샐러드': 'bg-green-500',
+          '카페/베이커리/패스트푸드': 'bg-purple-500',
+          '아시안푸드': 'bg-sky-500',
+        };
+        const catColor = categoryColors[res.category] || 'bg-blue-500';
+        const inPool = roulettePool.includes(res.name);
+
+        content.className = 'cursor-pointer group relative w-8 h-8 flex items-center justify-center transition-transform duration-200 active:scale-95';
+        content.innerHTML = `
+          <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-card/95 backdrop-blur-md border border-border/80 px-2 py-0.5 rounded-lg shadow-md text-[9px] font-extrabold text-foreground whitespace-nowrap transition-all duration-200 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary select-none">
+            ${res.name}
+          </div>
+          ${inPool
+            ? `<div class="flex items-center justify-center w-8 h-8 rounded-full bg-emerald-500 border-2 border-white shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-200 ring-2 ring-emerald-300 ring-offset-1">
+                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+               </div>`
+            : `<div class="flex items-center justify-center w-8 h-8 rounded-full bg-card border-2 border-white shadow-md hover:shadow-xl hover:scale-110 transition-all duration-200">
+                 <div class="w-2.5 h-2.5 rounded-full ${catColor}"></div>
+               </div>`
+          }
+        `;
+
+        content.addEventListener('click', () => {
+          onSelectRestaurant(res);
+          showCustomOverlay(res);
+        });
+      } else {
+        // Group Marker
+        content.className = 'cursor-pointer w-10 h-10 flex items-center justify-center rounded-full bg-primary text-white border-2 border-white shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 ring-4 ring-primary/20 font-black text-xs font-outfit select-none';
+        content.innerText = `${cluster.items.length}`;
+
+        content.addEventListener('click', () => {
+          const nextLevel = Math.max(1, zoomLevel - 1);
+          mapRef.current!.panTo(position);
+          mapRef.current!.setLevel(nextLevel, { animate: true });
+        });
+      }
 
       const customMarker = new kakao.maps.CustomOverlay({
         position: position,
@@ -199,14 +236,44 @@ export default function KakaoMapView({
         yAnchor: 0.5,
       });
 
-      content.addEventListener('click', () => {
-        onSelectRestaurant(res);
-        showCustomOverlay(res);
+      markersRef.current.push(customMarker);
+    };
+
+    if (zoomLevel < 4) {
+      // No clustering
+      restaurants.forEach((res) => {
+        renderCluster({ center: { lat: res.lat, lng: res.lng }, items: [res] });
+      });
+    } else {
+      // Perform clustering
+      const clusters: { center: { lat: number; lng: number }; items: Restaurant[] }[] = [];
+      restaurants.forEach((res) => {
+        let added = false;
+        for (const cluster of clusters) {
+          const dist = getApproxDistance(res.lat, res.lng, cluster.center.lat, cluster.center.lng);
+          if (dist < threshold) {
+            cluster.items.push(res);
+            const count = cluster.items.length;
+            const newLat = cluster.items.reduce((sum, item) => sum + item.lat, 0) / count;
+            const newLng = cluster.items.reduce((sum, item) => sum + item.lng, 0) / count;
+            cluster.center = { lat: newLat, lng: newLng };
+            added = true;
+            break;
+          }
+        }
+        if (!added) {
+          clusters.push({
+            center: { lat: res.lat, lng: res.lng },
+            items: [res]
+          });
+        }
       });
 
-      markersRef.current.push(customMarker);
-    });
-  }, [isSdkLoaded, restaurants, userLocation, roulettePool]);
+      clusters.forEach((cluster) => {
+        renderCluster(cluster);
+      });
+    }
+  }, [isSdkLoaded, restaurants, userLocation, roulettePool, zoomLevel]);
 
 
   // 4. Hover effect - Pan to and open temp overlay

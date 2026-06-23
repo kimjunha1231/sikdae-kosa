@@ -13,6 +13,7 @@ export interface Restaurant {
   rating?: string;
   operating_hours?: string;
   naver_link?: string;
+  instagram_link?: string | null;
   image_url?: string | null;
   lat: number;
   lng: number;

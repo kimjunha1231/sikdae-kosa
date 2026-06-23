@@ -3,11 +3,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/shared/ui/dialog';
 import { Button } from '@/shared/ui/button';
-import { MapPin, Clock, Star, ExternalLink, Utensils, X, Check, Plus, MessageSquare } from 'lucide-react';
+import { MapPin, Clock, Star, ExternalLink, Utensils, X, Check, Plus, MessageSquare, AlertCircle } from 'lucide-react';
 import { formatPrice } from '@/shared/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Restaurant, Review } from '../model/types';
-import { ref, push, set } from 'firebase/database';
+import { ref, push, set, onValue } from 'firebase/database';
 import { db, storage } from '@/shared/lib/firebase';
 import { ref as sRef, uploadString, getDownloadURL } from 'firebase/storage';
 
@@ -67,9 +67,42 @@ export default function RestaurantDetailModal({
   restaurant,
   isInPool = false,
   onTogglePool,
-  reviews = []
+  reviews: reviewsProp
 }: RestaurantDetailModalProps) {
   const [selectedImage, setSelectedImage] = useState<{ name: string; imageUrl: string; index: number } | null>(null);
+  const [localReviews, setLocalReviews] = useState<Review[]>([]);
+  const [firebaseError, setFirebaseError] = useState<string | null>(null);
+
+  // Realtime Firebase RTDB subscription for single restaurant reviews
+  useEffect(() => {
+    if (reviewsProp) {
+      setLocalReviews(reviewsProp);
+      return;
+    }
+    if (!restaurant?.id || !isOpen) {
+      setLocalReviews([]);
+      setFirebaseError(null);
+      return;
+    }
+
+    const reviewRef = ref(db, `reviews/${restaurant.id}`);
+    const unsubscribe = onValue(reviewRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        setLocalReviews(Object.values(data));
+      } else {
+        setLocalReviews([]);
+      }
+      setFirebaseError(null);
+    }, (error) => {
+      console.error("Firebase read failed:", error);
+      setFirebaseError(error.message);
+    });
+
+    return () => unsubscribe();
+  }, [restaurant?.id, isOpen, reviewsProp]);
+
+  const reviews = localReviews;
 
   // Review form states
   const [nicknameInput, setNicknameInput] = useState('');
@@ -268,6 +301,14 @@ export default function RestaurantDetailModal({
                   </span>
                 </div>
               </DialogHeader>
+
+              {/* Firebase Connection Error Banner */}
+              {firebaseError && (
+                <div className="flex items-center gap-2 p-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-500 text-xs font-semibold animate-pulse my-2">
+                  <AlertCircle size={14} className="shrink-0" />
+                  <span>실시간 리뷰 연결 실패: {firebaseError}</span>
+                </div>
+              )}
 
               {/* Hero Image */}
               {restaurant.image_url ? (

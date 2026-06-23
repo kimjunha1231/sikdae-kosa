@@ -42,6 +42,10 @@ const nextConfig: NextConfig = {
       {
         protocol: 'http',
         hostname: '*.cdninstagram.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'firebasestorage.googleapis.com',
       }
     ],
   },

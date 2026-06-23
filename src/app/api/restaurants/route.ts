@@ -1,22 +1,32 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs/promises';
 import path from 'path';
+import type { Restaurant, Review } from '@/entities/restaurant';
 
 const DATA_FILE_PATH = path.join(process.cwd(), 'src', 'data', 'restaurants.json');
 
-async function readData() {
+// 전역 캐시 변수 선언
+let cachedRawRestaurants: Restaurant[] | null = null;
+
+async function readData(): Promise<Restaurant[]> {
+  if (cachedRawRestaurants) {
+    return JSON.parse(JSON.stringify(cachedRawRestaurants));
+  }
   try {
     const data = await fs.readFile(DATA_FILE_PATH, 'utf-8');
-    return JSON.parse(data);
+    cachedRawRestaurants = JSON.parse(data);
+    return JSON.parse(JSON.stringify(cachedRawRestaurants));
   } catch (e) {
     console.error('Failed to read data file', e);
     return [];
   }
 }
 
-async function writeData(data: any) {
+async function writeData(data: Restaurant[]) {
   try {
     await fs.writeFile(DATA_FILE_PATH, JSON.stringify(data, null, 2), 'utf-8');
+    // 캐시 최신화
+    cachedRawRestaurants = JSON.parse(JSON.stringify(data));
     return true;
   } catch (e) {
     console.error('Failed to write data file', e);
@@ -40,44 +50,81 @@ export async function GET() {
     return NextResponse.json(restaurants);
   }
 
+  // 1. Firebase로부터 오늘 자 K밥상 데이터와 전체 리뷰 데이터 병합 시도
+  let reviews: Record<string, Record<string, Review>> = {};
+  let kBabsangData: any = null;
+
   try {
-    // 1. Firebase에서 오늘 자 K밥상 메뉴 이미지 데이터 가져오기
-    const res = await fetch(`${FIREBASE_DB_URL}/kbabsang/today.json`, {
-      cache: 'no-store',
-      // Timeout after 2 seconds to avoid blocking the main restaurants API if Firebase is slow
-      signal: AbortSignal.timeout(2000),
-    });
+    const [kbabsangRes, reviewsRes] = await Promise.all([
+      fetch(`${FIREBASE_DB_URL}/kbabsang/today.json`, {
+        cache: 'no-store',
+        signal: AbortSignal.timeout(2000),
+      }).catch((err) => {
+        console.error('Failed to fetch K-Babsang menu from Firebase:', err);
+        return null;
+      }),
+      fetch(`${FIREBASE_DB_URL}/reviews.json`, {
+        cache: 'no-store',
+        signal: AbortSignal.timeout(2000),
+      }).catch((err) => {
+        console.error('Failed to fetch reviews from Firebase:', err);
+        return null;
+      })
+    ]);
 
-    if (res.ok) {
-      const data = await res.json();
-      const todayStr = getKSTDateString();
-
-      // 2. 오늘 날짜와 일치하는 메뉴가 등록되어 있는지 검증
-      if (data && data.lastUpdated === todayStr && data.imageUrl) {
-        const kIndex = restaurants.findIndex((r: any) => r.name === 'K밥상');
-        if (kIndex !== -1) {
-          // 3. K밥상의 대표 이미지 및 메뉴 데이터를 동적으로 교체
-          restaurants[kIndex] = {
-            ...restaurants[kIndex],
-            image_url: data.imageUrl,
-            menus: [
-              {
-                name: '오늘의 한식뷔페 (인스타 식단표)',
-                price: 10000,
-                imageUrl: data.imageUrl,
-              }
-            ],
-            // 인스타그램 원본 링크도 필요하다면 metadata 등에 넣어두거나 활용 가능
-            instagram_link: data.postUrl || null,
-          };
-        }
-      }
+    if (kbabsangRes && kbabsangRes.ok) {
+      kBabsangData = await kbabsangRes.json();
+    }
+    if (reviewsRes && reviewsRes.ok) {
+      reviews = await reviewsRes.json() || {};
     }
   } catch (error) {
-    console.error('Failed to merge K-Babsang menu, returning original data:', error);
+    console.error('Failed to load Firebase data:', error);
   }
 
-  return NextResponse.json(restaurants);
+  // 2. K밥상 데이터 병합 처리
+  if (kBabsangData) {
+    const todayStr = getKSTDateString();
+    if (kBabsangData.lastUpdated === todayStr && kBabsangData.imageUrl) {
+      const kIndex = restaurants.findIndex((r) => r.name === 'K밥상');
+      if (kIndex !== -1) {
+        restaurants[kIndex] = {
+          ...restaurants[kIndex],
+          image_url: kBabsangData.imageUrl,
+          menus: [
+            {
+              name: '오늘의 한식뷔페 (인스타 식단표)',
+              price: 10000,
+              imageUrl: kBabsangData.imageUrl,
+            }
+          ],
+          instagram_link: kBabsangData.postUrl || null,
+        };
+      }
+    }
+  }
+
+  // 3. 각 식당에 실시간 리뷰 평점과 개수 매핑 처리
+  const restaurantsWithRatings = restaurants.map((r: Restaurant) => {
+    const resReviews = reviews[r.id || ''] || {};
+    const reviewsArray = Object.values(resReviews);
+    if (reviewsArray.length > 0) {
+      const sum = reviewsArray.reduce((acc: number, curr: Review) => acc + (curr.rating || 0), 0);
+      const avg = (sum / reviewsArray.length).toFixed(2);
+      return {
+        ...r,
+        rating: avg,
+        reviewCount: reviewsArray.length
+      };
+    }
+    return {
+      ...r,
+      rating: r.rating && r.rating !== '0' ? r.rating : '0',
+      reviewCount: r.reviewCount || 0
+    };
+  });
+
+  return NextResponse.json(restaurantsWithRatings);
 }
 
 export async function POST(request: Request) {

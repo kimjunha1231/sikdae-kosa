@@ -1,29 +1,47 @@
 'use client';
 
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { Sidebar } from '@/widgets/sidebar';
-import { KakaoMapView } from '@/widgets/map-view';
-import { RestaurantDetailModal, Restaurant, Review } from '@/entities/restaurant';
-import { WinnerModal } from '@/features/draw-roulette';
+import { RestaurantDetailModal, Restaurant, useRestaurantList } from '@/entities/restaurant';
 import { useCollaborativeRoom } from '@/features/collaboration';
-import { Users, Copy, Check, ArrowLeft, Edit2, Crown, ChevronRight, ChevronLeft } from 'lucide-react';
-import { CrocodileGame } from '@/features/crocodile-game';
-import { ref, onValue } from 'firebase/database';
-import { db } from '@/shared/lib/firebase';
-import { getHaversineDistance, getMemberColorClass } from '@/shared/lib/utils';
+import { Users, Copy, Check, ArrowLeft, Edit2, Crown, ChevronRight, ChevronLeft, AlertTriangle } from 'lucide-react';
+import { getMemberColorClass } from '@/shared/lib/utils';
 
+// Dynamic imports to optimize initial JS bundle size and defer client-only widgets
+const KakaoMapView = dynamic(
+  () => import('@/widgets/map-view').then((mod) => mod.KakaoMapView),
+  { ssr: false }
+);
 
+const WinnerModal = dynamic(
+  () => import('@/features/draw-roulette').then((mod) => mod.WinnerModal),
+  { ssr: false }
+);
+
+const CrocodileGame = dynamic(
+  () => import('@/features/crocodile-game').then((mod) => mod.CrocodileGame),
+  { ssr: false }
+);
 
 export default function CollaborativeRoom() {
   const params = useParams();
   const router = useRouter();
   const roomId = params.roomId as string;
 
-  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('전체');
-  const [sortBy, setSortBy] = useState<'distance' | 'rating' | 'name'>('distance');
+  const {
+    restaurants: allRestaurants,
+    filteredAndSorted,
+    isLoading,
+    setSearchQuery,
+    selectedCategory,
+    setSelectedCategory,
+    sortBy,
+    setSortBy,
+    userLocation
+  } = useRestaurantList();
+
   const [isDarkMode, setIsDarkMode] = useState(true);
 
   const [hoveredRes, setHoveredRes] = useState<Restaurant | null>(null);
@@ -34,27 +52,7 @@ export default function CollaborativeRoom() {
   const [copied, setCopied] = useState(false);
   const [isEditingNickname, setIsEditingNickname] = useState(false);
   const [newNickname, setNewNickname] = useState('');
-  const [allReviews, setAllReviews] = useState<Record<string, Record<string, Review>>>({});
   const [isMembersOpen, setIsMembersOpen] = useState(true);
-
-  const [userLocation] = useState<{ lat: number; lng: number } | null>({
-    lat: 37.495055,
-    lng: 127.122270,
-  });
-
-  // Subscribe to reviews in Realtime DB
-  useEffect(() => {
-    const reviewsRef = ref(db, 'reviews');
-    const unsubscribe = onValue(reviewsRef, (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        setAllReviews(data);
-      } else {
-        setAllReviews({});
-      }
-    });
-    return () => unsubscribe();
-  }, []);
 
   const {
     roulettePool,
@@ -70,22 +68,8 @@ export default function CollaborativeRoom() {
     startCrocodileGame,
     pressCrocodileTooth,
     resetCrocodileGame,
+    firebaseError,
   } = useCollaborativeRoom(roomId);
-
-  const fetchRestaurants = async () => {
-    try {
-      const res = await fetch('/api/restaurants');
-      const data = await res.json();
-      setRestaurants(data);
-    } catch (e) {
-      console.error('Failed to load restaurants', e);
-    }
-  };
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    fetchRestaurants();
-  }, []);
 
   useEffect(() => {
     const root = window.document.documentElement;
@@ -96,95 +80,88 @@ export default function CollaborativeRoom() {
     }
   }, [isDarkMode]);
 
-
-  const restaurantsWithDistance = useMemo(() => {
-    return restaurants.map((res) => {
-      const activeCenter = userLocation || { lat: 37.495055, lng: 127.122270 };
-      const distM = getHaversineDistance(activeCenter.lat, activeCenter.lng, res.lat, res.lng);
-      const formattedDistance = distM < 1000 ? `${Math.round(distM)}m` : `${(distM / 1000).toFixed(1)}km`;
-      return { ...res, distanceVal: distM, distance: formattedDistance };
-    });
-  }, [restaurants, userLocation]);
-
-  // Inject dynamic rating from database reviews
-  const restaurantsWithDbRatings = useMemo(() => {
-    return restaurantsWithDistance.map((res) => {
-      const resReviews = allReviews[res.id || ''] || {};
-      const reviewsArray = Object.values(resReviews);
-      if (reviewsArray.length > 0) {
-        const sum = reviewsArray.reduce((acc: number, curr: Review) => acc + (curr.rating || 0), 0);
-        const avg = (sum / reviewsArray.length).toFixed(2);
-        return {
-          ...res,
-          rating: avg,
-          reviewCount: reviewsArray.length,
-        };
-      }
-      return {
-        ...res,
-        rating: '0',
-        reviewCount: 0,
-      };
-    });
-  }, [restaurantsWithDistance, allReviews]);
-
-  const filteredAndSorted = useMemo(() => {
-    return restaurantsWithDbRatings
-      .filter((res) => {
-        const matchesSearch =
-          res.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          (res.menus && res.menus.some((m) => m.name.toLowerCase().includes(searchQuery.toLowerCase())));
-        const matchesCategory = selectedCategory === '전체' || res.category === selectedCategory;
-        return matchesSearch && matchesCategory;
-      })
-      .sort((a, b) => {
-        if (sortBy === 'distance') return (a.distanceVal ?? 0) - (b.distanceVal ?? 0);
-        if (sortBy === 'rating') {
-          const getNumericRating = (r?: string) => (!r || r === '-' ? 0 : parseFloat(r));
-          return getNumericRating(b.rating) - getNumericRating(a.rating);
-        }
-        return a.name.localeCompare(b.name, 'ko');
-      });
-  }, [restaurantsWithDbRatings, searchQuery, selectedCategory, sortBy]);
-
-  const handleCopyLink = () => {
+  const handleCopyLink = useCallback(() => {
     navigator.clipboard.writeText(window.location.href);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
-  };
+  }, []);
 
-  const handleSaveNickname = () => {
+  const handleSaveNickname = useCallback(() => {
     if (newNickname.trim()) {
       updateNickname(newNickname.trim());
       setIsEditingNickname(false);
     }
-  };
+  }, [newNickname, updateNickname]);
+
+  const handleSelectRes = useCallback((res: Restaurant | null) => {
+    setSelectedRes(res);
+  }, []);
+
+  const handleHoverEnterRes = useCallback((res: Restaurant | null) => {
+    setHoveredRes(res);
+  }, []);
+
+  const handleHoverLeaveRes = useCallback(() => {
+    setHoveredRes(null);
+  }, []);
+
+  const handleViewDetail = useCallback((res: Restaurant) => {
+    setDetailRes(res);
+    setIsDetailOpen(true);
+  }, []);
+
+  const handleToggleDarkMode = useCallback(() => {
+    setIsDarkMode((prev) => !prev);
+  }, []);
+
+  const handleCloseDetail = useCallback(() => {
+    setIsDetailOpen(false);
+    setDetailRes(null);
+  }, []);
+
+  const handleTriggerCollaborativeSpin = useCallback((chosen: Restaurant) => {
+    triggerSpin(chosen.name);
+  }, [triggerSpin]);
+
+  const handlePressCrocodileTooth = useCallback((idx: number) => {
+    pressCrocodileTooth(idx, participants);
+  }, [pressCrocodileTooth, participants]);
+
+  const handleStartCrocodileGame = useCallback(() => {
+    startCrocodileGame(participants);
+  }, [startCrocodileGame, participants]);
 
   return (
     <main className="w-full h-screen flex flex-col md:flex-row overflow-hidden bg-background text-foreground transition-colors duration-200">
       <Sidebar
+        isLoading={isLoading}
         isDarkMode={isDarkMode}
-        onToggleDarkMode={() => setIsDarkMode(!isDarkMode)}
+        onToggleDarkMode={handleToggleDarkMode}
         selectedCategory={selectedCategory}
         onSelectCategory={setSelectedCategory}
         sortBy={sortBy}
         onSortByChange={setSortBy}
         onSearchQueryChange={setSearchQuery}
         filteredAndSorted={filteredAndSorted}
-        allRestaurants={restaurantsWithDbRatings}
+        allRestaurants={allRestaurants}
         selectedRes={selectedRes}
-        onSelectRes={(res) => setSelectedRes(res)}
-        onHoverEnterRes={(res) => setHoveredRes(res)}
-        onHoverLeaveRes={() => setHoveredRes(null)}
+        onSelectRes={handleSelectRes}
+        onHoverEnterRes={handleHoverEnterRes}
+        onHoverLeaveRes={handleHoverLeaveRes}
         roulettePool={roulettePool}
         onTogglePool={toggleRouletteSelection}
-        onViewDetail={(res) => {
-          setDetailRes(res);
-          setIsDetailOpen(true);
-        }}
+        onViewDetail={handleViewDetail}
       />
 
       <section className="flex-grow min-w-0 h-full flex flex-col relative bg-muted/20">
+        {/* Firebase Error Warning Banner */}
+        {firebaseError && (
+          <div className="mx-4 mt-4 px-4 py-2.5 bg-destructive/15 border border-destructive/30 rounded-xl flex items-center gap-2 text-xs font-semibold text-destructive animate-pulse z-40">
+            <AlertTriangle size={14} className="shrink-0" />
+            <span>실시간 협업 서버 연결에 실패했습니다 ({firebaseError}). 일부 협업 기능이 작동하지 않을 수 있습니다.</span>
+          </div>
+        )}
+
         {/* Dynamic Collaborative Header */}
         <div className="p-4 pb-0 z-30">
           <div className="flex flex-wrap items-center justify-between gap-3 bg-card/90 backdrop-blur-md border border-border px-4 py-3 rounded-2xl shadow-lg">
@@ -269,8 +246,8 @@ export default function CollaborativeRoom() {
               {/* Crocodile Game Start Button */}
               {crocodileGame?.status === 'idle' && (
                 <button
-                  onClick={() => startCrocodileGame(participants)}
-                  className="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3 py-2 rounded-xl transition-colors cursor-pointer"
+                  onClick={handleStartCrocodileGame}
+                  className="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3 py-2 rounded-xl transition-colors cursor-pointer animate-fade-in"
                 >
                   <span>🐊 내기 게임 시작</span>
                 </button>
@@ -299,8 +276,8 @@ export default function CollaborativeRoom() {
               currentUser={currentUser}
               participants={participants}
               turnOrder={crocodileGame.turnOrder}
-              onPressTooth={(idx) => pressCrocodileTooth(idx, participants)}
-              onReset={() => startCrocodileGame(participants)}
+              onPressTooth={handlePressCrocodileTooth}
+              onReset={handleStartCrocodileGame}
               onClose={resetCrocodileGame}
             />
           ) : (
@@ -309,25 +286,16 @@ export default function CollaborativeRoom() {
                 restaurants={filteredAndSorted}
                 hoveredRestaurant={hoveredRes}
                 selectedRestaurant={selectedRes}
-                onSelectRestaurant={(res) => setSelectedRes(res)}
+                onSelectRestaurant={handleSelectRes}
                 userLocation={userLocation}
-                onViewDetails={(res) => {
-                  setDetailRes(res);
-                  setIsDetailOpen(true);
-                }}
+                onViewDetails={handleViewDetail}
                 roulettePool={roulettePool}
-                onWinnerSelected={(winner) => {
-                  setSelectedRes(winner);
-                }}
+                onWinnerSelected={handleSelectRes}
                 isCollaborative={true}
                 collaborativeSpinStatus={spinEvent.status}
                 collaborativeWinnerName={spinEvent.winner}
-                onTriggerCollaborativeSpin={(chosen) => {
-                  triggerSpin(chosen.name);
-                }}
-                onCollaborativeSpinEnd={() => {
-                  completeSpin();
-                }}
+                onTriggerCollaborativeSpin={handleTriggerCollaborativeSpin}
+                onCollaborativeSpinEnd={completeSpin}
               />
 
               {/* Floating Collaborative Members Card */}
@@ -398,20 +366,17 @@ export default function CollaborativeRoom() {
       {isDetailOpen && detailRes && (
         <RestaurantDetailModal
           isOpen={isDetailOpen}
-          onClose={() => setIsDetailOpen(false)}
+          onClose={handleCloseDetail}
           restaurant={detailRes}
           isInPool={roulettePool.includes(detailRes.name)}
           onTogglePool={toggleRouletteSelection}
-          reviews={detailRes && allReviews[detailRes.id || ''] ? Object.values(allReviews[detailRes.id || '']) : []}
         />
       )}
 
       {spinEvent.status === 'completed' && spinEvent.winner && (
         <WinnerModal
-          winner={restaurants.find((r) => r.name === spinEvent.winner) || null}
-          onClose={() => {
-            resetSpin();
-          }}
+          winner={allRestaurants.find((r) => r.name === spinEvent.winner) || null}
+          onClose={resetSpin}
         />
       )}
     </main>

@@ -16,6 +16,11 @@
   - `lg:flex-row` 브레이크포인트를 적용해 데스크톱 환경에서는 악어 보드(왼쪽)와 타임라인 패널(오른쪽)이 2단 가로 정렬되며, 화면이 좁아지는 모바일 환경에서는 `flex-col`로 안전하게 흘러내리도록 설계했습니다.
 - **상태 관리**:
   - 룰렛 방 참여자 수 및 현재 턴 유저(`turnUserId`), 벌칙 패배자(`loserNickname`) 등은 `useCollaborativeRoom.ts` 훅을 통해 Firebase Realtime DB와 실시간 동기화됩니다. UI 측에서 `participants`를 `id` 오름차순으로 정렬하면 Firebase 내 게임 턴 이동 인덱스 계산법과 일관되게 정렬할 수 있습니다.
+- **카카오 지도 커스텀 오버레이 클러스터링 & 타입 정의 규칙**:
+  - 카카오 지도 SDK의 `MarkerClusterer`는 HTML 커스텀 오버레이(`CustomOverlay`) 객체를 군집화할 수 없습니다. 따라서 Toss UI 스타일 마커 디자인 보존을 위해 **위/경도 및 그리드 기반 순수 JS 클러스터링 알고리즘**을 `KakaoMapView.tsx`에 탑재했습니다. 지도의 줌 레벨 `zoomLevel >= 4`일 때 군집화됩니다.
+  - 외부 SDK 스크립트를 동적으로 로드함에 따라 `KakaoMapView.tsx` 상단에 `KakaoMap` 인터페이스를 임시 선언해 활용합니다. 줌 레벨 감지 및 클러스터 클릭 시의 줌인 애니메이션 연동을 위해 반드시 **`getLevel: () => number`** 및 **`setLevel: (level: number, options?: { animate: boolean }) => void`** 메서드 시그니처가 인터페이스 타입에 명시되어야 빌드 에러를 예방할 수 있습니다.
+- **Restaurant 엔티티 스키마**:
+  - API 가공 로직(`api/restaurants/route.ts`)에서 인스타그램 크롤링 정보를 주입하기 위해 `src/entities/restaurant/model/types.ts` 내 `Restaurant` 인터페이스에는 반드시 **`instagram_link?: string | null;`** 필드가 선언되어 있어야 합니다.
 
 ## 3. 크롤링 및 음식점 데이터 관리
 - **Naver Place ID 하드코딩 예외**:
